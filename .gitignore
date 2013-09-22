@@ -1,0 +1,6 @@
+.DS*
+.waf*
+build
+.lock-*
+osx/Frameworks/Sparkle*
+waf-tools/*.pyc
