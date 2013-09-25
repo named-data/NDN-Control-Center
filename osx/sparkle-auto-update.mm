@@ -21,7 +21,7 @@ public:
 SparkleAutoUpdate::SparkleAutoUpdate(const char *updateUrl)
 {
   d = new Private;
-  d->updater = [[SUUpdater sharedUpdater] retain];
+  d->updater = [SUUpdater sharedUpdater];
   NSURL *url = [NSURL URLWithString: [NSString stringWithCString:updateUrl encoding:NSASCIIStringEncoding]];
   [d->updater setFeedURL: url];
   [d->updater setAutomaticallyChecksForUpdates: YES];
@@ -30,7 +30,7 @@ SparkleAutoUpdate::SparkleAutoUpdate(const char *updateUrl)
 
 SparkleAutoUpdate::~SparkleAutoUpdate()
 {
-  [d->updater release];
+  // [d->updater release];
   delete d;
   // presummably SUUpdater handles garbage collection
 }

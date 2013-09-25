@@ -8,7 +8,10 @@
 
 #import <Cocoa/Cocoa.h>
 
-int main(int argc, const char **argv)
+@interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
-  return NSApplicationMain (argc, argv);
+  IBOutlet NSMenu *statusMenu;
+  NSStatusItem * statusItem;
 }
+ 
+@end

@@ -2,23 +2,33 @@
 <!DOCTYPE plist SYSTEM "file://localhost/System/Library/DTDs/PropertyList.dtd">
 <plist version="0.9">
 <dict>
+    <key>CFBundleDevelopmentRegion</key>
+    <string>English</string>
     <key>CFBundleExecutable</key>
     <string>NDNx Control Center</string>
-    <key>CFBundleGetInfoString</key>
-    <string>Created by Waf</string>
     <key>CFBundleIconFile</key>
     <string>ndnx-main.icns</string>
     <key>CFBundleIdentifier</key>
     <string>net.named-data.control-center</string>
+    <key>CFBundleInfoDictionaryVersion</key>
+    <string>6.0</string>
+    <key>CFBundleName</key>
+    <string>NDNx Control Center</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>
     <string>????</string>
-    <key>NOTE</key>
-    <string>THIS IS A GENERATED FILE, DO NOT MODIFY</string>
+    <key>CFBundleShortVersionString</key>
+    <string>0.0.1</string>
+    <key>LSMinimumSystemVersion</key>
+    <string>10.6</string>
+    <key>CFBundleVersion</key>
+    <string>1</string>
+    <key>NSMainNibFile</key>
+    <string>MainMenu</string>
     <key>NSPrincipalClass</key>
     <string>NSApplication</string>
-    <!-- <key>LSUIElement</key> -->
-    <!-- <string>1</string> -->
+    <key>LSUIElement</key>
+    <string>1</string>
 </dict>
 </plist>

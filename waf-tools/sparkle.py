@@ -7,8 +7,8 @@ from waflib.Configure import conf
 @conf
 def check_sparkle_base (self, *k, **kw):
   self.check_cxx (framework_name="Sparkle", header_name=["Foundation/Foundation.h", "AppKit/AppKit.h"],
-                  uselib_store='OSX_SPARKLE', define_name='HAVE_SPARKLE',
-                  compile_filename='test.mm', use="OSX_FOUNDATION OSX_APPKIT",
+                  uselib_store='SPARKLE', define_name='HAVE_SPARKLE',
+                  compile_filename='test.mm', use="FOUNDATION APPKIT",
                   *k,
                   **kw
                   )
