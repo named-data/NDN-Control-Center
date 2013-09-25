@@ -6,7 +6,7 @@ from waflib import Logs, Utils, Task, TaskGen
 
 def options(opt):
     opt.load('compiler_c compiler_cxx')
-    opt.load('sparkle', tooldir='waf-tools')
+    opt.load('sparkle xcode', tooldir='waf-tools')
 
 def configure(conf):
     conf.load('compiler_c compiler_cxx')

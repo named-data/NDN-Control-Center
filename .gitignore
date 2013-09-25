@@ -4,3 +4,4 @@ build
 .lock-*
 osx/Frameworks/Sparkle*
 waf-tools/*.pyc
+ndnx-control-center.xcodeproj
