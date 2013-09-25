@@ -14,25 +14,71 @@
         <customObject id="-3" userLabel="Application"/>
         <customObject id="494" customClass="MenuDelegate">
             <connections>
+                <outlet property="connectionStatus" destination="yhj-L6-nZL" id="v5Y-5B-2aW"/>
+                <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
+                <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
+                <outlet property="startstopButton" destination="TvT-OR-oT4" id="kEH-ls-jDL"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
+                <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
+                <outlet property="trafficMap" destination="6tC-sG-tLM" id="rxz-Jt-3au"/>
             </connections>
         </customObject>
-        <customObject id="420" customClass="NSFontManager"/>
         <menu id="ovl-jc-kIR">
             <items>
-                <menuItem title="start" id="yhj-L6-nZL">
+                <menuItem title="Connected" id="yhj-L6-nZL">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="stop" id="TvT-OR-oT4">
+                <menuItem title="Stop" id="TvT-OR-oT4">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="ndnstatus" id="Tap-5m-ZRP">
+                <menuItem title="Status" id="Tap-5m-ZRP">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="openDaemonStatus:" target="494" id="EWq-Mc-qkx"/>
+                    </connections>
+                </menuItem>
+                <menuItem id="E2p-41-2EY">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Item" id="17X-uc-n9i">
+                <menuItem title="Routing Status" id="Vc8-fu-RAY">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="openRoutingStatusPage:" target="494" id="Xzn-D8-pMm"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Traffic Map" id="6tC-sG-tLM">
+                    <attributedString key="attributedTitle"/>
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="openTrafficMapPage:" target="494" id="eae-R6-kYb"/>
+                    </connections>
                 </menuItem>
             </items>
         </menu>
+        <viewController id="QoL-hX-ilM" userLabel="Popover View Controller">
+            <connections>
+                <outlet property="view" destination="pEE-BK-JGJ" id="aNk-Zu-Rlw"/>
+            </connections>
+        </viewController>
+        <popover id="eAA-vc-IW1">
+            <connections>
+                <outlet property="contentViewController" destination="QoL-hX-ilM" id="GKo-LB-19Q"/>
+            </connections>
+        </popover>
+        <customView id="pEE-BK-JGJ">
+            <rect key="frame" x="0.0" y="0.0" width="247" height="132"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="90x-3T-Z7e">
+                    <rect key="frame" x="57" y="82" width="166" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="NDN Daemon Status" id="Di0-ug-aeg">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+        </customView>
     </objects>
 </document>

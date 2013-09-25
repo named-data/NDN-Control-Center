@@ -46,7 +46,7 @@ def build (bld):
             use = "OSX COCOA FOUNDATION APPKIT SPARKLE",
 
             mac_plist = 'osx/Info.plist',
-            mac_resources = 'osx/Resources/ndnx-main.icns osx/Resources/ndnx-tray.icns',
+            mac_resources = [i.path_from(bld.path) for i in bld.path.ant_glob ('osx/Resources/**/*')],
             mac_frameworks = "osx/Frameworks/Sparkle.framework",
             )
 

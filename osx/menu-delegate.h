@@ -10,8 +10,21 @@
 
 @interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
-  IBOutlet NSMenu *statusMenu;
-  NSStatusItem * statusItem;
+    NSStatusItem *statusItem;
+    NSImage *menuIcon;
+
+    IBOutlet NSPopover *statusPopover;
+
+    IBOutlet NSMenu *statusMenu;
+    IBOutlet NSMenuItem *connectionStatus;
+    IBOutlet NSMenuItem *startstopButton;
+    IBOutlet NSMenuItem *daemonStatus;
+    IBOutlet NSMenuItem *routingStatus;
+    IBOutlet NSMenuItem *trafficMap;
 }
- 
+
+-(IBAction)openDaemonStatus:(id)sender;
+-(IBAction)openRoutingStatusPage:(id)sender;
+-(IBAction)openTrafficMapPage:(id)sender;
+
 @end
