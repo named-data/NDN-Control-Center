@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
 <document type="com.apple.InterfaceBuilder3.Cocoa.XIB" version="3.0" toolsVersion="4510" systemVersion="12F37" targetRuntime="MacOSX.Cocoa" propertyAccessControl="none" useAutolayout="YES">
     <dependencies>
-        <deployment defaultVersion="1080" identifier="macosx"/>
         <plugIn identifier="com.apple.InterfaceBuilder.CocoaPlugin" version="4510"/>
     </dependencies>
     <objects>
@@ -17,7 +16,6 @@
                 <outlet property="connectionStatus" destination="yhj-L6-nZL" id="v5Y-5B-2aW"/>
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
                 <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
-                <outlet property="startstopButton" destination="TvT-OR-oT4" id="kEH-ls-jDL"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
                 <outlet property="trafficMap" destination="6tC-sG-tLM" id="rxz-Jt-3au"/>
@@ -25,11 +23,14 @@
         </customObject>
         <menu id="ovl-jc-kIR">
             <items>
-                <menuItem title="Connected" id="yhj-L6-nZL">
+                <menuItem title="NDN disconnected" id="yhj-L6-nZL">
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
-                <menuItem title="Stop" id="TvT-OR-oT4">
+                <menuItem title="Start" id="TvT-OR-oT4">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="switchDaemon:" target="494" id="kgm-Z4-mQz"/>
+                    </connections>
                 </menuItem>
                 <menuItem title="Status" id="Tap-5m-ZRP">
                     <modifierMask key="keyEquivalentModifierMask"/>
@@ -52,6 +53,9 @@
                     <connections>
                         <action selector="openTrafficMapPage:" target="494" id="eae-R6-kYb"/>
                     </connections>
+                </menuItem>
+                <menuItem title="Preferences" id="c5x-Oa-5tb">
+                    <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
             </items>
         </menu>

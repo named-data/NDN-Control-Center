@@ -26,10 +26,38 @@
   //[statusItem setTarget:self];
 
   NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-  NSString *path = [bundle pathForResource:@"IconDisconnected" ofType:@"png"];
+  NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
   menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
   [statusItem setTitle:@""];
   [statusItem setImage:menuIcon];
+  
+  daemonStarted = false;
+}
+
+-(IBAction)switchDaemon:(id)sender
+{
+  if (daemonStarted)
+  {
+    daemonStarted = false;
+    [sender setTitle:@"Start"];
+    [connectionStatus setTitle:@"NDN disconnected"];
+    
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
+    menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
+    [statusItem setImage:menuIcon];
+  }
+  else
+  {
+    daemonStarted = true;
+    [sender setTitle:@"Stop"];
+    [connectionStatus setTitle:@"NDN connected"];
+    
+    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+    NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
+    menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
+    [statusItem setImage:menuIcon];
+  }
 }
 
 -(IBAction)openDaemonStatus:(id)sender

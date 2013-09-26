@@ -21,8 +21,11 @@
     IBOutlet NSMenuItem *daemonStatus;
     IBOutlet NSMenuItem *routingStatus;
     IBOutlet NSMenuItem *trafficMap;
+  
+    BOOL daemonStarted;
 }
 
+-(IBAction)switchDaemon:(id)sender;
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)openRoutingStatusPage:(id)sender;
 -(IBAction)openTrafficMapPage:(id)sender;
