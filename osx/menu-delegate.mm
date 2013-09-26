@@ -31,6 +31,13 @@
   [statusItem setTitle:@""];
   [statusItem setImage:menuIcon];
   
+  
+  
+  [connectionStatus setView: connectionStatusView];
+  [connectionStatus setTarget:self];
+  [daemonStatus setView: daemonStatusView];
+  [daemonStatus setTarget:self];
+
   daemonStarted = false;
 }
 
@@ -40,7 +47,8 @@
   {
     daemonStarted = false;
     [sender setTitle:@"Start"];
-    [connectionStatus setTitle:@"NDN disconnected"];
+    //[connectionStatus setTitle:@"NDN disconnected"];
+    [connectionStatusText setStringValue:@"Disconnected"];
     
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
@@ -51,7 +59,8 @@
   {
     daemonStarted = true;
     [sender setTitle:@"Stop"];
-    [connectionStatus setTitle:@"NDN connected"];
+    //[connectionStatus setTitle:@"NDN connected"];
+    [connectionStatusText setStringValue:@"Connected"];
     
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
@@ -62,11 +71,6 @@
 
 -(IBAction)openDaemonStatus:(id)sender
 {
-  [statusPopover showRelativeToRect:[[daemonStatus view] bounds]
-                 ofView:[daemonStatus view]
-                 preferredEdge:NSMinXEdge];
-
-  //[statusPopover showRelativeToRect:[sender bounds] ofView:sender preferredEdge:NSMinYEdge];
 }
 
 -(IBAction)openRoutingStatusPage:(id)sender
@@ -82,6 +86,22 @@
   NSURL *pageURL = [NSURL URLWithString:@"http://ndnmap.arl.wustl.edu"];
 
   [[NSWorkspace sharedWorkspace] openURL: pageURL];
+}
+
+-(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
+{
+
+  if( ([item view]!=nil) && (item == daemonStatus) )
+  {
+    [statusPopover showRelativeToRect:[[item view] bounds]
+                 ofView:[item view]
+                 preferredEdge:NSMinXEdge];
+    
+  }
+  else
+  {
+    [statusPopover performClose:nil];
+  }
 }
 
 @end

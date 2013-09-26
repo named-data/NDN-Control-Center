@@ -23,8 +23,14 @@
     IBOutlet NSMenuItem *trafficMap;
   
     BOOL daemonStarted;
+  
+    IBOutlet NSView *daemonStatusView;
+  
+    IBOutlet NSView *connectionStatusView;
+    IBOutlet NSTextField *connectionStatusText;
 }
 
+-(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
 -(IBAction)switchDaemon:(id)sender;
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)openRoutingStatusPage:(id)sender;

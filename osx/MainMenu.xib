@@ -14,7 +14,10 @@
         <customObject id="494" customClass="MenuDelegate">
             <connections>
                 <outlet property="connectionStatus" destination="yhj-L6-nZL" id="v5Y-5B-2aW"/>
+                <outlet property="connectionStatusText" destination="EUJ-R2-Os4" id="2pC-dc-tng"/>
+                <outlet property="connectionStatusView" destination="24d-37-bzd" id="AYC-I7-1KX"/>
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
+                <outlet property="daemonStatusView" destination="NBE-Gf-zLc" id="91G-ey-DeA"/>
                 <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
@@ -58,6 +61,9 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
             </items>
+            <connections>
+                <outlet property="delegate" destination="494" id="AgM-WF-ty0"/>
+            </connections>
         </menu>
         <viewController id="QoL-hX-ilM" userLabel="Popover View Controller">
             <connections>
@@ -80,6 +86,36 @@
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+        </customView>
+        <customView id="NBE-Gf-zLc">
+            <rect key="frame" x="0.0" y="0.0" width="150" height="20"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="T4F-W2-p5Y">
+                    <rect key="frame" x="19" y="2" width="46" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Status" id="3iV-EO-iJG">
+                        <font key="font" size="14" name="LucidaGrande"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+            </subviews>
+        </customView>
+        <customView id="24d-37-bzd">
+            <rect key="frame" x="0.0" y="0.0" width="155" height="20"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="EUJ-R2-Os4">
+                    <rect key="frame" x="0.0" y="0.0" width="155" height="20"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" alignment="center" title="Disconnected" drawsBackground="YES" id="4JT-Ml-4Z3">
+                        <font key="font" size="14" name="LucidaGrande"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" red="0.28345577993626336" green="0.28865913722826086" blue="0.27492015640756962" alpha="1" colorSpace="calibratedRGB"/>
                     </textFieldCell>
                 </textField>
             </subviews>
