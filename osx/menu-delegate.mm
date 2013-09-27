@@ -16,7 +16,15 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-  // Insert code here to initialize your application
+  daemonStarted = false;
+  allowSoftwareUpdates = true;
+  enableHubDiscovery = true;
+  
+  NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0
+                      target: self
+                      selector:@selector(onTick:)
+                      userInfo: nil repeats:YES];
+  [[NSRunLoop mainRunLoop] addTimer:t forMode:NSRunLoopCommonModes];
 }
 
 -(void)awakeFromNib
@@ -39,9 +47,6 @@
   [connectionStatus setTarget:self];
   [daemonStatus setView: daemonStatusView];
   [daemonStatus setTarget:self];
-
-  daemonStarted = false;
-  //[NSApp activateIgnoringOtherApps:YES];
 }
 
 -(IBAction)switchDaemon:(id)sender
@@ -155,6 +160,27 @@
   else
   {
     enableHubDiscovery = false;
+  }
+}
+
+-(void)onTick:(NSTimer *)timer
+{
+  if (daemonStarted)
+  {
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: NDND_STATUS_COMMAND];
+    
+    NSPipe * out = [NSPipe pipe];
+    [task setStandardOutput:out];
+
+    [task launch];
+    [task waitUntilExit];
+
+    NSFileHandle * read = [out fileHandleForReading];
+    NSData * dataRead = [read readDataToEndOfFile];
+    NSString *stringRead = [[NSString alloc] initWithData:dataRead encoding:NSUTF8StringEncoding];
+  
+    [daemonStatusText setStringValue:stringRead];
   }
 }
 

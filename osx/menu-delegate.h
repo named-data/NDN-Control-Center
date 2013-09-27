@@ -28,6 +28,7 @@
     BOOL enableHubDiscovery;
   
     IBOutlet NSView *daemonStatusView;
+    IBOutlet NSTextField *daemonStatusText;
   
     IBOutlet NSView *connectionStatusView;
     IBOutlet NSTextField *connectionStatusText;

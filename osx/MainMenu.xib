@@ -17,6 +17,7 @@
                 <outlet property="connectionStatusText" destination="EUJ-R2-Os4" id="2pC-dc-tng"/>
                 <outlet property="connectionStatusView" destination="24d-37-bzd" id="AYC-I7-1KX"/>
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
+                <outlet property="daemonStatusText" destination="XxQ-Xi-z1I" id="tTA-y8-Uze"/>
                 <outlet property="daemonStatusView" destination="NBE-Gf-zLc" id="91G-ey-DeA"/>
                 <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="8MT-1G-PZi"/>
                 <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="Apc-XD-aOH"/>
@@ -84,13 +85,22 @@
             </connections>
         </popover>
         <customView id="pEE-BK-JGJ">
-            <rect key="frame" x="0.0" y="0.0" width="247" height="132"/>
+            <rect key="frame" x="0.0" y="0.0" width="330" height="258"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="90x-3T-Z7e">
-                    <rect key="frame" x="57" y="82" width="166" height="17"/>
+                    <rect key="frame" x="82" y="234" width="166" height="17"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="NDN Daemon Status" id="Di0-ug-aeg">
+                        <font key="font" metaFont="system"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <textField verticalHuggingPriority="750" horizontalCompressionResistancePriority="250" fixedFrame="YES" setsMaxLayoutWidthAtFirstLayout="YES" translatesAutoresizingMaskIntoConstraints="NO" id="XxQ-Xi-z1I">
+                    <rect key="frame" x="7" y="7" width="315" height="219"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Multiline Label" id="R13-Gb-7b6">
                         <font key="font" metaFont="system"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
