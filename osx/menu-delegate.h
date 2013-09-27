@@ -21,6 +21,7 @@
     IBOutlet NSMenuItem *daemonStatus;
     IBOutlet NSMenuItem *routingStatus;
     IBOutlet NSMenuItem *trafficMap;
+    IBOutlet NSMenuItem *ndnPreferences;
   
     BOOL daemonStarted;
   
@@ -28,6 +29,8 @@
   
     IBOutlet NSView *connectionStatusView;
     IBOutlet NSTextField *connectionStatusText;
+  
+    IBOutlet NSWindow *preferencesPanel;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
@@ -35,5 +38,6 @@
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)openRoutingStatusPage:(id)sender;
 -(IBAction)openTrafficMapPage:(id)sender;
+-(IBAction)openNDNDPreferences:(id)sender;
 
 @end

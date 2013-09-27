@@ -18,6 +18,8 @@
                 <outlet property="connectionStatusView" destination="24d-37-bzd" id="AYC-I7-1KX"/>
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
                 <outlet property="daemonStatusView" destination="NBE-Gf-zLc" id="91G-ey-DeA"/>
+                <outlet property="ndnPreferences" destination="c5x-Oa-5tb" id="5qP-ZT-G5y"/>
+                <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="Jb0-qB-W2K"/>
                 <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
@@ -59,6 +61,9 @@
                 </menuItem>
                 <menuItem title="Preferences" id="c5x-Oa-5tb">
                     <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="openNDNDPreferences:" target="494" id="VWY-2X-g0b"/>
+                    </connections>
                 </menuItem>
             </items>
             <connections>
@@ -120,5 +125,40 @@
                 </textField>
             </subviews>
         </customView>
+        <window title="NDN Preferences" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="coQ-VU-5RU">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="163" y="199" width="480" height="270"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
+            <view key="contentView" id="aW4-0e-sj2">
+                <rect key="frame" x="0.0" y="0.0" width="480" height="270"/>
+                <autoresizingMask key="autoresizingMask"/>
+            </view>
+            <toolbar key="toolbar" implicitIdentifier="0943E656-2E2A-4D7E-9B26-FBD529BA0E9F" autosavesConfiguration="NO" displayMode="iconAndLabel" sizeMode="regular" id="UQm-vD-cSv">
+                <allowedToolbarItems>
+                    <toolbarItem implicitItemIdentifier="NSToolbarShowColorsItem" id="Ce4-Os-mjG"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarShowFontsItem" id="3ic-rw-laG"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="5Vl-D8-4Ln"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="5XW-vG-TKY"/>
+                    <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="NVu-QV-Pc4"/>
+                    <toolbarItem implicitItemIdentifier="3648465F-1236-436C-88D7-002134AB1299" label="General" paletteLabel="General" tag="-1" image="NSPreferencesGeneral" id="Ppn-Fc-Ncg"/>
+                    <toolbarItem implicitItemIdentifier="0FA8D11D-6C2C-43BD-94B8-3A7A8F16C193" label="Forwarding" paletteLabel="Forwarding" tag="-1" image="NSNetwork" id="wWT-fR-d9Z"/>
+                    <toolbarItem implicitItemIdentifier="40F41351-5D87-4CD1-81BF-EB61A224433D" label="Security" paletteLabel="Security" tag="-1" image="NSAdvanced" id="JtM-k1-dOw"/>
+                </allowedToolbarItems>
+                <defaultToolbarItems>
+                    <toolbarItem reference="Ppn-Fc-Ncg"/>
+                    <toolbarItem reference="wWT-fR-d9Z"/>
+                    <toolbarItem reference="JtM-k1-dOw"/>
+                </defaultToolbarItems>
+            </toolbar>
+            <connections>
+                <outlet property="delegate" destination="494" id="YXz-pN-o9y"/>
+            </connections>
+        </window>
     </objects>
+    <resources>
+        <image name="NSAdvanced" width="32" height="32"/>
+        <image name="NSNetwork" width="32" height="32"/>
+        <image name="NSPreferencesGeneral" width="32" height="32"/>
+    </resources>
 </document>

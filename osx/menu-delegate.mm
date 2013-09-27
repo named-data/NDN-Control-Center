@@ -8,6 +8,10 @@
 
 #import "menu-delegate.h"
 
+#define NDND_START_COMMAND @"/opt/local/bin/ndndstart"
+#define NDND_STOP_COMMAND @"/opt/local/bin/ndndstop"
+#define NDND_STATUS_COMMAND @"/opt/local/bin/ndndstatus"
+
 @implementation MenuDelegate
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
@@ -21,7 +25,6 @@
   [statusItem setMenu:statusMenu];
   [statusItem setToolTip:@"NDN Control Center"];
   [statusItem setEnabled:YES];
-  //[statusItem setTitle:@"Status"];
   [statusItem setHighlightMode:YES];
   //[statusItem setTarget:self];
 
@@ -32,13 +35,13 @@
   [statusItem setImage:menuIcon];
   
   
-  
   [connectionStatus setView: connectionStatusView];
   [connectionStatus setTarget:self];
   [daemonStatus setView: daemonStatusView];
   [daemonStatus setTarget:self];
 
   daemonStarted = false;
+  [NSApp activateIgnoringOtherApps:YES];
 }
 
 -(IBAction)switchDaemon:(id)sender
@@ -47,8 +50,11 @@
   {
     daemonStarted = false;
     [sender setTitle:@"Start"];
-    //[connectionStatus setTitle:@"NDN disconnected"];
     [connectionStatusText setStringValue:@"Disconnected"];
+    
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: NDND_STOP_COMMAND];
+    [task launch];
     
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
@@ -59,8 +65,11 @@
   {
     daemonStarted = true;
     [sender setTitle:@"Stop"];
-    //[connectionStatus setTitle:@"NDN connected"];
     [connectionStatusText setStringValue:@"Connected"];
+    
+    NSTask *task = [[NSTask alloc] init];
+    [task setLaunchPath: NDND_START_COMMAND];
+    [task launch];
     
     NSBundle *bundle = [NSBundle bundleForClass:[self class]];
     NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
@@ -104,4 +113,10 @@
   }
 }
 
+-(IBAction)openNDNDPreferences:(id)sender
+{
+  [preferencesPanel makeKeyAndOrderFront:sender];
+  [preferencesPanel setLevel: NSStatusWindowLevel];
+}
+//
 @end
