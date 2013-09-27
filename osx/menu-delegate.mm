@@ -41,7 +41,7 @@
   [daemonStatus setTarget:self];
 
   daemonStarted = false;
-  [NSApp activateIgnoringOtherApps:YES];
+  //[NSApp activateIgnoringOtherApps:YES];
 }
 
 -(IBAction)switchDaemon:(id)sender
@@ -105,7 +105,6 @@
     [statusPopover showRelativeToRect:[[item view] bounds]
                  ofView:[item view]
                  preferredEdge:NSMinXEdge];
-    
   }
   else
   {
@@ -115,8 +114,48 @@
 
 -(IBAction)openNDNDPreferences:(id)sender
 {
+  [preferencesPanel setContentView:generalSettingsView];
   [preferencesPanel makeKeyAndOrderFront:sender];
   [preferencesPanel setLevel: NSStatusWindowLevel];
 }
-//
+
+-(IBAction)openGeneralSettings:(id)sender
+{
+  [preferencesPanel setContentView:generalSettingsView];
+}
+
+-(IBAction)openForwardingSettings:(id)sender
+{
+  [preferencesPanel setContentView:forwardingSettingsView];
+}
+
+-(IBAction)openSecuritySettings:(id)sender
+{
+  [preferencesPanel setContentView:securitySettingsView];
+}
+
+-(IBAction)switchSoftwareUpdates:(id)sender
+{
+  if ([(NSButton*)sender state] == NSOnState)
+  {
+    allowSoftwareUpdates = true;
+  }
+  else
+  {
+    allowSoftwareUpdates = false;
+  }
+}
+
+-(IBAction)switchHubDiscovery:(id)sender
+{
+  if ([(NSButton*)sender state] == NSOnState)
+  {
+    enableHubDiscovery = true;
+  }
+  else
+  {
+    enableHubDiscovery = false;
+  }
+}
+
 @end

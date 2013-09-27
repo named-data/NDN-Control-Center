@@ -24,6 +24,8 @@
     IBOutlet NSMenuItem *ndnPreferences;
   
     BOOL daemonStarted;
+    BOOL allowSoftwareUpdates;
+    BOOL enableHubDiscovery;
   
     IBOutlet NSView *daemonStatusView;
   
@@ -31,6 +33,9 @@
     IBOutlet NSTextField *connectionStatusText;
   
     IBOutlet NSWindow *preferencesPanel;
+    IBOutlet NSView *generalSettingsView;
+    IBOutlet NSView *forwardingSettingsView;
+    IBOutlet NSView *securitySettingsView;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
@@ -40,4 +45,10 @@
 -(IBAction)openTrafficMapPage:(id)sender;
 -(IBAction)openNDNDPreferences:(id)sender;
 
+-(IBAction)openGeneralSettings:(id)sender;
+-(IBAction)openForwardingSettings:(id)sender;
+-(IBAction)openSecuritySettings:(id)sender;
+
+-(IBAction)switchSoftwareUpdates:(id)sender;
+-(IBAction)switchHubDiscovery:(id)sender;
 @end

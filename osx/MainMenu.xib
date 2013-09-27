@@ -18,9 +18,12 @@
                 <outlet property="connectionStatusView" destination="24d-37-bzd" id="AYC-I7-1KX"/>
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
                 <outlet property="daemonStatusView" destination="NBE-Gf-zLc" id="91G-ey-DeA"/>
+                <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="8MT-1G-PZi"/>
+                <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="Apc-XD-aOH"/>
                 <outlet property="ndnPreferences" destination="c5x-Oa-5tb" id="5qP-ZT-G5y"/>
                 <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="Jb0-qB-W2K"/>
                 <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
+                <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="a3X-aK-fOB"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
                 <outlet property="trafficMap" destination="6tC-sG-tLM" id="rxz-Jt-3au"/>
@@ -141,9 +144,21 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarPrintItem" id="5Vl-D8-4Ln"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarSpaceItem" id="5XW-vG-TKY"/>
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="NVu-QV-Pc4"/>
-                    <toolbarItem implicitItemIdentifier="3648465F-1236-436C-88D7-002134AB1299" label="General" paletteLabel="General" tag="-1" image="NSPreferencesGeneral" id="Ppn-Fc-Ncg"/>
-                    <toolbarItem implicitItemIdentifier="0FA8D11D-6C2C-43BD-94B8-3A7A8F16C193" label="Forwarding" paletteLabel="Forwarding" tag="-1" image="NSNetwork" id="wWT-fR-d9Z"/>
-                    <toolbarItem implicitItemIdentifier="40F41351-5D87-4CD1-81BF-EB61A224433D" label="Security" paletteLabel="Security" tag="-1" image="NSAdvanced" id="JtM-k1-dOw"/>
+                    <toolbarItem implicitItemIdentifier="3648465F-1236-436C-88D7-002134AB1299" label="General" paletteLabel="General" tag="-1" image="NSPreferencesGeneral" id="Ppn-Fc-Ncg">
+                        <connections>
+                            <action selector="openGeneralSettings:" target="494" id="iib-ep-d7d"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="0FA8D11D-6C2C-43BD-94B8-3A7A8F16C193" label="Forwarding" paletteLabel="Forwarding" tag="-1" image="NSNetwork" id="wWT-fR-d9Z">
+                        <connections>
+                            <action selector="openForwardingSettings:" target="494" id="0Sb-lQ-Fsd"/>
+                        </connections>
+                    </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="40F41351-5D87-4CD1-81BF-EB61A224433D" label="Security" paletteLabel="Security" tag="-1" image="NSAdvanced" id="JtM-k1-dOw">
+                        <connections>
+                            <action selector="openSecuritySettings:" target="494" id="MLk-ah-hpM"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="Ppn-Fc-Ncg"/>
@@ -155,6 +170,114 @@
                 <outlet property="delegate" destination="494" id="YXz-pN-o9y"/>
             </connections>
         </window>
+        <customView id="A7D-GN-X5W">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="142"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rXp-X3-HMm">
+                    <rect key="frame" x="18" y="94" width="328" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Automatically check for software updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="oOs-AF-Jm4">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="14" name="LucidaGrande"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="switchSoftwareUpdates:" target="494" id="wmO-D9-xT5"/>
+                    </connections>
+                </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pK9-GZ-bQL">
+                    <rect key="frame" x="18" y="62" width="307" height="18"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="check" title="Automatically discover nearest NDN-hub" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kiY-Dk-Uox">
+                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                        <font key="font" size="14" name="LucidaGrande"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="switchHubDiscovery:" target="494" id="I9B-EQ-nOm"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <customView id="lQz-E7-PRx">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="223"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8C0-3r-hw7">
+                    <rect key="frame" x="176" y="186" width="129" height="17"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Forwarding Table" id="zB2-9L-OLy">
+                        <font key="font" size="14" name="LucidaGrande"/>
+                        <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                        <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                    </textFieldCell>
+                </textField>
+                <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwe-zt-TSj">
+                    <rect key="frame" x="34" y="44" width="421" height="135"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <clipView key="contentView" ambiguous="YES" misplaced="YES" id="sSD-vM-Ynn">
+                        <rect key="frame" x="1" y="17" width="419" height="117"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <tableView verticalHuggingPriority="750" allowsExpansionToolTips="YES" columnAutoresizingStyle="lastColumnOnly" columnSelection="YES" multipleSelection="NO" autosaveColumns="NO" headerView="LTh-Cz-kn3" id="cwE-tM-0QM">
+                                <rect key="frame" x="0.0" y="0.0" width="419" height="117"/>
+                                <autoresizingMask key="autoresizingMask"/>
+                                <size key="intercellSpacing" width="3" height="2"/>
+                                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                                <color key="gridColor" name="gridColor" catalog="System" colorSpace="catalog"/>
+                                <tableColumns>
+                                    <tableColumn width="209.12890625" minWidth="40" maxWidth="1000" id="uNg-7f-0Fn">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="bj9-3e-JNy">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                    </tableColumn>
+                                    <tableColumn width="204" minWidth="40" maxWidth="1000" id="Lyf-oJ-Usx">
+                                        <tableHeaderCell key="headerCell" lineBreakMode="truncatingTail" borderStyle="border" alignment="left">
+                                            <font key="font" metaFont="smallSystem"/>
+                                            <color key="textColor" name="headerTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" white="0.33333298560000002" alpha="1" colorSpace="calibratedWhite"/>
+                                        </tableHeaderCell>
+                                        <textFieldCell key="dataCell" lineBreakMode="truncatingTail" selectable="YES" editable="YES" alignment="left" title="Text Cell" id="Apc-MV-xLA">
+                                            <font key="font" metaFont="system"/>
+                                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                                            <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                                        </textFieldCell>
+                                        <tableColumnResizingMask key="resizingMask" resizeWithTable="YES" userResizable="YES"/>
+                                    </tableColumn>
+                                </tableColumns>
+                            </tableView>
+                        </subviews>
+                        <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
+                    </clipView>
+                    <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="l9T-JI-kUJ">
+                        <rect key="frame" x="1" y="118" width="419" height="16"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="37" id="Ohc-CY-k3U">
+                        <rect key="frame" x="-15" y="17" width="16" height="0.0"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </scroller>
+                    <tableHeaderView key="headerView" id="LTh-Cz-kn3">
+                        <rect key="frame" x="0.0" y="0.0" width="419" height="17"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                    </tableHeaderView>
+                </scrollView>
+            </subviews>
+            <constraints>
+                <constraint firstAttribute="centerX" secondItem="8C0-3r-hw7" secondAttribute="centerX" id="B5J-y5-Jw0"/>
+            </constraints>
+        </customView>
+        <customView id="o3g-Q4-BEo">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="142"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+        </customView>
     </objects>
     <resources>
         <image name="NSAdvanced" width="32" height="32"/>
