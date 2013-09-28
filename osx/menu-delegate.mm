@@ -6,11 +6,12 @@
  * @author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
+#include "config.h"
 #import "menu-delegate.h"
 
-#define NDND_START_COMMAND @"/opt/local/bin/ndndstart"
-#define NDND_STOP_COMMAND @"/opt/local/bin/ndndstop"
-#define NDND_STATUS_COMMAND @"/opt/local/bin/ndndstatus"
+#define NDND_START_COMMAND @ NDNX_ROOT "/bin/ndndstart"
+#define NDND_STOP_COMMAND @ NDNX_ROOT "/bin/ndndstop"
+#define NDND_STATUS_COMMAND @ NDNX_ROOT "/bin/ndndstatus"
 
 @implementation MenuDelegate
 
