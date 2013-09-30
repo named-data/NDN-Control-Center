@@ -6,7 +6,10 @@
  * @author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
+#include "config.h"
 #import "preference-delegate.h"
+
+#define NDND_FIB_COMMAND @ NDNX_ROOT "/bin/ndndc"
 
 @implementation PreferenceDelegate
 
@@ -56,5 +59,45 @@
   }
 }
 
+-(IBAction)addFibEntry:(id)sender
+{
+  [NSApp endSheet:prefixRegistrationSheet];
+  [prefixRegistrationSheet orderOut:sender];
+  
+  NSString *operationName = @"add";
+  
+  NSString *prefixName = [namePrefixText stringValue];
+  NSString *socketType = [tunnelCombobox itemObjectValueAtIndex:[tunnelCombobox indexOfSelectedItem]];
+  NSString *address = [endpointText stringValue];
+
+  NSArray *arguments = [NSArray arrayWithObjects: operationName, prefixName, socketType, address, nil];
+
+  NSTask *task = [[NSTask alloc] init];
+  [task setLaunchPath: NDND_FIB_COMMAND];
+  [task setArguments: arguments];
+  [task launch];
+}
+
+-(IBAction)removeFibEntry:(id)sender
+{
+
+}
+
+- (IBAction) showFibEntrySheet:(id)sender
+{
+    [NSApp beginSheet:prefixRegistrationSheet
+    modalForWindow:preferencesPanel
+    modalDelegate:self
+    didEndSelector:nil
+    contextInfo:nil];
+  
+    [tunnelCombobox selectItemAtIndex:0];
+}
+
+-(IBAction)hideFibEntrySheet:(id)sender
+{
+    [NSApp endSheet:prefixRegistrationSheet];
+    [prefixRegistrationSheet orderOut:sender];
+}
 
 @end

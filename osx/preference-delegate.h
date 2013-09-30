@@ -14,6 +14,11 @@
   IBOutlet NSView *generalSettingsView;
   IBOutlet NSView *forwardingSettingsView;
   IBOutlet NSView *securitySettingsView;
+  
+  IBOutlet NSPanel *prefixRegistrationSheet;
+  IBOutlet NSComboBox *tunnelCombobox;
+  IBOutlet NSTextField *namePrefixText;
+  IBOutlet NSTextField *endpointText;
 }
 
 @property BOOL allowSoftwareUpdates;
@@ -26,4 +31,9 @@
 
 -(IBAction)switchSoftwareUpdates:(id)sender;
 -(IBAction)switchHubDiscovery:(id)sender;
+
+-(IBAction)addFibEntry:(id)sender;
+-(IBAction)removeFibEntry:(id)sender;
+-(IBAction) showFibEntrySheet:(id)sender;
+-(IBAction)hideFibEntrySheet:(id)sender;
 @end

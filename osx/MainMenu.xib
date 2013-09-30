@@ -33,10 +33,14 @@
         </customObject>
         <customObject id="0yn-TQ-4SC" userLabel="Preference Delegate" customClass="PreferenceDelegate">
             <connections>
+                <outlet property="endpointText" destination="xpw-xe-S74" id="9Rb-zh-uE8"/>
                 <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="d1y-fe-mMm"/>
                 <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="paQ-iM-qEx"/>
+                <outlet property="namePrefixText" destination="Nr4-e2-zkN" id="2Nt-9H-SpG"/>
                 <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="tZs-5C-1La"/>
+                <outlet property="prefixRegistrationSheet" destination="tRY-ba-DfO" id="FJr-yW-O1r"/>
                 <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="UDh-Kj-DYk"/>
+                <outlet property="tunnelCombobox" destination="xrn-ng-SrO" id="cCr-A0-gR2"/>
             </connections>
         </customObject>
         <menu id="ovl-jc-kIR">
@@ -218,20 +222,20 @@
             </subviews>
         </customView>
         <customView id="lQz-E7-PRx">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="223"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="253"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
                 <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="8C0-3r-hw7">
-                    <rect key="frame" x="176" y="186" width="129" height="17"/>
+                    <rect key="frame" x="11" y="210" width="52" height="33"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Forwarding Table" id="zB2-9L-OLy">
-                        <font key="font" size="14" name="LucidaGrande"/>
+                    <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="FIB" id="zB2-9L-OLy">
+                        <font key="font" size="30" name="LucidaGrande"/>
                         <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
                         <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
                     </textFieldCell>
                 </textField>
                 <scrollView fixedFrame="YES" autohidesScrollers="YES" horizontalLineScroll="19" horizontalPageScroll="10" verticalLineScroll="19" verticalPageScroll="10" usesPredominantAxisScrolling="NO" translatesAutoresizingMaskIntoConstraints="NO" id="pwe-zt-TSj">
-                    <rect key="frame" x="34" y="44" width="421" height="135"/>
+                    <rect key="frame" x="30" y="67" width="421" height="135"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
                     <clipView key="contentView" ambiguous="YES" misplaced="YES" id="sSD-vM-Ynn">
                         <rect key="frame" x="1" y="17" width="419" height="117"/>
@@ -288,6 +292,28 @@
                         <autoresizingMask key="autoresizingMask"/>
                     </tableHeaderView>
                 </scrollView>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="bzX-Tt-J0Y">
+                    <rect key="frame" x="30" y="35" width="24" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" title="+" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="x7I-60-289">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="showFibEntrySheet:" target="0yn-TQ-4SC" id="m5r-mr-VTs"/>
+                    </connections>
+                </button>
+                <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="gQI-Og-HTs">
+                    <rect key="frame" x="64" y="35" width="24" height="24"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="square" title="-" bezelStyle="shadowlessSquare" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="MLe-yE-kAQ">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="removeFibEntry:" target="0yn-TQ-4SC" id="GSV-Ss-oy9"/>
+                    </connections>
+                </button>
             </subviews>
             <constraints>
                 <constraint firstAttribute="centerX" secondItem="8C0-3r-hw7" secondAttribute="centerX" id="B5J-y5-Jw0"/>
@@ -297,6 +323,101 @@
             <rect key="frame" x="0.0" y="0.0" width="480" height="142"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
         </customView>
+        <window title="Window" allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" hidesOnDeactivate="YES" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="tRY-ba-DfO" customClass="NSPanel">
+            <windowStyleMask key="styleMask" titled="YES" closable="YES" miniaturizable="YES" resizable="YES" utility="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="167" y="107" width="274" height="223"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
+            <view key="contentView" id="xr7-Ov-Bjk">
+                <rect key="frame" x="0.0" y="0.0" width="274" height="223"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xZf-SK-rY3">
+                        <rect key="frame" x="154" y="6" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Ok" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="f6n-gf-Aio">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="14" name="LucidaGrande"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="addFibEntry:" target="0yn-TQ-4SC" id="3fS-LJ-gmp"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="f88-gx-ibD">
+                        <rect key="frame" x="38" y="6" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="y0j-W7-SQZ">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="hideFibEntrySheet:" target="0yn-TQ-4SC" id="yrb-HG-kR1"/>
+                        </connections>
+                    </button>
+                    <comboBox verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xrn-ng-SrO">
+                        <rect key="frame" x="113" y="123" width="144" height="27"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <comboBoxCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" sendsActionOnEndEditing="YES" borderStyle="bezel" drawsBackground="YES" completes="NO" numberOfVisibleItems="2" id="TJb-fs-yy0">
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                            <objectValues>
+                                <string>TCP</string>
+                                <string>UDP</string>
+                            </objectValues>
+                        </comboBoxCell>
+                    </comboBox>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="RS6-nu-Q94">
+                        <rect key="frame" x="20" y="196" width="143" height="17"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="NDN name (prefix)" id="gV7-h5-kZD">
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Nr4-e2-zkN">
+                        <rect key="frame" x="23" y="169" width="231" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="hYP-6n-R7e">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="ZUZ-lE-M1E">
+                        <rect key="frame" x="20" y="126" width="106" height="21"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Tunnel type" id="OLc-dz-WmY">
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="KSW-vV-1ew">
+                        <rect key="frame" x="20" y="84" width="241" height="24"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" sendsActionOnEndEditing="YES" title="Endpoint (IP address or DNS name)" id="fkh-lb-BcV">
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="xpw-xe-S74">
+                        <rect key="frame" x="23" y="59" width="231" height="22"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" scrollable="YES" lineBreakMode="clipping" selectable="YES" editable="YES" sendsActionOnEndEditing="YES" state="on" borderStyle="bezel" drawsBackground="YES" id="Rei-4l-gox">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="textColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="textBackgroundColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                </subviews>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="NSAdvanced" width="32" height="32"/>
