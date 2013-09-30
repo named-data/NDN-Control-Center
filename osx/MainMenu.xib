@@ -22,12 +22,21 @@
                 <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="8MT-1G-PZi"/>
                 <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="Apc-XD-aOH"/>
                 <outlet property="ndnPreferences" destination="c5x-Oa-5tb" id="5qP-ZT-G5y"/>
+                <outlet property="preferencesDelegate" destination="0yn-TQ-4SC" id="OUx-zN-9bt"/>
                 <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="Jb0-qB-W2K"/>
                 <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
                 <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="a3X-aK-fOB"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
                 <outlet property="trafficMap" destination="6tC-sG-tLM" id="rxz-Jt-3au"/>
+            </connections>
+        </customObject>
+        <customObject id="0yn-TQ-4SC" userLabel="Preference Delegate" customClass="PreferenceDelegate">
+            <connections>
+                <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="d1y-fe-mMm"/>
+                <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="paQ-iM-qEx"/>
+                <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="tZs-5C-1La"/>
+                <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="UDh-Kj-DYk"/>
             </connections>
         </customObject>
         <menu id="ovl-jc-kIR">
@@ -66,7 +75,7 @@
                 <menuItem title="Preferences" id="c5x-Oa-5tb">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
-                        <action selector="openNDNDPreferences:" target="494" id="VWY-2X-g0b"/>
+                        <action selector="showPreferencesPanel:" target="0yn-TQ-4SC" id="fSq-Mk-9Hv"/>
                     </connections>
                 </menuItem>
             </items>
@@ -156,17 +165,17 @@
                     <toolbarItem implicitItemIdentifier="NSToolbarFlexibleSpaceItem" id="NVu-QV-Pc4"/>
                     <toolbarItem implicitItemIdentifier="3648465F-1236-436C-88D7-002134AB1299" label="General" paletteLabel="General" tag="-1" image="NSPreferencesGeneral" id="Ppn-Fc-Ncg">
                         <connections>
-                            <action selector="openGeneralSettings:" target="494" id="iib-ep-d7d"/>
+                            <action selector="openGeneralSettings:" target="0yn-TQ-4SC" id="8op-rr-lR0"/>
                         </connections>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="0FA8D11D-6C2C-43BD-94B8-3A7A8F16C193" label="Forwarding" paletteLabel="Forwarding" tag="-1" image="NSNetwork" id="wWT-fR-d9Z">
                         <connections>
-                            <action selector="openForwardingSettings:" target="494" id="0Sb-lQ-Fsd"/>
+                            <action selector="openForwardingSettings:" target="0yn-TQ-4SC" id="nv8-xH-jyM"/>
                         </connections>
                     </toolbarItem>
                     <toolbarItem implicitItemIdentifier="40F41351-5D87-4CD1-81BF-EB61A224433D" label="Security" paletteLabel="Security" tag="-1" image="NSAdvanced" id="JtM-k1-dOw">
                         <connections>
-                            <action selector="openSecuritySettings:" target="494" id="MLk-ah-hpM"/>
+                            <action selector="openSecuritySettings:" target="0yn-TQ-4SC" id="fB4-d2-txt"/>
                         </connections>
                     </toolbarItem>
                 </allowedToolbarItems>
@@ -192,7 +201,7 @@
                         <font key="font" size="14" name="LucidaGrande"/>
                     </buttonCell>
                     <connections>
-                        <action selector="switchSoftwareUpdates:" target="494" id="wmO-D9-xT5"/>
+                        <action selector="switchSoftwareUpdates:" target="0yn-TQ-4SC" id="Gh4-nv-8N8"/>
                     </connections>
                 </button>
                 <button fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pK9-GZ-bQL">
@@ -203,7 +212,7 @@
                         <font key="font" size="14" name="LucidaGrande"/>
                     </buttonCell>
                     <connections>
-                        <action selector="switchHubDiscovery:" target="494" id="I9B-EQ-nOm"/>
+                        <action selector="switchHubDiscovery:" target="0yn-TQ-4SC" id="by5-Mt-5bD"/>
                     </connections>
                 </button>
             </subviews>
@@ -267,10 +276,10 @@
                         <color key="backgroundColor" name="controlBackgroundColor" catalog="System" colorSpace="catalog"/>
                     </clipView>
                     <scroller key="horizontalScroller" hidden="YES" verticalHuggingPriority="750" id="l9T-JI-kUJ">
-                        <rect key="frame" x="1" y="118" width="419" height="16"/>
+                        <rect key="frame" x="1" y="1" width="0.0" height="16"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>
-                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="37" id="Ohc-CY-k3U">
+                    <scroller key="verticalScroller" hidden="YES" verticalHuggingPriority="750" doubleValue="1" id="Ohc-CY-k3U">
                         <rect key="frame" x="-15" y="17" width="16" height="0.0"/>
                         <autoresizingMask key="autoresizingMask"/>
                     </scroller>

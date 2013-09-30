@@ -7,6 +7,7 @@
  */
 
 #import <Cocoa/Cocoa.h>
+#import "preference-delegate.h"
 
 @interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
@@ -33,10 +34,7 @@
     IBOutlet NSView *connectionStatusView;
     IBOutlet NSTextField *connectionStatusText;
   
-    IBOutlet NSWindow *preferencesPanel;
-    IBOutlet NSView *generalSettingsView;
-    IBOutlet NSView *forwardingSettingsView;
-    IBOutlet NSView *securitySettingsView;
+    IBOutlet PreferenceDelegate *preferencesDelegate;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
@@ -44,12 +42,5 @@
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)openRoutingStatusPage:(id)sender;
 -(IBAction)openTrafficMapPage:(id)sender;
--(IBAction)openNDNDPreferences:(id)sender;
 
--(IBAction)openGeneralSettings:(id)sender;
--(IBAction)openForwardingSettings:(id)sender;
--(IBAction)openSecuritySettings:(id)sender;
-
--(IBAction)switchSoftwareUpdates:(id)sender;
--(IBAction)switchHubDiscovery:(id)sender;
 @end

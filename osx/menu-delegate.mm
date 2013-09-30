@@ -118,52 +118,6 @@
   }
 }
 
--(IBAction)openNDNDPreferences:(id)sender
-{
-  [preferencesPanel setContentView:generalSettingsView];
-  [preferencesPanel makeKeyAndOrderFront:sender];
-  [preferencesPanel setLevel: NSStatusWindowLevel];
-}
-
--(IBAction)openGeneralSettings:(id)sender
-{
-  [preferencesPanel setContentView:generalSettingsView];
-}
-
--(IBAction)openForwardingSettings:(id)sender
-{
-  [preferencesPanel setContentView:forwardingSettingsView];
-}
-
--(IBAction)openSecuritySettings:(id)sender
-{
-  [preferencesPanel setContentView:securitySettingsView];
-}
-
--(IBAction)switchSoftwareUpdates:(id)sender
-{
-  if ([(NSButton*)sender state] == NSOnState)
-  {
-    allowSoftwareUpdates = true;
-  }
-  else
-  {
-    allowSoftwareUpdates = false;
-  }
-}
-
--(IBAction)switchHubDiscovery:(id)sender
-{
-  if ([(NSButton*)sender state] == NSOnState)
-  {
-    enableHubDiscovery = true;
-  }
-  else
-  {
-    enableHubDiscovery = false;
-  }
-}
-
 -(void)onTick:(NSTimer *)timer
 {
   if (daemonStarted)
