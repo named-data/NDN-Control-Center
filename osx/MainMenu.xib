@@ -19,16 +19,15 @@
                 <outlet property="daemonStatus" destination="Tap-5m-ZRP" id="yrK-Nr-zKm"/>
                 <outlet property="daemonStatusText" destination="XxQ-Xi-z1I" id="tTA-y8-Uze"/>
                 <outlet property="daemonStatusView" destination="NBE-Gf-zLc" id="91G-ey-DeA"/>
+                <outlet property="exitWindow" destination="6NI-pK-JJs" id="tLd-My-JXC"/>
                 <outlet property="forwardingSettingsView" destination="lQz-E7-PRx" id="8MT-1G-PZi"/>
                 <outlet property="generalSettingsView" destination="A7D-GN-X5W" id="Apc-XD-aOH"/>
                 <outlet property="ndnPreferences" destination="c5x-Oa-5tb" id="5qP-ZT-G5y"/>
                 <outlet property="preferencesDelegate" destination="0yn-TQ-4SC" id="OUx-zN-9bt"/>
                 <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="Jb0-qB-W2K"/>
-                <outlet property="routingStatus" destination="Vc8-fu-RAY" id="GVC-zB-uSO"/>
                 <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="a3X-aK-fOB"/>
                 <outlet property="statusMenu" destination="ovl-jc-kIR" id="dlz-Qz-Ia0"/>
                 <outlet property="statusPopover" destination="eAA-vc-IW1" id="bD5-Rp-Syx"/>
-                <outlet property="trafficMap" destination="6tC-sG-tLM" id="rxz-Jt-3au"/>
             </connections>
         </customObject>
         <customObject id="0yn-TQ-4SC" userLabel="Preference Delegate" customClass="PreferenceDelegate">
@@ -40,6 +39,7 @@
                 <outlet property="preferencesPanel" destination="coQ-VU-5RU" id="tZs-5C-1La"/>
                 <outlet property="prefixRegistrationSheet" destination="tRY-ba-DfO" id="FJr-yW-O1r"/>
                 <outlet property="securitySettingsView" destination="o3g-Q4-BEo" id="UDh-Kj-DYk"/>
+                <outlet property="testbedSettingsView" destination="Oey-Qd-MNO" id="Quf-pr-l8I"/>
                 <outlet property="tunnelCombobox" destination="xrn-ng-SrO" id="cCr-A0-gR2"/>
             </connections>
         </customObject>
@@ -50,12 +50,6 @@
                     <modifierMask key="keyEquivalentModifierMask"/>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="2xJ-1J-1HK"/>
-                <menuItem title="Start" id="TvT-OR-oT4">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="switchDaemon:" target="494" id="kgm-Z4-mQz"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="Status" id="Tap-5m-ZRP">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
@@ -63,23 +57,16 @@
                     </connections>
                 </menuItem>
                 <menuItem isSeparatorItem="YES" id="4g8-aw-JZn"/>
-                <menuItem title="Routing Status" id="Vc8-fu-RAY">
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="openRoutingStatusPage:" target="494" id="Xzn-D8-pMm"/>
-                    </connections>
-                </menuItem>
-                <menuItem title="Traffic Map" id="6tC-sG-tLM">
-                    <attributedString key="attributedTitle"/>
-                    <modifierMask key="keyEquivalentModifierMask"/>
-                    <connections>
-                        <action selector="openTrafficMapPage:" target="494" id="eae-R6-kYb"/>
-                    </connections>
-                </menuItem>
                 <menuItem title="Preferences..." id="c5x-Oa-5tb">
                     <modifierMask key="keyEquivalentModifierMask"/>
                     <connections>
                         <action selector="showPreferencesPanel:" target="0yn-TQ-4SC" id="fSq-Mk-9Hv"/>
+                    </connections>
+                </menuItem>
+                <menuItem title="Quit..." id="eBR-jg-KO1">
+                    <modifierMask key="keyEquivalentModifierMask"/>
+                    <connections>
+                        <action selector="showExitConfirmationWindow:" target="494" id="54e-yD-BTd"/>
                     </connections>
                 </menuItem>
             </items>
@@ -182,11 +169,17 @@
                             <action selector="openSecuritySettings:" target="0yn-TQ-4SC" id="fB4-d2-txt"/>
                         </connections>
                     </toolbarItem>
+                    <toolbarItem implicitItemIdentifier="CCABE25A-70EC-4CDA-9AF2-F274ADECCF13" label="NDN Testbed" paletteLabel="NDN Testbed" tag="-1" image="NSBonjour" id="d6n-eV-ZEN">
+                        <connections>
+                            <action selector="openTestbedSettings:" target="0yn-TQ-4SC" id="w3x-Jk-pgh"/>
+                        </connections>
+                    </toolbarItem>
                 </allowedToolbarItems>
                 <defaultToolbarItems>
                     <toolbarItem reference="Ppn-Fc-Ncg"/>
                     <toolbarItem reference="wWT-fR-d9Z"/>
                     <toolbarItem reference="JtM-k1-dOw"/>
+                    <toolbarItem reference="d6n-eV-ZEN"/>
                 </defaultToolbarItems>
             </toolbar>
             <connections>
@@ -194,60 +187,75 @@
             </connections>
         </window>
         <customView id="A7D-GN-X5W">
-            <rect key="frame" x="0.0" y="0.0" width="480" height="142"/>
+            <rect key="frame" x="0.0" y="0.0" width="480" height="162"/>
             <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
             <subviews>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="pG7-Kv-zmF">
-                    <rect key="frame" x="18" y="106" width="355" height="18"/>
+                <box autoresizesSubviews="NO" fixedFrame="YES" borderType="line" translatesAutoresizingMaskIntoConstraints="NO" id="dPr-jz-Nc2">
+                    <rect key="frame" x="9" y="48" width="462" height="114"/>
                     <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="351" id="Tls-yE-o5t"/>
-                    </constraints>
-                    <buttonCell key="cell" type="check" title="Automatically start NDNx Control Center at login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ycm-ud-Yg7">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="LucidaGrande"/>
+                    <view key="contentView">
+                        <rect key="frame" x="1" y="1" width="460" height="98"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <subviews>
+                            <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pG7-Kv-zmF">
+                                <rect key="frame" x="16" y="72" width="355" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="351" id="Tls-yE-o5t"/>
+                                </constraints>
+                                <buttonCell key="cell" type="check" title="Automatically start NDNx Control Center at login" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="Ycm-ud-Yg7">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <binding destination="Hcg-fF-E5x" name="value" keyPath="launchAtLogin" id="wzT-nM-6OY"/>
+                                </connections>
+                            </button>
+                            <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="rXp-X3-HMm">
+                                <rect key="frame" x="16" y="32" width="328" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="324" id="2lk-MT-GN6"/>
+                                </constraints>
+                                <buttonCell key="cell" type="check" title="Check for software updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="oOs-AF-Jm4">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="switchSoftwareUpdates:" target="0yn-TQ-4SC" id="Gh4-nv-8N8"/>
+                                </connections>
+                            </button>
+                            <button ambiguous="YES" misplaced="YES" translatesAutoresizingMaskIntoConstraints="NO" id="pK9-GZ-bQL">
+                                <rect key="frame" x="16" y="52" width="307" height="18"/>
+                                <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="303" id="wbU-qa-bpU"/>
+                                </constraints>
+                                <buttonCell key="cell" type="check" title="Discover nearest NDN-hub" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kiY-Dk-Uox">
+                                    <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
+                                    <font key="font" metaFont="system"/>
+                                </buttonCell>
+                                <connections>
+                                    <action selector="switchHubDiscovery:" target="0yn-TQ-4SC" id="by5-Mt-5bD"/>
+                                </connections>
+                            </button>
+                        </subviews>
+                    </view>
+                    <color key="borderColor" white="0.0" alpha="0.41999999999999998" colorSpace="calibratedWhite"/>
+                    <color key="fillColor" white="0.0" alpha="0.0" colorSpace="calibratedWhite"/>
+                </box>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="JtO-ik-OIb">
+                    <rect key="frame" x="308" y="13" width="166" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Restart NDN Service" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="5Lu-bh-ybJ">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
                     </buttonCell>
                     <connections>
-                        <binding destination="Hcg-fF-E5x" name="value" keyPath="launchAtLogin" id="wzT-nM-6OY"/>
-                    </connections>
-                </button>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="rXp-X3-HMm">
-                    <rect key="frame" x="18" y="66" width="328" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="324" id="2lk-MT-GN6"/>
-                    </constraints>
-                    <buttonCell key="cell" type="check" title="Check for software updates" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="oOs-AF-Jm4">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="LucidaGrande"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="switchSoftwareUpdates:" target="0yn-TQ-4SC" id="Gh4-nv-8N8"/>
-                    </connections>
-                </button>
-                <button translatesAutoresizingMaskIntoConstraints="NO" id="pK9-GZ-bQL">
-                    <rect key="frame" x="18" y="86" width="307" height="18"/>
-                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
-                    <constraints>
-                        <constraint firstAttribute="width" constant="303" id="wbU-qa-bpU"/>
-                    </constraints>
-                    <buttonCell key="cell" type="check" title="Discover nearest NDN-hub" bezelStyle="regularSquare" imagePosition="left" state="on" inset="2" id="kiY-Dk-Uox">
-                        <behavior key="behavior" changeContents="YES" doesNotDimImage="YES" lightByContents="YES"/>
-                        <font key="font" size="13" name="LucidaGrande"/>
-                    </buttonCell>
-                    <connections>
-                        <action selector="switchHubDiscovery:" target="0yn-TQ-4SC" id="by5-Mt-5bD"/>
+                        <action selector="restartDaemon:" target="0yn-TQ-4SC" id="bzA-wn-4wL"/>
                     </connections>
                 </button>
             </subviews>
-            <constraints>
-                <constraint firstItem="pK9-GZ-bQL" firstAttribute="leading" secondItem="pG7-Kv-zmF" secondAttribute="leading" id="9dk-ZX-h3t"/>
-                <constraint firstItem="pG7-Kv-zmF" firstAttribute="top" secondItem="A7D-GN-X5W" secondAttribute="top" constant="20" symbolic="YES" id="FQb-Kp-gKJ"/>
-                <constraint firstItem="rXp-X3-HMm" firstAttribute="top" secondItem="pK9-GZ-bQL" secondAttribute="bottom" constant="6" id="Km1-p2-5aW"/>
-                <constraint firstItem="pK9-GZ-bQL" firstAttribute="leading" secondItem="rXp-X3-HMm" secondAttribute="leading" id="Rgm-ja-d7n"/>
-                <constraint firstItem="pG7-Kv-zmF" firstAttribute="leading" secondItem="A7D-GN-X5W" secondAttribute="leading" constant="20" symbolic="YES" id="c8v-Ji-vn3"/>
-                <constraint firstItem="pK9-GZ-bQL" firstAttribute="top" secondItem="pG7-Kv-zmF" secondAttribute="bottom" constant="6" symbolic="YES" id="xXl-7j-H00"/>
-            </constraints>
         </customView>
         <customView id="lQz-E7-PRx">
             <rect key="frame" x="0.0" y="0.0" width="480" height="253"/>
@@ -475,9 +483,93 @@ Gw
             <rect key="frame" x="0.0" y="0.0" width="100" height="100"/>
             <autoresizingMask key="autoresizingMask"/>
         </view>
+        <customView id="Oey-Qd-MNO">
+            <rect key="frame" x="0.0" y="0.0" width="480" height="142"/>
+            <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+            <subviews>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="lGF-4w-GUX">
+                    <rect key="frame" x="14" y="54" width="204" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Open Testbed Traffic Map" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="kBP-Pw-hK6">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="openTrafficMapPage:" target="0yn-TQ-4SC" id="Sii-pf-rXm"/>
+                    </connections>
+                </button>
+                <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Yxc-am-NiT">
+                    <rect key="frame" x="241" y="54" width="225" height="32"/>
+                    <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                    <buttonCell key="cell" type="push" title="Open Testbed Routing Status" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="EFM-kw-8Gn">
+                        <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                        <font key="font" metaFont="system"/>
+                    </buttonCell>
+                    <connections>
+                        <action selector="openRoutingStatusPage:" target="0yn-TQ-4SC" id="Dqm-V8-Bhh"/>
+                    </connections>
+                </button>
+            </subviews>
+        </customView>
+        <window allowsToolTipsWhenApplicationIsInactive="NO" autorecalculatesKeyViewLoop="NO" oneShot="NO" releasedWhenClosed="NO" showsToolbarButton="NO" visibleAtLaunch="NO" animationBehavior="default" id="6NI-pK-JJs">
+            <windowStyleMask key="styleMask" titled="YES"/>
+            <windowPositionMask key="initialPositionMask" leftStrut="YES" rightStrut="YES" topStrut="YES" bottomStrut="YES"/>
+            <rect key="contentRect" x="163" y="199" width="274" height="135"/>
+            <rect key="screenRect" x="0.0" y="0.0" width="1680" height="1028"/>
+            <view key="contentView" id="P0O-3X-rOU">
+                <rect key="frame" x="0.0" y="0.0" width="274" height="135"/>
+                <autoresizingMask key="autoresizingMask"/>
+                <subviews>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="Hmq-7p-n1o">
+                        <rect key="frame" x="13" y="89" width="248" height="39"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="Are you sure you want to quit NDN Control Center?" id="NRV-sz-Mpi">
+                            <font key="font" size="14" name="LucidaGrande-Bold"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <textField horizontalHuggingPriority="251" verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="jCI-Hw-kmn">
+                        <rect key="frame" x="13" y="47" width="254" height="34"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <textFieldCell key="cell" sendsActionOnEndEditing="YES" title="This action will shut down NDN Service that leads to loosing NDN connectivity " id="7mB-Qb-ylL">
+                            <font key="font" metaFont="system"/>
+                            <color key="textColor" name="controlTextColor" catalog="System" colorSpace="catalog"/>
+                            <color key="backgroundColor" name="controlColor" catalog="System" colorSpace="catalog"/>
+                        </textFieldCell>
+                    </textField>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="9ht-Qr-bcN">
+                        <rect key="frame" x="115" y="0.0" width="82" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Cancel" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="zkT-XH-FNU">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="14" name="LucidaGrande"/>
+                            <string key="keyEquivalent" base64-UTF8="YES">
+Gw
+</string>
+                        </buttonCell>
+                        <connections>
+                            <action selector="cancelExit:" target="494" id="iQm-vR-TEd"/>
+                        </connections>
+                    </button>
+                    <button verticalHuggingPriority="750" fixedFrame="YES" translatesAutoresizingMaskIntoConstraints="NO" id="fq0-RJ-oct">
+                        <rect key="frame" x="203" y="0.0" width="67" height="32"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMaxX="YES" flexibleMinY="YES"/>
+                        <buttonCell key="cell" type="push" title="Quit" bezelStyle="rounded" alignment="center" borderStyle="border" imageScaling="proportionallyDown" inset="2" id="B4Q-jO-cYF">
+                            <behavior key="behavior" pushIn="YES" lightByBackground="YES" lightByGray="YES"/>
+                            <font key="font" size="14" name="LucidaGrande"/>
+                        </buttonCell>
+                        <connections>
+                            <action selector="confirmExit:" target="494" id="KqY-nJ-fuh"/>
+                        </connections>
+                    </button>
+                </subviews>
+            </view>
+        </window>
     </objects>
     <resources>
         <image name="NSAdvanced" width="32" height="32"/>
+        <image name="NSBonjour" width="32" height="32"/>
         <image name="NSNetwork" width="32" height="32"/>
         <image name="NSPreferencesGeneral" width="32" height="32"/>
     </resources>

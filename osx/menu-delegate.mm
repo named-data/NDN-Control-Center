@@ -26,6 +26,18 @@
                       selector:@selector(onTick:)
                       userInfo: nil repeats:YES];
   [[NSRunLoop mainRunLoop] addTimer:t forMode:NSRunLoopCommonModes];
+  
+  daemonStarted = true;
+  [connectionStatusText setStringValue:@"Connected"];
+    
+  NSTask *task = [[NSTask alloc] init];
+  [task setLaunchPath: NDND_START_COMMAND];
+  [task launch];
+    
+  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+  NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
+  menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
+  [statusItem setImage:menuIcon];
 }
 
 -(void)awakeFromNib
@@ -50,57 +62,14 @@
   [daemonStatus setTarget:self];
 }
 
--(IBAction)switchDaemon:(id)sender
-{
-  if (daemonStarted)
-  {
-    daemonStarted = false;
-    [sender setTitle:@"Start"];
-    [connectionStatusText setStringValue:@"Disconnected"];
-    
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: NDND_STOP_COMMAND];
-    [task launch];
-    
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
-    menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
-    [statusItem setImage:menuIcon];
-  }
-  else
-  {
-    daemonStarted = true;
-    [sender setTitle:@"Stop"];
-    [connectionStatusText setStringValue:@"Connected"];
-    
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: NDND_START_COMMAND];
-    [task launch];
-    
-    NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-    NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
-    menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
-    [statusItem setImage:menuIcon];
-  }
-}
-
 -(IBAction)openDaemonStatus:(id)sender
 {
 }
 
--(IBAction)openRoutingStatusPage:(id)sender
+-(IBAction)showExitConfirmationWindow:(id)sender
 {
-  NSURL *pageURL = [NSURL URLWithString:@"http://netlab.cs.memphis.edu/script/htm/status.htm"];
-
-  [[NSWorkspace sharedWorkspace] openURL: pageURL];
-}
-
--(IBAction)openTrafficMapPage:(id)sender
-{
-
-  NSURL *pageURL = [NSURL URLWithString:@"http://ndnmap.arl.wustl.edu"];
-
-  [[NSWorkspace sharedWorkspace] openURL: pageURL];
+  [exitWindow makeKeyAndOrderFront:sender];
+  [exitWindow setLevel: NSStatusWindowLevel];
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
@@ -137,6 +106,17 @@
   
     [daemonStatusText setStringValue:stringRead];
   }
+}
+
+-(IBAction)confirmExit:(id)sender
+{
+  [NSApp terminate:self];
+}
+
+-(IBAction)cancelExit:(id)sender
+{
+  if([exitWindow isVisible])
+   [exitWindow orderOut:self];
 }
 
 @end

@@ -9,6 +9,9 @@
 #include "config.h"
 #import "preference-delegate.h"
 
+#define NDND_START_COMMAND @ NDNX_ROOT "/bin/ndndstart"
+#define NDND_STOP_COMMAND @ NDNX_ROOT "/bin/ndndstop"
+#define NDND_STATUS_COMMAND @ NDNX_ROOT "/bin/ndndstatus"
 #define NDND_FIB_COMMAND @ NDNX_ROOT "/bin/ndndc"
 
 @implementation PreferenceDelegate
@@ -35,6 +38,11 @@
   [preferencesPanel setContentView:securitySettingsView];
 }
 
+-(IBAction)openTestbedSettings:(id)sender
+{
+  [preferencesPanel setContentView:testbedSettingsView];
+}
+
 -(IBAction)switchSoftwareUpdates:(id)sender
 {
   if ([(NSButton*)sender state] == NSOnState)
@@ -57,6 +65,22 @@
   {
     _enableHubDiscovery = false;
   }
+}
+
+-(IBAction)restartDaemon:(id)sender
+{
+  /*daemonStarted = false;
+  [sender setTitle:@"Start"];
+  [connectionStatusText setStringValue:@"Disconnected"];
+    
+  NSTask *task = [[NSTask alloc] init];
+  [task setLaunchPath: NDND_STOP_COMMAND];
+  [task launch];
+    
+  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+  NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
+  menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
+  [statusItem setImage:menuIcon];*/
 }
 
 -(IBAction)addFibEntry:(id)sender
@@ -99,5 +123,22 @@
     [NSApp endSheet:prefixRegistrationSheet];
     [prefixRegistrationSheet orderOut:sender];
 }
+
+
+-(IBAction)openRoutingStatusPage:(id)sender
+{
+  NSURL *pageURL = [NSURL URLWithString:@"http://netlab.cs.memphis.edu/script/htm/status.htm"];
+
+  [[NSWorkspace sharedWorkspace] openURL: pageURL];
+}
+
+-(IBAction)openTrafficMapPage:(id)sender
+{
+
+  NSURL *pageURL = [NSURL URLWithString:@"http://ndnmap.arl.wustl.edu"];
+
+  [[NSWorkspace sharedWorkspace] openURL: pageURL];
+}
+
 
 @end

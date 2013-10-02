@@ -35,12 +35,14 @@
     IBOutlet NSTextField *connectionStatusText;
   
     IBOutlet PreferenceDelegate *preferencesDelegate;
+  
+    IBOutlet NSWindow *exitWindow;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
--(IBAction)switchDaemon:(id)sender;
 -(IBAction)openDaemonStatus:(id)sender;
--(IBAction)openRoutingStatusPage:(id)sender;
--(IBAction)openTrafficMapPage:(id)sender;
 
+-(IBAction)showExitConfirmationWindow:(id)sender;
+-(IBAction)confirmExit:(id)sender;
+-(IBAction)cancelExit:(id)sender;
 @end

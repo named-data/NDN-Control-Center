@@ -14,6 +14,7 @@
   IBOutlet NSView *generalSettingsView;
   IBOutlet NSView *forwardingSettingsView;
   IBOutlet NSView *securitySettingsView;
+  IBOutlet NSView *testbedSettingsView;
   
   IBOutlet NSPanel *prefixRegistrationSheet;
   IBOutlet NSComboBox *tunnelCombobox;
@@ -28,12 +29,17 @@
 -(IBAction)openGeneralSettings:(id)sender;
 -(IBAction)openForwardingSettings:(id)sender;
 -(IBAction)openSecuritySettings:(id)sender;
+-(IBAction)openTestbedSettings:(id)sender;
 
 -(IBAction)switchSoftwareUpdates:(id)sender;
 -(IBAction)switchHubDiscovery:(id)sender;
+-(IBAction)restartDaemon:(id)sender;
 
 -(IBAction)addFibEntry:(id)sender;
 -(IBAction)removeFibEntry:(id)sender;
 -(IBAction) showFibEntrySheet:(id)sender;
 -(IBAction)hideFibEntrySheet:(id)sender;
+
+-(IBAction)openRoutingStatusPage:(id)sender;
+-(IBAction)openTrafficMapPage:(id)sender;
 @end
