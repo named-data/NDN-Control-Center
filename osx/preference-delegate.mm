@@ -9,11 +9,6 @@
 #include "config.h"
 #import "preference-delegate.h"
 
-#define NDND_START_COMMAND @ NDNX_ROOT "/bin/ndndstart"
-#define NDND_STOP_COMMAND @ NDNX_ROOT "/bin/ndndstop"
-#define NDND_STATUS_COMMAND @ NDNX_ROOT "/bin/ndndstatus"
-#define NDND_FIB_COMMAND @ NDNX_ROOT "/bin/ndndc"
-
 @implementation PreferenceDelegate
 
 -(IBAction)showPreferencesPanel:(id)sender
@@ -97,7 +92,7 @@
   NSArray *arguments = [NSArray arrayWithObjects: operationName, prefixName, socketType, address, nil];
 
   NSTask *task = [[NSTask alloc] init];
-  [task setLaunchPath: NDND_FIB_COMMAND];
+  [task setLaunchPath: @NDND_FIB_COMMAND];
   [task setArguments: arguments];
   [task launch];
 }

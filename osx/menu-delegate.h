@@ -11,38 +11,45 @@
 
 @interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
-    NSStatusItem *statusItem;
-    NSImage *menuIcon;
+  NSOperationQueue *m_operationQueue;
+  
+  NSStatusItem *statusItem;
 
-    IBOutlet NSPopover *statusPopover;
+  NSImage *m_connectedIcon;
+  NSImage *m_disconnectedIcon;
+  NSData  *m_statusXslt;
 
-    IBOutlet NSMenu *statusMenu;
-    IBOutlet NSMenuItem *connectionStatus;
-    IBOutlet NSMenuItem *startstopButton;
-    IBOutlet NSMenuItem *daemonStatus;
-    IBOutlet NSMenuItem *routingStatus;
-    IBOutlet NSMenuItem *trafficMap;
-    IBOutlet NSMenuItem *ndnPreferences;
+  IBOutlet NSPopover *statusPopover;
+
+  IBOutlet NSMenu *statusMenu;
+  IBOutlet NSMenuItem *connectionStatus;
+  IBOutlet NSMenuItem *startstopButton;
+  IBOutlet NSMenuItem *daemonStatus;
+  IBOutlet NSMenuItem *routingStatus;
+  IBOutlet NSMenuItem *trafficMap;
+  IBOutlet NSMenuItem *ndnPreferences;
   
-    BOOL daemonStarted;
-    BOOL allowSoftwareUpdates;
-    BOOL enableHubDiscovery;
+  BOOL m_daemonStarted;
+  BOOL allowSoftwareUpdates;
+  BOOL enableHubDiscovery;
   
-    IBOutlet NSView *daemonStatusView;
-    IBOutlet NSTextField *daemonStatusText;
+  IBOutlet NSView *daemonStatusView;
+  IBOutlet NSTextField *daemonStatusHtml;
+  IBOutlet NSView *daemonStatusHtmlView;
+  NSAttributedString *m_statusString;
   
-    IBOutlet NSView *connectionStatusView;
-    IBOutlet NSTextField *connectionStatusText;
+  IBOutlet NSView *connectionStatusView;
+  IBOutlet NSTextField *connectionStatusText;
   
-    IBOutlet PreferenceDelegate *preferencesDelegate;
-  
-    IBOutlet NSWindow *exitWindow;
+  IBOutlet PreferenceDelegate *preferencesDelegate;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
--(IBAction)openDaemonStatus:(id)sender;
 
+-(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)showExitConfirmationWindow:(id)sender;
--(IBAction)confirmExit:(id)sender;
--(IBAction)cancelExit:(id)sender;
+
+- (void)statusUpdated:(NSXMLDocument*)document;
+- (void)statusUnavailable:(id)none;
+
 @end

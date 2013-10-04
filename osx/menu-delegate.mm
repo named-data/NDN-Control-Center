@@ -8,36 +8,38 @@
 
 #include "config.h"
 #import "menu-delegate.h"
-
-#define NDND_START_COMMAND @ NDNX_ROOT "/bin/ndndstart"
-#define NDND_STOP_COMMAND @ NDNX_ROOT "/bin/ndndstop"
-#define NDND_STATUS_COMMAND @ NDNX_ROOT "/bin/ndndstatus"
+#import "ndnd-status-operation.h"
 
 @implementation MenuDelegate
 
+-(id)init
+{
+  if (![super init]) {
+    return nil;
+  }
+
+  m_operationQueue = [[NSOperationQueue alloc] init];
+  return self;
+}
+
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
-  daemonStarted = false;
+  m_daemonStarted = false; 
   allowSoftwareUpdates = true;
   enableHubDiscovery = true;
+
+  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
+  m_connectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatConnected" ofType:@"png"]];
+  m_disconnectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatDisconnected" ofType:@"png"]];
+  m_statusXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status" ofType:@"xslt"]];
   
   NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0
                       target: self
                       selector:@selector(onTick:)
                       userInfo: nil repeats:YES];
   [[NSRunLoop mainRunLoop] addTimer:t forMode:NSRunLoopCommonModes];
-  
-  daemonStarted = true;
-  [connectionStatusText setStringValue:@"Connected"];
-    
-  NSTask *task = [[NSTask alloc] init];
-  [task setLaunchPath: NDND_START_COMMAND];
-  [task launch];
-    
-  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-  NSString *path = [bundle pathForResource:@"FlatConnected" ofType:@"png"];
-  menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
-  [statusItem setImage:menuIcon];
+
+  [m_operationQueue addOperation:[[NdndStatusOperation alloc] initWithDelegate:self]];
 }
 
 -(void)awakeFromNib
@@ -49,15 +51,12 @@
   [statusItem setHighlightMode:YES];
   //[statusItem setTarget:self];
 
-  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-  NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
-  menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
   [statusItem setTitle:@""];
-  [statusItem setImage:menuIcon];
-  
+  [statusItem setImage:m_disconnectedIcon];
   
   [connectionStatus setView: connectionStatusView];
   [connectionStatus setTarget:self];
+  
   [daemonStatus setView: daemonStatusView];
   [daemonStatus setTarget:self];
 }
@@ -68,18 +67,34 @@
 
 -(IBAction)showExitConfirmationWindow:(id)sender
 {
-  [exitWindow makeKeyAndOrderFront:sender];
-  [exitWindow setLevel: NSStatusWindowLevel];
+  NSAlert *alert = [[NSAlert alloc] init];
+  [alert addButtonWithTitle:@"Yes"];
+  [alert addButtonWithTitle:@"No"];
+  [alert addButtonWithTitle:@"Cancel"];
+  [alert setMessageText:@"Shutdown NDN daemon as well?"];
+  [alert setInformativeText:@"All NDN operations will be become unavailable."];
+  [alert setAlertStyle:NSCriticalAlertStyle];
+  [alert setShowsSuppressionButton: YES];
+
+  NSInteger res = [alert runModal];
+  if (res == NSAlertFirstButtonReturn) {
+    [m_operationQueue cancelAllOperations];
+    [NSApp terminate:self];
+  } else if (res == NSAlertSecondButtonReturn) {
+    [m_operationQueue cancelAllOperations];
+    [NSApp terminate:self];
+  }
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
 {
-
   if( ([item view]!=nil) && (item == daemonStatus) )
   {
-    [statusPopover showRelativeToRect:[[item view] bounds]
-                 ofView:[item view]
-                 preferredEdge:NSMinXEdge];
+    NSView *view = [item view];
+    
+    [statusPopover showRelativeToRect:[view bounds]
+                   ofView:view
+                   preferredEdge:NSMinXEdge];
   }
   else
   {
@@ -89,34 +104,42 @@
 
 -(void)onTick:(NSTimer *)timer
 {
-  if (daemonStarted)
-  {
-    NSTask *task = [[NSTask alloc] init];
-    [task setLaunchPath: NDND_STATUS_COMMAND];
+  [m_operationQueue addOperation:[[NdndStatusOperation alloc] initWithDelegate:self]];
+}
+
+- (void)statusUpdated:(NSXMLDocument*)document
+{
+  if (!m_daemonStarted) {
+    m_daemonStarted = true;
+    [connectionStatusText setStringValue:@"Active"];
     
-    NSPipe * out = [NSPipe pipe];
-    [task setStandardOutput:out];
-
-    [task launch];
-    [task waitUntilExit];
-
-    NSFileHandle * read = [out fileHandleForReading];
-    NSData * dataRead = [read readDataToEndOfFile];
-    NSString *stringRead = [[NSString alloc] initWithData:dataRead encoding:NSUTF8StringEncoding];
-  
-    [daemonStatusText setStringValue:stringRead];
+    [statusItem setImage:m_connectedIcon];
   }
+
+  NSXMLDocument *result = [document objectByApplyingXSLT:m_statusXslt
+                           arguments:nil
+                           error:nil];
+
+  m_statusString = [[NSAttributedString alloc]initWithHTML:[result XMLData] documentAttributes:NULL];
+  [daemonStatusHtml setAttributedStringValue:m_statusString];
 }
 
--(IBAction)confirmExit:(id)sender
+- (void)statusUnavailable:(id)none
 {
-  [NSApp terminate:self];
-}
-
--(IBAction)cancelExit:(id)sender
-{
-  if([exitWindow isVisible])
-   [exitWindow orderOut:self];
+  // try start ndnd if it is not started yet
+  if (m_daemonStarted) {
+    m_daemonStarted = false;
+    
+    [connectionStatusText setStringValue:@"Starting..."];
+    
+    [statusItem setImage:m_disconnectedIcon];
+  }
+  
+  [m_operationQueue addOperationWithBlock:^{
+      NSTask *task = [[NSTask alloc] init];
+      [task setLaunchPath: @NDND_START_COMMAND];
+      [task launch];
+    }];
 }
 
 @end
