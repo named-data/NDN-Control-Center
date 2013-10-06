@@ -16,6 +16,11 @@
   [preferencesPanel setContentView:generalSettingsView];
   [preferencesPanel makeKeyAndOrderFront:sender];
   [preferencesPanel setLevel: NSStatusWindowLevel];
+  
+  if(m_operationQueue == nil)
+    m_operationQueue = [[NSOperationQueue alloc] init];
+  
+  tableController.m_tableView = fibTableView;
 }
 
 -(IBAction)openGeneralSettings:(id)sender
@@ -31,11 +36,6 @@
 -(IBAction)openSecuritySettings:(id)sender
 {
   [preferencesPanel setContentView:securitySettingsView];
-}
-
--(IBAction)openTestbedSettings:(id)sender
-{
-  [preferencesPanel setContentView:testbedSettingsView];
 }
 
 -(IBAction)switchSoftwareUpdates:(id)sender
@@ -62,20 +62,10 @@
   }
 }
 
--(IBAction)restartDaemon:(id)sender
+-(void)updateFibStatus:(NSXMLDocument*)status;
 {
-  /*daemonStarted = false;
-  [sender setTitle:@"Start"];
-  [connectionStatusText setStringValue:@"Disconnected"];
-    
-  NSTask *task = [[NSTask alloc] init];
-  [task setLaunchPath: NDND_STOP_COMMAND];
-  [task launch];
-    
-  NSBundle *bundle = [NSBundle bundleForClass:[self class]];
-  NSString *path = [bundle pathForResource:@"FlatDisconnected" ofType:@"png"];
-  menuIcon = [[NSImage alloc] initWithContentsOfFile:path];
-  [statusItem setImage:menuIcon];*/
+  [tableController loadStatus:status];
+  [fibTableView reloadData];
 }
 
 -(IBAction)addFibEntry:(id)sender
@@ -83,40 +73,59 @@
   [NSApp endSheet:prefixRegistrationSheet];
   [prefixRegistrationSheet orderOut:sender];
   
-  NSString *operationName = @"add";
-  
   NSString *prefixName = [namePrefixText stringValue];
-  NSString *socketType = [tunnelCombobox itemObjectValueAtIndex:[tunnelCombobox indexOfSelectedItem]];
-  NSString *address = [endpointText stringValue];
+  NSString *tunnelType = [tunnelCombobox itemObjectValueAtIndex:[tunnelCombobox indexOfSelectedItem]];
+  NSString *endpoint = [endpointText stringValue];
+  
+  [m_operationQueue addOperationWithBlock:^{
+      NSTask *task = [[NSTask alloc] init];
+      [task setLaunchPath: @NDND_FIB_COMMAND];
+      [task setArguments: [NSArray arrayWithObjects: @"add", prefixName, tunnelType, endpoint, nil]];
+      [task launch];
+      [task waitUntilExit];
+    }];
 
-  NSArray *arguments = [NSArray arrayWithObjects: operationName, prefixName, socketType, address, nil];
-
-  NSTask *task = [[NSTask alloc] init];
-  [task setLaunchPath: @NDND_FIB_COMMAND];
-  [task setArguments: arguments];
-  [task launch];
 }
 
 -(IBAction)removeFibEntry:(id)sender
 {
+  NSInteger selectedRow = [fibTableView selectedRow];
+  
+  if(selectedRow == -1)
+    return;
+  
+  NSString *faceID = [tableController getFaceByRowIndex:selectedRow];
+  if (faceID == nil)
+    return;
 
+  NSString *prefix = [tableController getPrefixByRowIndex:selectedRow];
+  if (prefix == nil)
+    return;
+
+  [m_operationQueue addOperationWithBlock:^{
+      NSTask *task = [[NSTask alloc] init];
+      [task setLaunchPath: @NDND_FIB_COMMAND];
+      [task setArguments: [NSArray arrayWithObjects: @"del", prefix, @"face", faceID, nil]];
+      [task launch];
+      [task waitUntilExit];
+    }];
 }
 
 - (IBAction) showFibEntrySheet:(id)sender
 {
-    [NSApp beginSheet:prefixRegistrationSheet
+  [NSApp beginSheet:prefixRegistrationSheet
     modalForWindow:preferencesPanel
     modalDelegate:self
     didEndSelector:nil
     contextInfo:nil];
   
-    [tunnelCombobox selectItemAtIndex:0];
+  [tunnelCombobox selectItemAtIndex:0];
 }
 
 -(IBAction)hideFibEntrySheet:(id)sender
 {
-    [NSApp endSheet:prefixRegistrationSheet];
-    [prefixRegistrationSheet orderOut:sender];
+  [NSApp endSheet:prefixRegistrationSheet];
+  [prefixRegistrationSheet orderOut:sender];
 }
 
 

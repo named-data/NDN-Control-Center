@@ -18,6 +18,7 @@
   NSImage *m_connectedIcon;
   NSImage *m_disconnectedIcon;
   NSData  *m_statusXslt;
+  NSData  *m_statusToFibXslt;
 
   IBOutlet NSPopover *statusPopover;
 

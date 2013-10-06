@@ -32,6 +32,7 @@
   m_connectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatConnected" ofType:@"png"]];
   m_disconnectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatDisconnected" ofType:@"png"]];
   m_statusXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status" ofType:@"xslt"]];
+  m_statusToFibXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status-to-fib" ofType:@"xslt"]];
   
   NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0
                       target: self
@@ -116,12 +117,18 @@
     [statusItem setImage:m_connectedIcon];
   }
 
-  NSXMLDocument *result = [document objectByApplyingXSLT:m_statusXslt
-                           arguments:nil
-                           error:nil];
+  NSXMLDocument *statusXml = [document objectByApplyingXSLT:m_statusXslt
+                              arguments:nil
+                              error:nil];
 
-  m_statusString = [[NSAttributedString alloc]initWithHTML:[result XMLData] documentAttributes:NULL];
+  NSXMLDocument *statusFibXml = [document objectByApplyingXSLT:m_statusToFibXslt
+                                 arguments:nil
+                                 error:nil];
+
+  m_statusString = [[NSAttributedString alloc]initWithHTML:[statusXml XMLData] documentAttributes:NULL];
   [daemonStatusHtml setAttributedStringValue:m_statusString];
+
+  [preferencesDelegate updateFibStatus:statusFibXml];
 }
 
 - (void)statusUnavailable:(id)none
@@ -134,7 +141,10 @@
     
     [statusItem setImage:m_disconnectedIcon];
   }
-  
+
+  [daemonStatusHtml setStringValue:@""];
+  [preferencesDelegate updateFibStatus:nil];
+
   [m_operationQueue addOperationWithBlock:^{
       NSTask *task = [[NSTask alloc] init];
       [task setLaunchPath: @NDND_START_COMMAND];
