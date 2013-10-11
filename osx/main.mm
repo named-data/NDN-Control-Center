@@ -1,4 +1,4 @@
-/* -*- Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/* -*- Mode: objc; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
 /*
  * @copyright See LICENCE for copyright and license information.
  *
