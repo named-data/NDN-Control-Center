@@ -26,7 +26,6 @@
   IBOutlet NSTextField *endpointText;
   
   IBOutlet FibTableController *tableController;
-  NSOperationQueue *m_operationQueue;
 }
 
 @property BOOL allowSoftwareUpdates;

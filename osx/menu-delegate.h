@@ -50,7 +50,9 @@
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)showExitConfirmationWindow:(id)sender;
 
-- (void)statusUpdated:(NSXMLDocument*)document;
-- (void)statusUnavailable:(id)none;
+-(void)updateStatus;
+-(void)updateStatusWithDependency:(NSOperation*)dependency;
+-(void)statusUpdated:(NSXMLDocument*)document;
+-(void)statusUnavailable:(id)none;
 
 @end

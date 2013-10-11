@@ -8,6 +8,7 @@
 
 #include "config.h"
 #import "preference-delegate.h"
+#import "menu-delegate.h"
 
 @implementation PreferenceDelegate
 
@@ -16,9 +17,6 @@
   [preferencesPanel setContentView:generalSettingsView];
   [preferencesPanel makeKeyAndOrderFront:sender];
   [preferencesPanel setLevel: NSStatusWindowLevel];
-  
-  if(m_operationQueue == nil)
-    m_operationQueue = [[NSOperationQueue alloc] init];
   
   tableController.m_tableView = fibTableView;
 }
@@ -76,8 +74,8 @@
   NSString *prefixName = [namePrefixText stringValue];
   NSString *tunnelType = [tunnelCombobox itemObjectValueAtIndex:[tunnelCombobox indexOfSelectedItem]];
   NSString *endpoint = [endpointText stringValue];
-  
-  [m_operationQueue addOperationWithBlock:^{
+
+  NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
       NSTask *task = [[NSTask alloc] init];
       [task setLaunchPath: @NDND_FIB_COMMAND];
       [task setArguments: [NSArray arrayWithObjects: @"add", prefixName, tunnelType, endpoint, nil]];
@@ -85,6 +83,7 @@
       [task waitUntilExit];
     }];
 
+  [(MenuDelegate*)[[NSApplication sharedApplication] delegate] updateStatusWithDependency:operation];
 }
 
 -(IBAction)removeFibEntry:(id)sender
@@ -102,13 +101,15 @@
   if (prefix == nil)
     return;
 
-  [m_operationQueue addOperationWithBlock:^{
+  NSOperation *operation = [NSBlockOperation blockOperationWithBlock:^{
       NSTask *task = [[NSTask alloc] init];
       [task setLaunchPath: @NDND_FIB_COMMAND];
       [task setArguments: [NSArray arrayWithObjects: @"del", prefix, @"face", faceID, nil]];
       [task launch];
       [task waitUntilExit];
     }];
+
+  [(MenuDelegate*)[[NSApplication sharedApplication] delegate] updateStatusWithDependency:operation];
 }
 
 - (IBAction) showFibEntrySheet:(id)sender

@@ -35,12 +35,11 @@
   m_statusToFibXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status-to-fib" ofType:@"xslt"]];
   
   NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0
-                      target: self
-                      selector:@selector(onTick:)
-                      userInfo: nil repeats:YES];
-  [[NSRunLoop mainRunLoop] addTimer:t forMode:NSRunLoopCommonModes];
-
-  [m_operationQueue addOperation:[[NdndStatusOperation alloc] initWithDelegate:self]];
+                target: self
+                selector:@selector(onTick:)
+                userInfo: nil
+                repeats:YES];
+  [self updateStatus];
 }
 
 -(void)awakeFromNib
@@ -79,9 +78,20 @@
 
   NSInteger res = [alert runModal];
   if (res == NSAlertFirstButtonReturn) {
+    // "YES" stop ndnd
     [m_operationQueue cancelAllOperations];
+
+    [m_operationQueue addOperationWithBlock:^{
+        NSTask *task = [[NSTask alloc] init];
+        [task setLaunchPath: @NDND_STOP_COMMAND];
+        [task launch];
+        [task waitUntilExit];
+      }];
+
+    [m_operationQueue waitUntilAllOperationsAreFinished];
     [NSApp terminate:self];
   } else if (res == NSAlertSecondButtonReturn) {
+    // "NO" terminate app but keep ndnd running
     [m_operationQueue cancelAllOperations];
     [NSApp terminate:self];
   }
@@ -105,7 +115,22 @@
 
 -(void)onTick:(NSTimer *)timer
 {
-  [m_operationQueue addOperation:[[NdndStatusOperation alloc] initWithDelegate:self]];
+  [self updateStatus];
+}
+
+-(void)updateStatus
+{
+  NSOperation *operation = [[NdndStatusOperation alloc] initWithDelegate:self];
+  [m_operationQueue addOperation:operation];
+}
+
+-(void)updateStatusWithDependency:(NSOperation*)dependency
+{
+  NSOperation *operation = [[NdndStatusOperation alloc] initWithDelegate:self];
+  [operation addDependency:dependency];
+
+  [m_operationQueue addOperation:dependency];
+  [m_operationQueue addOperation:operation];
 }
 
 - (void)statusUpdated:(NSXMLDocument*)document
