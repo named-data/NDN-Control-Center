@@ -18,6 +18,7 @@
     return nil;
   }
 
+  m_autoconfInProgress = false;
   m_operationQueue = [[NSOperationQueue alloc] init];
   return self;
 }
@@ -34,11 +35,11 @@
   m_statusXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status" ofType:@"xslt"]];
   m_statusToFibXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status-to-fib" ofType:@"xslt"]];
   
-  NSTimer *t = [NSTimer scheduledTimerWithTimeInterval: 1.0
-                target: self
-                selector:@selector(onTick:)
-                userInfo: nil
-                repeats:YES];
+  [NSTimer scheduledTimerWithTimeInterval: 1.0
+           target: self
+           selector:@selector(onTick:)
+           userInfo: nil
+           repeats:YES];
   [self updateStatus];
 }
 
@@ -154,6 +155,13 @@
   [daemonStatusHtml setAttributedStringValue:m_statusString];
 
   [preferencesDelegate updateFibStatus:statusFibXml];
+
+  NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
+  if ([autoconf count] == 0)
+    {
+      NSLog (@"No automatically detected route configured, trying to get one");
+      [self restartDaemon:nil];
+    }
 }
 
 - (void)statusUnavailable:(id)none
@@ -170,10 +178,42 @@
   [daemonStatusHtml setStringValue:@""];
   [preferencesDelegate updateFibStatus:nil];
 
-  [m_operationQueue addOperationWithBlock:^{
+  m_autoconfInProgress = true;
+  
+  NSOperation *startOp = [NSBlockOperation blockOperationWithBlock:^{
       NSTask *task = [[NSTask alloc] init];
       [task setLaunchPath: @NDND_START_COMMAND];
       [task launch];
+    }];
+
+  NSOperation *autoconfOp = [NSBlockOperation blockOperationWithBlock:^{
+      NSTask *task = [[NSTask alloc] init];
+      [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
+      [task launch];
+      [task waitUntilExit];
+
+      m_autoconfInProgress = false;
+    }];
+
+  [autoconfOp addDependency:startOp];
+
+  [m_operationQueue addOperation:startOp];
+  [m_operationQueue addOperation:autoconfOp];
+}
+
+-(void)restartDaemon:(id)none
+{
+  if (m_autoconfInProgress)
+    return;
+
+  m_autoconfInProgress = true;
+  [m_operationQueue addOperationWithBlock:^{
+      NSTask *task = [[NSTask alloc] init];
+      [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
+      [task launch];
+      [task waitUntilExit];
+
+      m_autoconfInProgress = false;
     }];
 }
 

@@ -3,14 +3,14 @@
 
 <xsl:template match="/ndnd">
 <fibs>
-<xsl:apply-templates select="forwarding/fentry" />
+<xsl:apply-templates select="forwarding/fentry/dest" />
 </fibs>
 </xsl:template>
 
-<xsl:template match="fentry">
+<xsl:template match="dest">
 <fib>
-<xsl:apply-templates select="dest/faceid" />
-<prefix><xsl:value-of select="prefix"/></prefix>
+<xsl:apply-templates select="faceid" />
+<prefix><xsl:value-of select="../prefix"/></prefix>
 </fib>
 </xsl:template>
 

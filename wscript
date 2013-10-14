@@ -30,6 +30,7 @@ def configure(conf):
     conf.define('NDND_STOP_COMMAND', '%s/bin/ndndstop' % conf.options.ndnx_root)
     conf.define('NDND_STATUS_COMMAND', '%s/bin/ndndsmoketest' % conf.options.ndnx_root)
     conf.define('NDND_FIB_COMMAND',  '%s/bin/ndndc' % conf.options.ndnx_root)
+    conf.define('NDND_AUTOCONFIG_COMMAND', '%s/bin/ndnd-autoconfig' % conf.options.ndnx_root)
     
     if Utils.unversioned_sys_platform () == "darwin":
         conf.find_program('ibtool', var='IBTOOL', mandatory=False)

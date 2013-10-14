@@ -43,6 +43,8 @@
   IBOutlet NSTextField *connectionStatusText;
   
   IBOutlet PreferenceDelegate *preferencesDelegate;
+
+  bool m_autoconfInProgress;
 }
 
 -(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
@@ -54,5 +56,7 @@
 -(void)updateStatusWithDependency:(NSOperation*)dependency;
 -(void)statusUpdated:(NSXMLDocument*)document;
 -(void)statusUnavailable:(id)none;
+
+-(void)restartDaemon:(id)none;
 
 @end
