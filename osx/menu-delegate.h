@@ -8,6 +8,7 @@
 
 #import <Cocoa/Cocoa.h>
 #import "preference-delegate.h"
+#import "system-events.h"
 
 @interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
@@ -44,6 +45,7 @@
   
   IBOutlet PreferenceDelegate *preferencesDelegate;
 
+  SystemEvents *m_systemEvents;
   bool m_autoconfInProgress;
 }
 

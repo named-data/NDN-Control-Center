@@ -41,6 +41,13 @@
            userInfo: nil
            repeats:YES];
   [self updateStatus];
+
+  m_systemEvents = [[SystemEvents alloc] init];
+}
+
+- (void)applicationWillTerminate:(NSNotification *)aNotification
+{
+  [m_systemEvents disable];
 }
 
 -(void)awakeFromNib
@@ -159,7 +166,6 @@
   NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
   if ([autoconf count] == 0)
     {
-      NSLog (@"No automatically detected route configured, trying to get one");
       [self restartDaemon:nil];
     }
 }
@@ -206,6 +212,8 @@
   if (m_autoconfInProgress)
     return;
 
+  NSLog (@"No automatically detected route configured, trying to get one");
+  
   m_autoconfInProgress = true;
   [m_operationQueue addOperationWithBlock:^{
       NSTask *task = [[NSTask alloc] init];
