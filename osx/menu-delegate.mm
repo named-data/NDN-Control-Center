@@ -25,9 +25,19 @@
 
 - (void)applicationDidFinishLaunching:(NSNotification *)aNotification
 {
+  // Register the preference defaults early.
+  NSDictionary *appDefaults =
+    [NSDictionary dictionaryWithObjectsAndKeys:
+                      [NSNumber numberWithBool:YES], @"allowSoftwareUpdates",
+                      [NSNumber numberWithBool:YES], @"enableHubDiscovery",
+                      [NSNumber numberWithBool:NO],  @"shutdownNdndOnExit",
+                  nil
+     ];
+  [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
+ 
+   // Other initialization...
+
   m_daemonStarted = false; 
-  allowSoftwareUpdates = true;
-  enableHubDiscovery = true;
 
   NSBundle *bundle = [NSBundle bundleForClass:[self class]];
   m_connectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatConnected" ofType:@"png"]];
@@ -75,18 +85,7 @@
 
 -(IBAction)showExitConfirmationWindow:(id)sender
 {
-  NSAlert *alert = [[NSAlert alloc] init];
-  [alert addButtonWithTitle:@"Yes"];
-  [alert addButtonWithTitle:@"No"];
-  [alert addButtonWithTitle:@"Cancel"];
-  [alert setMessageText:@"Shutdown NDN daemon as well?"];
-  [alert setInformativeText:@"All NDN operations will be become unavailable."];
-  [alert setAlertStyle:NSCriticalAlertStyle];
-  [alert setShowsSuppressionButton: YES];
-
-  NSInteger res = [alert runModal];
-  if (res == NSAlertFirstButtonReturn) {
-    // "YES" stop ndnd
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"shutdownNdndOnExit"]) {
     [m_operationQueue cancelAllOperations];
 
     [m_operationQueue addOperationWithBlock:^{
@@ -98,10 +97,36 @@
 
     [m_operationQueue waitUntilAllOperationsAreFinished];
     [NSApp terminate:self];
-  } else if (res == NSAlertSecondButtonReturn) {
-    // "NO" terminate app but keep ndnd running
-    [m_operationQueue cancelAllOperations];
-    [NSApp terminate:self];
+  }
+  else {
+    NSAlert *alert = [[NSAlert alloc] init];
+    [alert addButtonWithTitle:@"Yes"];
+    [alert addButtonWithTitle:@"No"];
+    [alert addButtonWithTitle:@"Cancel"];
+    [alert setMessageText:@"Shutdown NDN daemon as well?"];
+    [alert setInformativeText:@"All NDN operations will be become unavailable."];
+    [alert setAlertStyle:NSCriticalAlertStyle];
+    // [alert setShowsSuppressionButton: YES];
+
+    NSInteger res = [alert runModal];
+    if (res == NSAlertFirstButtonReturn) {
+      // "YES" stop ndnd
+      [m_operationQueue cancelAllOperations];
+
+      [m_operationQueue addOperationWithBlock:^{
+          NSTask *task = [[NSTask alloc] init];
+          [task setLaunchPath: @NDND_STOP_COMMAND];
+          [task launch];
+          [task waitUntilExit];
+        }];
+
+      [m_operationQueue waitUntilAllOperationsAreFinished];
+      [NSApp terminate:self];
+    } else if (res == NSAlertSecondButtonReturn) {
+      // "NO" terminate app but keep ndnd running
+      [m_operationQueue cancelAllOperations];
+      [NSApp terminate:self];
+    }
   }
 }
 
@@ -163,11 +188,13 @@
 
   [preferencesDelegate updateFibStatus:statusFibXml];
 
-  NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
-  if ([autoconf count] == 0)
-    {
-      [self restartDaemon:nil];
-    }
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) { 
+    NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
+    if ([autoconf count] == 0)
+      {
+        [self restartDaemon:nil];
+      }
+  }
 }
 
 - (void)statusUnavailable:(id)none
@@ -192,23 +219,28 @@
       [task launch];
     }];
 
-  NSOperation *autoconfOp = [NSBlockOperation blockOperationWithBlock:^{
-      NSTask *task = [[NSTask alloc] init];
-      [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
-      [task launch];
-      [task waitUntilExit];
+  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) {
+    NSOperation *autoconfOp = [NSBlockOperation blockOperationWithBlock:^{
+        NSTask *task = [[NSTask alloc] init];
+        [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
+        [task launch];
+        [task waitUntilExit];
 
-      m_autoconfInProgress = false;
-    }];
+        m_autoconfInProgress = false;
+      }];
 
-  [autoconfOp addDependency:startOp];
+    [autoconfOp addDependency:startOp];
+    [m_operationQueue addOperation:autoconfOp];
+  }
 
   [m_operationQueue addOperation:startOp];
-  [m_operationQueue addOperation:autoconfOp];
 }
 
 -(void)restartDaemon:(id)none
 {
+  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"])
+    return;
+    
   if (m_autoconfInProgress)
     return;
 

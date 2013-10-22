@@ -36,30 +36,6 @@
   [preferencesPanel setContentView:securitySettingsView];
 }
 
--(IBAction)switchSoftwareUpdates:(id)sender
-{
-  if ([(NSButton*)sender state] == NSOnState)
-  {
-    _allowSoftwareUpdates = true;
-  }
-  else
-  {
-    _allowSoftwareUpdates = false;
-  }
-}
-
--(IBAction)switchHubDiscovery:(id)sender
-{
-  if ([(NSButton*)sender state] == NSOnState)
-  {
-    _enableHubDiscovery = true;
-  }
-  else
-  {
-    _enableHubDiscovery = false;
-  }
-}
-
 -(void)updateFibStatus:(NSXMLDocument*)status;
 {
   [tableController loadStatus:status];

@@ -12,8 +12,12 @@
 @interface PreferenceDelegate : NSObject
 {
   IBOutlet NSWindow *preferencesPanel;
-  IBOutlet NSView *generalSettingsView;
   
+  IBOutlet NSView *generalSettingsView;
+  IBOutlet NSButton *checkAllowSoftwareUpdates;
+  IBOutlet NSButton *checkEnableHubDiscovery;
+  IBOutlet NSButton *checkShutdownNdndOnExit;
+
   IBOutlet NSView *forwardingSettingsView;
   IBOutlet NSTableView *fibTableView;
   
@@ -28,16 +32,10 @@
   IBOutlet FibTableController *tableController;
 }
 
-@property BOOL allowSoftwareUpdates;
-@property BOOL enableHubDiscovery;
-
 -(IBAction)showPreferencesPanel:(id)sender;
 -(IBAction)openGeneralSettings:(id)sender;
 -(IBAction)openForwardingSettings:(id)sender;
 -(IBAction)openSecuritySettings:(id)sender;
-
--(IBAction)switchSoftwareUpdates:(id)sender;
--(IBAction)switchHubDiscovery:(id)sender;
 
 -(IBAction)addFibEntry:(id)sender;
 -(IBAction)removeFibEntry:(id)sender;

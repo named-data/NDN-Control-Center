@@ -32,8 +32,6 @@
   IBOutlet NSMenuItem *ndnPreferences;
   
   BOOL m_daemonStarted;
-  BOOL allowSoftwareUpdates;
-  BOOL enableHubDiscovery;
   
   IBOutlet NSView *daemonStatusView;
   IBOutlet NSTextField *daemonStatusHtml;
