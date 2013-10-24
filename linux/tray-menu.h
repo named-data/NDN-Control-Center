@@ -1,0 +1,103 @@
+/* -*- Mode: C++; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/*
+ * @copyright See LICENCE for copyright and license information.
+ *
+ * @author Ilya Moiseenko <iliamo@ucla.edu>
+ */
+
+#ifndef TRAYMENU_H
+#define TRAYMENU_H
+
+#include <QMainWindow>
+#include <QWidget>
+#include <QSystemTrayIcon>
+#include <QMenu>
+#include <QTimer>
+#include <QProcess>
+#include <QThread>
+#include <QXmlStreamReader>
+#include <QStandardItemModel>
+#include <QtXml>
+
+#include "FibInputDialog.h"
+#include "QuitDialog.h"
+
+#define NDND_START_COMMAND "/usr/local/bin/ndndstart"
+#define NDND_STOP_COMMAND "/usr/local/bin/ndndstop"
+#define NDND_STATUS_COMMAND "/usr/local/bin/ndndsmoketest"
+#define NDND_FIB_COMMAND "/usr/local/bin/ndndc"
+
+namespace Ui
+{
+    class TrayMenu;
+}
+
+class TrayMenu : public QMainWindow
+{
+    Q_OBJECT
+    
+public:
+    explicit TrayMenu(QWidget *parent = 0);
+    ~TrayMenu();
+
+private:
+    Ui::TrayMenu *ui;
+
+    void createTrayIcon();
+    void setIcon(bool isConnected);
+    void createToolbar();
+    void createTableView();
+    void closeEvent(QCloseEvent *); // Overriding the window's close event
+    void showEvent(QShowEvent * event); //Overriding the window's show event
+
+    void startDaemon();
+
+    QSystemTrayIcon *trayIcon;
+    QMenu *trayIconMenu;
+    QToolBar *toolBar;
+
+    QTimer *daemonStatusTimer;
+    QThread *statusUpdateThread;
+
+    QString statusXml;
+    QString fibContentsXml;
+
+    QStandardItemModel *model;
+    int selectedRow;
+
+    QAction *statusIndicator;
+    QAction *open;
+    QAction *close;
+    QAction *openGeneralSettings;
+    QAction *openForwardingSettings;
+    QAction *openSecuritySettings;
+
+    FibInputDialog *dialog;
+
+    bool allowAutomaticUpdates;
+    bool enableHubDiscovery;
+    bool enableStartOnLogin;
+    bool shutdownOnExit;
+
+private slots:
+    void trayIconClicked(QSystemTrayIcon::ActivationReason);
+    void generalSettingsClicked();
+    void forwardingSettingsClicked();
+    void securitySettingsClicked();
+    void openTrafficMap();
+    void openRoutingStatus();
+    void displayPopup();
+    void confirmQuit();
+    void showFibInputDialog();
+    void terminateDaemonAndClose();
+    void addFibEntry();
+    void daemonStatusUpdate();
+    void selectTableRow();
+    void deleteFibEntry();
+    void changeSoftwareUpdate();
+    void changeHubDiscovery();
+    void changeLoginStart();
+    void changeShutdownExit();
+};
+
+#endif // TRAYMENU_H
