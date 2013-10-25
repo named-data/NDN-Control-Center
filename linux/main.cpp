@@ -6,7 +6,7 @@
  */
 
 #include <QtGui/QApplication>
-#include "traymenu.h"
+#include "tray-menu.h"
 
 int main(int argc, char *argv[])
 {

@@ -9,6 +9,7 @@
 #include "ui_traymenu.h"   //generated from traymenu.ui
 #include "quit-dialog.h"
 #include "fib-input-dialog.h"
+#include "network-manager.h"
 
 #include <QMenu>
 #include <QCloseEvent>
@@ -38,6 +39,8 @@ TrayMenu::TrayMenu(QWidget *parent) :
     createTableView();
 
     startDaemon();
+
+    networkManager = new NetworkManager();
 
     connect(ui->openTrafficMapButton, SIGNAL(pressed()), this, SLOT(openTrafficMap()));
     connect(ui->openRoutingStatusButton, SIGNAL(pressed()), this, SLOT(openRoutingStatus()));

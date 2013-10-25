@@ -19,8 +19,9 @@
 #include <QStandardItemModel>
 #include <QtXml>
 
-#include "FibInputDialog.h"
-#include "QuitDialog.h"
+#include "fib-input-dialog.h"
+#include "quit-dialog.h"
+#include "network-manager.h"
 
 #define NDND_START_COMMAND "/usr/local/bin/ndndstart"
 #define NDND_STOP_COMMAND "/usr/local/bin/ndndstop"
@@ -78,6 +79,8 @@ private:
     bool enableHubDiscovery;
     bool enableStartOnLogin;
     bool shutdownOnExit;
+
+    NetworkManager *networkManager;
 
 private slots:
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
