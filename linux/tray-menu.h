@@ -18,6 +18,8 @@
 #include <QXmlStreamReader>
 #include <QStandardItemModel>
 #include <QtXml>
+#include <QThread>
+#include <QSettings>
 
 #include "fib-input-dialog.h"
 #include "quit-dialog.h"
@@ -27,6 +29,14 @@
 #define NDND_STOP_COMMAND "/usr/local/bin/ndndstop"
 #define NDND_STATUS_COMMAND "/usr/local/bin/ndndsmoketest"
 #define NDND_FIB_COMMAND "/usr/local/bin/ndndc"
+
+#define ALLOW_SOFTWARE_UPDATES "AllowAutomaticUpdates"
+#define ENABLE_HUB_DISCOVERY "EnableHubDiscovery"
+#define ENABLE_START_ON_LOGIN "enableStartOnLogin"
+#define SHUTDOWN_ON_EXIT "ShutdownOnExit"
+
+#define AUTOSTART_DIRECTORY "/.config/autostart/"
+#define SHORTCUT_FILE "ndnxcontrolcenter.desktop"
 
 namespace Ui
 {
@@ -51,7 +61,12 @@ private:
     void closeEvent(QCloseEvent *); // Overriding the window's close event
     void showEvent(QShowEvent * event); //Overriding the window's show event
 
-    void startDaemon();
+    void loadSettings();
+    void makeAutostartDirectory();
+
+    bool daemonStarted;
+
+    QSettings *persistentSettings;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
@@ -89,6 +104,7 @@ private slots:
     void securitySettingsClicked();
     void openTrafficMap();
     void openRoutingStatus();
+    void openCertificationPage();
     void displayPopup();
     void confirmQuit();
     void showFibInputDialog();
@@ -101,6 +117,7 @@ private slots:
     void changeHubDiscovery();
     void changeLoginStart();
     void changeShutdownExit();
+    void copyFile();
 };
 
 #endif // TRAYMENU_H

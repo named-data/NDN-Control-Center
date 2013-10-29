@@ -26,11 +26,20 @@
 #include <QDebug>
 #include <QtXml>
 #include <QStandardItemModel>
+#include <QDir>
 
 TrayMenu::TrayMenu(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::TrayMenu)
 {
+    networkManager = new NetworkManager();
+
+    QCoreApplication::setOrganizationName("UCLA");
+    QCoreApplication::setOrganizationDomain("named-data.net");
+    QCoreApplication::setApplicationName("NDNx Control Center");
+
+    persistentSettings = new QSettings();
+
     ui->setupUi(this);
 
     createTrayIcon();
@@ -38,9 +47,7 @@ TrayMenu::TrayMenu(QWidget *parent) :
     createToolbar();
     createTableView();
 
-    startDaemon();
-
-    networkManager = new NetworkManager();
+    loadSettings();
 
     connect(ui->openTrafficMapButton, SIGNAL(pressed()), this, SLOT(openTrafficMap()));
     connect(ui->openRoutingStatusButton, SIGNAL(pressed()), this, SLOT(openRoutingStatus()));
@@ -51,6 +58,7 @@ TrayMenu::TrayMenu(QWidget *parent) :
     connect(ui->loginStartCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeLoginStart()));
     connect(ui->shutdownCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeShutdownExit()));
     connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectTableRow()));
+    connect(ui->openNdnCertificationButton, SIGNAL(released()), this, SLOT(openCertificationPage()));
 
     statusUpdateThread = new QThread();
     statusUpdateThread->start();
@@ -62,36 +70,136 @@ TrayMenu::TrayMenu(QWidget *parent) :
     trayIcon->show();
 }
 
+void TrayMenu::loadSettings()
+{
+    QVariant value;
+
+    value = persistentSettings->value(ALLOW_SOFTWARE_UPDATES);
+    if(!value.isNull())
+    {
+        allowAutomaticUpdates = value.toBool();
+        ui->softwareUpdateCheckbox->setChecked(allowAutomaticUpdates);
+    }
+    else
+    {
+        ui->softwareUpdateCheckbox->setChecked(true);
+        changeSoftwareUpdate();
+    }
+
+    value = persistentSettings->value(ENABLE_HUB_DISCOVERY);
+    if(!value.isNull())
+    {
+        enableHubDiscovery = value.toBool();
+        ui->hubDiscoveryCheckbox->setChecked(enableHubDiscovery);
+    }
+    else
+    {
+        ui->hubDiscoveryCheckbox->setChecked(true);
+        changeHubDiscovery();
+    }
+
+    value = persistentSettings->value(ENABLE_START_ON_LOGIN);
+    if(!value.isNull())
+    {
+        enableStartOnLogin = value.toBool();
+        ui->loginStartCheckbox->setChecked(enableStartOnLogin);
+    }
+    else
+    {
+        ui->loginStartCheckbox->setChecked(false);
+        changeLoginStart();
+    }
+
+    value = persistentSettings->value(SHUTDOWN_ON_EXIT);
+    if(!value.isNull())
+    {
+        shutdownOnExit = value.toBool();
+        ui->shutdownCheckbox->setChecked(shutdownOnExit);
+    }
+    else
+    {
+        ui->shutdownCheckbox->setChecked(false);
+        changeShutdownExit();
+    }
+}
+
 void TrayMenu::changeSoftwareUpdate()
 {
     if(ui->softwareUpdateCheckbox->isChecked())
+    {
         allowAutomaticUpdates = true;
+        persistentSettings->setValue(ALLOW_SOFTWARE_UPDATES, true);
+    }
     else
+    {
         allowAutomaticUpdates = false;
+        persistentSettings->setValue(ALLOW_SOFTWARE_UPDATES, false);
+    }
 }
 
 void TrayMenu::changeHubDiscovery()
 {
     if(ui->hubDiscoveryCheckbox->isChecked())
+    {
         enableHubDiscovery = true;
+        persistentSettings->setValue(ENABLE_HUB_DISCOVERY, true);
+    }
     else
+    {
         enableHubDiscovery = false;
+        persistentSettings->setValue(ENABLE_HUB_DISCOVERY, false);
+    }
 }
 
 void TrayMenu::changeLoginStart()
 {
     if(ui->loginStartCheckbox->isChecked())
+    {
         enableStartOnLogin = true;
+        persistentSettings->setValue(ENABLE_START_ON_LOGIN, true);
+        makeAutostartDirectory();
+    }
     else
+    {
         enableStartOnLogin = false;
+        persistentSettings->setValue(ENABLE_START_ON_LOGIN, false);
+
+        QProcess *process = new QProcess();
+        QStringList arguments;
+        arguments << QDir::homePath() + AUTOSTART_DIRECTORY + SHORTCUT_FILE;
+        process->start("rm", arguments);
+    }
+}
+
+void TrayMenu::makeAutostartDirectory()
+{
+    QProcess *process = new QProcess();
+    connect(process, SIGNAL(finished(int)), this, SLOT(copyFile()));
+    QStringList arguments;
+    arguments << QDir::homePath() + AUTOSTART_DIRECTORY;
+    process->start("mkdir", arguments);
+}
+
+void TrayMenu::copyFile()
+{
+    QProcess *process = new QProcess();
+    QStringList arguments;
+    arguments << QApplication::applicationDirPath() + "/" + SHORTCUT_FILE << QDir::homePath() + AUTOSTART_DIRECTORY;
+    process->start("cp",arguments);
 }
 
 void TrayMenu::changeShutdownExit()
 {
     if(ui->shutdownCheckbox->isChecked())
+    {
         shutdownOnExit = true;
+        persistentSettings->setValue(SHUTDOWN_ON_EXIT, true);
+    }
     else
+    {
         shutdownOnExit = false;
+        persistentSettings->setValue(SHUTDOWN_ON_EXIT, false);
+    }
 }
 
 void TrayMenu::showFibInputDialog()
@@ -108,6 +216,11 @@ void TrayMenu::openTrafficMap()
 void TrayMenu::openRoutingStatus()
 {
     QDesktopServices::openUrl(QUrl("http://netlab.cs.memphis.edu/script/htm/status.htm", QUrl::TolerantMode));
+}
+
+void TrayMenu::openCertificationPage()
+{
+    QDesktopServices::openUrl(QUrl("http://ndncert.named-data.net", QUrl::TolerantMode));
 }
 
 void TrayMenu::createTrayIcon()
@@ -209,14 +322,19 @@ void TrayMenu::addFibEntry()
 
     dialog->hide();
 
-    QProcess *process = new QProcess(this);
-    process->start(NDND_FIB_COMMAND,arguments);
+    QProcess *process = new QProcess();
+    process->start(NDND_FIB_COMMAND, arguments);
 }
 
 void TrayMenu::confirmQuit()
 {
-    QuitDialog dialog(this);
-    dialog.exec();
+    if(shutdownOnExit)
+        terminateDaemonAndClose();
+    else
+    {
+        QuitDialog dialog(this);
+        dialog.exec();
+    }
 }
 
 void TrayMenu::terminateDaemonAndClose()
@@ -256,12 +374,6 @@ void TrayMenu::setIcon(bool isConnected)
         trayIcon->setIcon(QIcon(":/resource/Resources/icon-disconnected-white.png"));
 }
 
-void TrayMenu::startDaemon()
-{
-    QProcess *process = new QProcess(this);
-    process->start(NDND_START_COMMAND);
-}
-
 void TrayMenu::daemonStatusUpdate()
 {
     QXmlQuery query(QXmlQuery::XSLT20);
@@ -270,8 +382,31 @@ void TrayMenu::daemonStatusUpdate()
     query.setQuery(QUrl("qrc:/resource/Resources/status.xslt")); // TODO: I suspect it's being read from HDD each time
     query.evaluateTo(&statusXml);
 
+    if(statusXml == "") // there was an error during Query evaluation
+    {
+        daemonStarted = false;
+        setIcon(false);
+        statusIndicator->setText(tr("Starting..."));
+
+        QProcess *process = new QProcess();
+        if(enableHubDiscovery)
+            connect(process, SIGNAL(finished(int)), networkManager, SLOT(autoconfigDaemon()));
+        process->start(NDND_START_COMMAND);
+    }
+    else
+    {
+        daemonStarted = true;
+        setIcon(true);
+        statusIndicator->setText(tr("Active"));
+    }
+
     query.setQuery(QUrl("qrc:/resource/Resources/status-to-fib.xslt"));  // TODO: I suspect it's being read from HDD each time
     query.evaluateTo(&fibContentsXml);
+
+    if ((enableHubDiscovery) && (fibContentsXml.indexOf("ndn:/autoconf-route",0,Qt::CaseInsensitive) == -1))
+    {
+        networkManager->autoconfigDaemon();
+    }
 
     QDomDocument xmldoc;
     QDomElement root;
@@ -293,12 +428,6 @@ void TrayMenu::daemonStatusUpdate()
         QDomNode faceID = properties.at(0);
         QDomNode ip =  properties.at(1);
         QDomNode prefix = properties.at(2);
-
-        // bad: causes scroll to go up every time and overall flickering
-        /*QList<QStandardItem*> row = QList<QStandardItem*>() << new QStandardItem(prefix.toElement().text())
-                                                                       << new QStandardItem(faceID.toElement().text())
-                                                                       << new QStandardItem(ip.toElement().text());
-        model->appendRow(row);*/
 
         model->setItem(row, 0, new QStandardItem(prefix.toElement().text()));
         model->setItem(row, 1, new QStandardItem(faceID.toElement().text()));
@@ -344,8 +473,8 @@ void TrayMenu::deleteFibEntry()
     QStringList arguments;
     arguments << "del" << prefix->text() << "face" << faceID->text();
 
-    QProcess *process = new QProcess(this);
-    process->start(NDND_FIB_COMMAND,arguments);
+    QProcess *process = new QProcess();
+    process->start(NDND_FIB_COMMAND, arguments);
 }
 
 TrayMenu::~TrayMenu()

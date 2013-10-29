@@ -6,6 +6,7 @@
  */
 
 #include <QtDBus>
+#include <QThread>
 
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
@@ -21,12 +22,18 @@ class NetworkManager : public QObject
 
 public:
     NetworkManager();
+    bool IsAutoconfigRunning();
+
+public slots:
+    void autoconfigDaemon();
 
 private:
-    void autoconfigDaemon();
+    QProcess * autoconfigProcess;
+    bool isAutoconfigRunning;
 
 private slots:
     void stateChanged(uint state);
+    void autoconfigFinished();
 };
 
 

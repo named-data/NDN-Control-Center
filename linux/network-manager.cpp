@@ -16,6 +16,10 @@ NetworkManager::NetworkManager()
         return;
     }
 
+    autoconfigProcess = new QProcess();
+    connect(autoconfigProcess,SIGNAL(finished(int)),this,SLOT(autoconfigFinished()));
+    connect(autoconfigProcess, SIGNAL(error(QProcess::ProcessError)), this, SLOT(autoconfigFinished()));
+
     QDBusConnection::systemBus().connect("org.freedesktop.NetworkManager",
                                           "/org/freedesktop/NetworkManager",
                                           "org.freedesktop.NetworkManager",
@@ -32,6 +36,21 @@ void NetworkManager::stateChanged(uint state)
 
 void NetworkManager::autoconfigDaemon()
 {
-    QProcess *process = new QProcess();
-    process->start(NDND_AUTOCONFIG_COMMAND);
+    if(IsAutoconfigRunning())
+        return;
+
+     qDebug() << "started running";
+     isAutoconfigRunning = true;
+     autoconfigProcess->start(NDND_AUTOCONFIG_COMMAND);
+}
+
+void NetworkManager::autoconfigFinished()
+{
+    qDebug() << "stoped running";
+    isAutoconfigRunning = false;
+}
+
+bool NetworkManager::IsAutoconfigRunning()
+{
+    return isAutoconfigRunning;
 }

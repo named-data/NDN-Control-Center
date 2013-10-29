@@ -23,28 +23,67 @@
    <bool>true</bool>
   </property>
   <widget class="QWidget" name="centralWidget">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <property name="sizePolicy">
+    <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+     <horstretch>0</horstretch>
+     <verstretch>0</verstretch>
+    </sizepolicy>
+   </property>
+   <property name="minimumSize">
+    <size>
+     <width>550</width>
+     <height>300</height>
+    </size>
+   </property>
+   <property name="maximumSize">
+    <size>
+     <width>550</width>
+     <height>300</height>
+    </size>
+   </property>
+   <property name="baseSize">
+    <size>
+     <width>0</width>
+     <height>0</height>
+    </size>
+   </property>
    <widget class="QWidget" name="generalSettingsWidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>521</width>
-      <height>241</height>
+      <width>520</width>
+      <height>240</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>520</width>
+      <height>240</height>
+     </size>
     </property>
     <widget class="QGroupBox" name="groupBox">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>0</y>
-       <width>471</width>
+       <y>10</y>
+       <width>500</width>
        <height>141</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QGroupBox#groupBox { 
-border: 2px solid gray; 
-border-radius: 7px; 
+border: 1px solid gray; 
+border-radius: 5px; 
 }</string>
      </property>
      <property name="title">
@@ -56,7 +95,7 @@ border-radius: 7px;
      <widget class="QCheckBox" name="shutdownCheckbox">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>110</y>
         <width>441</width>
         <height>22</height>
@@ -74,7 +113,7 @@ border-radius: 7px;
      <widget class="QCheckBox" name="softwareUpdateCheckbox">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>80</y>
         <width>441</width>
         <height>22</height>
@@ -92,7 +131,7 @@ border-radius: 7px;
      <widget class="QCheckBox" name="hubDiscoveryCheckbox">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>50</y>
         <width>431</width>
         <height>22</height>
@@ -110,7 +149,7 @@ border-radius: 7px;
      <widget class="QCheckBox" name="loginStartCheckbox">
       <property name="geometry">
        <rect>
-        <x>0</x>
+        <x>10</x>
         <y>20</y>
         <width>451</width>
         <height>22</height>
@@ -125,25 +164,20 @@ border-radius: 7px;
        <string>Automatically start NDNx Control Center at login</string>
       </property>
      </widget>
-     <zorder>shutdownCheckbox</zorder>
-     <zorder>softwareUpdateCheckbox</zorder>
-     <zorder>hubDiscoveryCheckbox</zorder>
-     <zorder>loginStartCheckbox</zorder>
-     <zorder>forwardingSettingsWidget</zorder>
     </widget>
     <widget class="QGroupBox" name="groupBox_2">
      <property name="geometry">
       <rect>
        <x>10</x>
-       <y>150</y>
-       <width>471</width>
-       <height>81</height>
+       <y>160</y>
+       <width>500</width>
+       <height>75</height>
       </rect>
      </property>
      <property name="styleSheet">
       <string notr="true">QGroupBox#groupBox_2 { 
-border: 2px solid gray; 
-border-radius: 7px; 
+border: 1px solid gray; 
+border-radius: 5px; 
 }</string>
      </property>
      <property name="title">
@@ -182,9 +216,21 @@ border-radius: 7px;
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>521</width>
-      <height>251</height>
+      <width>530</width>
+      <height>250</height>
      </rect>
+    </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>530</width>
+      <height>250</height>
+     </size>
     </property>
     <widget class="QLabel" name="label">
      <property name="geometry">
@@ -238,21 +284,60 @@ border-radius: 7px;
       <string>-</string>
      </property>
     </widget>
-    <zorder>label</zorder>
-    <zorder>tableView</zorder>
-    <zorder>addFibButton</zorder>
-    <zorder>deleteFibButton</zorder>
-    <zorder>securitySettingsWidget</zorder>
    </widget>
    <widget class="QWidget" name="securitySettingsWidget" native="true">
     <property name="geometry">
      <rect>
       <x>10</x>
       <y>50</y>
-      <width>521</width>
-      <height>241</height>
+      <width>520</width>
+      <height>240</height>
      </rect>
     </property>
+    <property name="sizePolicy">
+     <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+      <horstretch>0</horstretch>
+      <verstretch>0</verstretch>
+     </sizepolicy>
+    </property>
+    <property name="maximumSize">
+     <size>
+      <width>520</width>
+      <height>240</height>
+     </size>
+    </property>
+    <widget class="QGroupBox" name="groupBox_3">
+     <property name="geometry">
+      <rect>
+       <x>10</x>
+       <y>10</y>
+       <width>500</width>
+       <height>200</height>
+      </rect>
+     </property>
+     <property name="styleSheet">
+      <string notr="true">QGroupBox#groupBox_3 { 
+border: 1px solid gray; 
+border-radius: 5px; 
+}</string>
+     </property>
+     <property name="title">
+      <string/>
+     </property>
+     <widget class="QPushButton" name="openNdnCertificationButton">
+      <property name="geometry">
+       <rect>
+        <x>10</x>
+        <y>20</y>
+        <width>201</width>
+        <height>27</height>
+       </rect>
+      </property>
+      <property name="text">
+       <string>Obtain NDN Certificate</string>
+      </property>
+     </widget>
+    </widget>
    </widget>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
