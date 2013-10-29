@@ -9,6 +9,7 @@
 #include "config.h"
 #import "menu-delegate.h"
 #import "ndnd-status-operation.h"
+#import "tight-menu-item-view.h"
 
 @implementation MenuDelegate
 
@@ -72,7 +73,13 @@
   [statusItem setTitle:@""];
   [statusItem setImage:m_disconnectedIcon];
   
-  [connectionStatus setView: connectionStatusView];
+  float menuItemHeight = 20;
+
+  NSRect viewRect = NSMakeRect(0, 0, /* width autoresizes */ 1, menuItemHeight);
+  connectionStatusView = [[TightMenuItemView alloc] initWithFrame:viewRect];
+  connectionStatusView.autoresizingMask = NSViewWidthSizable;
+
+  [connectionStatus setView:connectionStatusView];
   [connectionStatus setTarget:self];
   
   [daemonStatus setView: daemonStatusView];
@@ -130,22 +137,6 @@
   }
 }
 
--(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item
-{
-  if( ([item view]!=nil) && (item == daemonStatus) )
-  {
-    NSView *view = [item view];
-    
-    [statusPopover showRelativeToRect:[view bounds]
-                   ofView:view
-                   preferredEdge:NSMinXEdge];
-  }
-  else
-  {
-    [statusPopover performClose:nil];
-  }
-}
-
 -(void)onTick:(NSTimer *)timer
 {
   [self updateStatus];
@@ -170,7 +161,7 @@
 {
   if (!m_daemonStarted) {
     m_daemonStarted = true;
-    [connectionStatusText setStringValue:@"Active"];
+    [connectionStatusView setStatus:@"Active"];
     
     [statusItem setImage:m_connectedIcon];
   }
@@ -203,7 +194,7 @@
   if (m_daemonStarted) {
     m_daemonStarted = false;
     
-    [connectionStatusText setStringValue:@"Starting..."];
+    [connectionStatusView setStatus:@"Starting..."];
     
     [statusItem setImage:m_disconnectedIcon];
   }

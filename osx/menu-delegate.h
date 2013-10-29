@@ -9,6 +9,7 @@
 #import <Cocoa/Cocoa.h>
 #import "preference-delegate.h"
 #import "system-events.h"
+#import "tight-menu-item-view.h"
 
 @interface MenuDelegate : NSObject <NSApplicationDelegate>
 {
@@ -33,21 +34,21 @@
   
   BOOL m_daemonStarted;
   
+  IBOutlet NSTextField *interestSentRecv;
+  IBOutlet NSTextField *dataSentRecv;
+  
   IBOutlet NSView *daemonStatusView;
   IBOutlet NSTextField *daemonStatusHtml;
   IBOutlet NSView *daemonStatusHtmlView;
   NSAttributedString *m_statusString;
   
-  IBOutlet NSView *connectionStatusView;
-  IBOutlet NSTextField *connectionStatusText;
+  TightMenuItemView *connectionStatusView;
   
   IBOutlet PreferenceDelegate *preferencesDelegate;
 
   SystemEvents *m_systemEvents;
   bool m_autoconfInProgress;
 }
-
--(void)menu:(NSMenu *)menu willHighlightItem:(NSMenuItem *)item;
 
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)showExitConfirmationWindow:(id)sender;

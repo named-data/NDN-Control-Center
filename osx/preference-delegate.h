@@ -44,6 +44,7 @@
 
 -(IBAction)openRoutingStatusPage:(id)sender;
 -(IBAction)openTrafficMapPage:(id)sender;
+-(IBAction)openCertificationPage:(id)sender;
 
 -(void)updateFibStatus:(NSXMLDocument*)status;
 

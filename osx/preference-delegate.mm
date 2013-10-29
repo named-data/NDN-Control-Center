@@ -121,5 +121,12 @@
   [[NSWorkspace sharedWorkspace] openURL: pageURL];
 }
 
+-(IBAction)openCertificationPage:(id)sender
+{
+  NSURL *pageURL = [NSURL URLWithString:@"http://ndncert.named-data.net"];
+
+  [[NSWorkspace sharedWorkspace] openURL: pageURL];
+}
+
 
 @end
