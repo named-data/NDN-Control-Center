@@ -100,7 +100,7 @@ def xib(self,node):
     real_out = resources.make_node (out.name)
 
     self.create_task('xib', node, real_out)
-    inst_to = getattr(self, 'install_path', '/Applications') + '/%s/Resources' % name
+    inst_to = getattr(self, 'install_path', '/Applications') + '/%s/Contents/Resources' % name
     self.bld.install_as (inst_to + '/%s' % real_out.name, real_out)
         
 class xib(Task.Task):
