@@ -9,8 +9,8 @@ def options(opt):
     opt.load('sparkle xcode', tooldir='waf-tools')
 
     grp = opt.add_option_group ('NDNx Control Center options')
-    grp.add_option ('--ndnx', help='''Root path to NDNx installation (default: /usr)''',
-                    dest='ndnx_root', type=str, default='/usr')
+    grp.add_option ('--ndnx', help='''Root path to NDNx installation (default: /usr/local/ndn)''',
+                    dest='ndnx_root', type=str, default='/usr/local/ndn')
 
 def configure(conf):
     conf.load('compiler_c compiler_cxx')
@@ -21,7 +21,7 @@ def configure(conf):
 
     conf.start_msg('Checking for NDNx in %s' % conf.options.ndnx_root)
     if not conf.find_file('ndnd ndndstatus ndndstart ndndstop', path_list='%s/bin' % conf.options.ndnx_root, mandatory=False):
-        conf.end_msg ('not found, but will proceed anyways', 'YELLOW')
+        conf.fatal ('not found', 'RED')
     else:
         conf.end_msg ('ok')
 
@@ -40,10 +40,10 @@ def configure(conf):
         conf.check_cxx(framework_name='Cocoa',      uselib_store='COCOA',      compile_filename='test.mm')
 
         conf.env.ARCH_OSX = 'x86_64'
-        conf.env.CXXFLAGS_OSX += ['-fobjc-arc', '-mmacosx-version-min=10.8']
-        conf.env.LINKFLAGS_OSX += ['-mmacosx-version-min=10.8']
+        conf.env.CXXFLAGS_OSX += ['-fobjc-arc', '-mmacosx-version-min=10.7']
+        conf.env.LINKFLAGS_OSX += ['-mmacosx-version-min=10.7']
         
-        conf.env.MACOSX_DEPLOYMENT_TARGET = '10.8'
+        conf.env.MACOSX_DEPLOYMENT_TARGET = '10.7'
         
         conf.load('sparkle')
 

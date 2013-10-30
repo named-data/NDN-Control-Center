@@ -38,9 +38,6 @@
   IBOutlet NSTextField *dataSentRecv;
   
   IBOutlet NSView *daemonStatusView;
-  IBOutlet NSTextField *daemonStatusHtml;
-  IBOutlet NSView *daemonStatusHtmlView;
-  NSAttributedString *m_statusString;
   
   TightMenuItemView *connectionStatusView;
   
@@ -49,6 +46,11 @@
   SystemEvents *m_systemEvents;
   bool m_autoconfInProgress;
 }
+
+@property (nonatomic, readwrite) NSString *interestSent;
+@property (nonatomic, readwrite) NSString *interestRecv;
+@property (nonatomic, readwrite) NSString *dataSent;
+@property (nonatomic, readwrite) NSString *dataRecv;
 
 -(IBAction)openDaemonStatus:(id)sender;
 -(IBAction)showExitConfirmationWindow:(id)sender;

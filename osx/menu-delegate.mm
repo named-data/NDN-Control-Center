@@ -13,12 +13,22 @@
 
 @implementation MenuDelegate
 
+@synthesize interestSent;
+@synthesize interestRecv;
+@synthesize dataSent;
+@synthesize dataRecv;
+
 -(id)init
 {
   if (![super init]) {
     return nil;
   }
 
+  interestSent = @"N/A";
+  interestRecv = @"N/A";
+  dataSent = @"N/A";
+  dataRecv = @"N/A";
+  
   m_autoconfInProgress = false;
   m_operationQueue = [[NSOperationQueue alloc] init];
   return self;
@@ -173,9 +183,14 @@
   NSXMLDocument *statusFibXml = [document objectByApplyingXSLT:m_statusToFibXslt
                                  arguments:nil
                                  error:nil];
-
-  m_statusString = [[NSAttributedString alloc]initWithHTML:[statusXml XMLData] documentAttributes:NULL];
-  [daemonStatusHtml setAttributedStringValue:m_statusString];
+  
+  NSXMLNode *element = [[statusXml rootElement] childAtIndex:0]; //data
+  [self setDataRecv:[[element childAtIndex:0] stringValue]];
+  [self setDataSent:[[element childAtIndex:1] stringValue]];
+  
+  element = [[statusXml rootElement] childAtIndex:1]; //interests
+  [self setInterestRecv:[[element childAtIndex:0] stringValue]];
+  [self setInterestSent:[[element childAtIndex:1] stringValue]];
 
   [preferencesDelegate updateFibStatus:statusFibXml];
 
@@ -199,7 +214,11 @@
     [statusItem setImage:m_disconnectedIcon];
   }
 
-  [daemonStatusHtml setStringValue:@""];
+  [self setInterestSent:@"N/A"];
+  [self setInterestRecv:@"N/A"];
+  [self setDataSent:@"N/A"];
+  [self setDataRecv:@"N/A"];
+
   [preferencesDelegate updateFibStatus:nil];
 
   m_autoconfInProgress = true;
