@@ -105,4 +105,4 @@ def xib(self,node):
         
 class xib(Task.Task):
     color='PINK'
-    run_str = '${IBTOOL} --errors --warnings --notices --minimum-deployment-target 10.8 --output-format human-readable-text  --compile ${TGT} ${SRC}'
+    run_str = '${IBTOOL} --errors --warnings --notices --output-format human-readable-text  --compile ${TGT} ${SRC}'
