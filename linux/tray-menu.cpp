@@ -27,6 +27,8 @@
 #include <QtXml>
 #include <QStandardItemModel>
 #include <QDir>
+#include <QWidgetAction>
+#include <QTextStream>
 
 TrayMenu::TrayMenu(QWidget *parent) :
     QMainWindow(parent),
@@ -232,9 +234,14 @@ void TrayMenu::createTrayIcon()
 
     trayIconMenu->addSeparator();
 
-    QAction *displayStatus = new QAction(tr("Status"), this);
-    connect(displayStatus, SIGNAL(triggered()), this, SLOT(displayPopup()));
+    displayStatus = new QAction("                           Sent / Recv   ", this);
+    //connect(displayStatus, SIGNAL(triggered()), this, SLOT(displayPopup()));
     trayIconMenu->addAction(displayStatus);
+    interestSentRecv = new QAction("Interests      0 / 0", this);
+    trayIconMenu->addAction(interestSentRecv);
+    dataSentRecv = new QAction("Data               0 / 0", this);
+    trayIconMenu->addAction(dataSentRecv);
+
 
     trayIconMenu->addSeparator();
 
@@ -245,6 +252,22 @@ void TrayMenu::createTrayIcon()
     close = new QAction(tr("Quit..."), this);
     connect(close, SIGNAL(triggered()), this, SLOT(confirmQuit()));
     trayIconMenu->addAction(close);
+
+
+
+
+    /*QWidgetAction * wa = new QWidgetAction(this);
+    wa->setDefaultWidget(new QPushButton("Default"));
+
+    trayIconMenu->setDefaultAction(wa);
+*/
+    //trayIconMenu->addAction();
+    /*QVBoxLayout *layout = new QVBoxLayout(wa->defaultWidget());
+
+    QLineEdit *edit = new QLineEdit("", wa->defaultWidget());
+    layout->addWidget(edit);
+
+    trayIconMenu->addAction(wa);*/
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
@@ -398,6 +421,62 @@ void TrayMenu::daemonStatusUpdate()
         daemonStarted = true;
         setIcon(true);
         statusIndicator->setText(tr("Active"));
+        //qDebug() << statusXml;
+        QString interestIn = statusXml.mid(statusXml.indexOf("<in>")+4, statusXml.indexOf("</in>") - (statusXml.indexOf("<in>")+4));
+        QString interestOut = statusXml.mid(statusXml.indexOf("<out>")+5, statusXml.indexOf("</out>") - (statusXml.indexOf("<out>")+5));
+        QString dataIn = statusXml.mid(statusXml.lastIndexOf("<in>")+4, statusXml.lastIndexOf("</in>") - (statusXml.lastIndexOf("<in>")+4));
+        QString dataOut = statusXml.mid(statusXml.lastIndexOf("<out>")+5, statusXml.lastIndexOf("</out>") - (statusXml.lastIndexOf("<out>")+5));
+
+        int i = 0;
+        int k = 0;
+        if((dataOut.length() - interestOut.length()) > 0)
+        {
+            i = dataOut.length() - interestOut.length();
+            i*=2; //because space takes less space than a letter
+        }
+
+        if((interestOut.length() - dataOut.length()) > 0)
+        {
+            k = interestOut.length() - dataOut.length();
+            k*=2; //because space takes less space than a letter
+        }
+
+        QString interestStats = QString("%1%2%3%4").arg("Interests",-16,' ').arg(interestOut,6+i,' ').arg(" / ",3).arg(interestIn,-6,' ');
+        QString dataStats = QString("%1%2%3%4").arg("Data",-20,' ').arg(dataOut,6+k,' ').arg(" / ",3).arg(dataIn,-6,' ');
+
+        //Now I try to align header "Sent / Recv" centrally with the upper line
+        QString padding;
+        for(int j = 0; j < interestStats.indexOf(interestOut); j++)
+        {
+            if(interestStats.at(j)==' ')
+                padding +=" ";
+            else
+                padding += "  "; //because space takes less space than a letter
+        }
+
+        QString header;
+        int m = 0;
+        if(interestOut.length() - QString("Sent").length() > 0)
+        {
+            m = interestOut.length() - QString("Sent").length();
+            m *=3;
+            //qDebug() << "m=" << m;
+            header = QString("%1%2").arg(padding).arg("  Sent / Recv",QString("  Sent / Recv").length() + m,' ');
+        }
+        else if(interestOut.length() - QString("Sent").length() < 0)
+        {
+            //qDebug() << "truncating";
+            padding.truncate(padding.length()-(QString("Sent").length() - interestOut.length()));
+            header = padding + "Sent / Recv";
+        }
+        else
+        {
+            header = padding + "  Sent / Recv";
+        }
+
+        interestSentRecv->setText(interestStats);
+        dataSentRecv->setText(dataStats);
+        displayStatus->setText(header);
     }
 
     query.setQuery(QUrl("qrc:/resource/Resources/status-to-fib.xslt"));  // TODO: I suspect it's being read from HDD each time

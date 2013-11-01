@@ -1,7 +1,5 @@
 <RCC>
     <qresource prefix="/resource">
-        <file>Resources/icon1.png</file>
-        <file>Resources/FlatConnected.png</file>
         <file>Resources/emblem-dropbox-unsyncable.png</file>
         <file>Resources/emblem-system.png</file>
         <file>Resources/emblem-web.png</file>
@@ -9,9 +7,9 @@
         <file>Resources/mail-send-receive.png</file>
         <file>Resources/preferences-desktop.png</file>
         <file>Resources/system-run.png</file>
-        <file>Resources/status.xslt</file>
         <file>Resources/icon-connected-white.png</file>
         <file>Resources/icon-disconnected-white.png</file>
         <file>Resources/status-to-fib.xslt</file>
+        <file>Resources/status.xslt</file>
     </qresource>
 </RCC>

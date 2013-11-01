@@ -82,6 +82,9 @@ private:
     int selectedRow;
 
     QAction *statusIndicator;
+    QAction *displayStatus;
+    QAction *interestSentRecv;
+    QAction *dataSentRecv;
     QAction *open;
     QAction *close;
     QAction *openGeneralSettings;
