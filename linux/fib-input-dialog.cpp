@@ -71,3 +71,8 @@ FibInputDialog::getTunnelType()
 {
     return tunnelComboBox->currentText();
 }
+
+#if WAF
+#include "fib-input-dialog.moc"
+#include "fib-input-dialog.cpp.moc"
+#endif

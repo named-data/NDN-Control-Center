@@ -38,3 +38,8 @@ QuitDialog::QuitDialog(QWidget *parent)
 
     setWindowTitle(tr("NDNx Control Center"));
 }
+
+#if WAF
+#include "quit-dialog.moc"
+#include "quit-dialog.cpp.moc"
+#endif

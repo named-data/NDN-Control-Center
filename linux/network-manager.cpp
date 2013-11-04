@@ -54,3 +54,8 @@ bool NetworkManager::IsAutoconfigRunning()
 {
     return isAutoconfigRunning;
 }
+
+#if WAF
+#include "network-manager.moc"
+#include "network-manager.cpp.moc"
+#endif

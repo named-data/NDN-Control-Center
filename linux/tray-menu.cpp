@@ -573,3 +573,8 @@ TrayMenu::~TrayMenu()
     delete daemonStatusTimer;
     delete dialog;
 }
+
+#if WAF
+#include "tray-menu.moc"
+#include "tray-menu.cpp.moc"
+#endif

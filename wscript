@@ -5,19 +5,20 @@ APPNAME='ndnx-control-center'
 from waflib import Logs, Utils, Task, TaskGen
 
 def options(opt):
-    opt.load('compiler_c compiler_cxx')
+    opt.load('compiler_c compiler_cxx qt4')
     opt.load('sparkle xcode', tooldir='waf-tools')
 
     grp = opt.add_option_group ('NDNx Control Center options')
     grp.add_option ('--ndnx', help='''Root path to NDNx installation (default: /usr/local/ndn)''',
                     dest='ndnx_root', type=str, default='/usr/local/ndn')
 
+    if Utils.unversioned_sys_platform () == "darwin":
+        grp.add_option ('--qt4', help='''Build QT4 app, instead of native one''',
+                        action='store_true', dest='build_qt', default=False)
+
+    
 def configure(conf):
     conf.load('compiler_c compiler_cxx')
-
-    if Utils.unversioned_sys_platform () != "darwin":
-        Logs.error ("Only OSX is supported so far")
-        return -1
 
     conf.start_msg('Checking for NDNx in %s' % conf.options.ndnx_root)
     if not conf.find_file('ndnd ndndstatus ndndstart ndndstop', path_list='%s/bin' % conf.options.ndnx_root, mandatory=False):
@@ -32,7 +33,9 @@ def configure(conf):
     conf.define('NDND_FIB_COMMAND',  '%s/bin/ndndc' % conf.options.ndnx_root)
     conf.define('NDND_AUTOCONFIG_COMMAND', '%s/bin/ndnd-autoconfig' % conf.options.ndnx_root)
     
-    if Utils.unversioned_sys_platform () == "darwin":
+    if Utils.unversioned_sys_platform () == "darwin" and not conf.options.build_qt:
+        conf.env.BUILD_OSX_NATIVE = 1
+        
         conf.find_program('ibtool', var='IBTOOL', mandatory=False)
 
         conf.check_cxx(framework_name='Foundation', uselib_store='FOUNDATION', compile_filename='test.mm')
@@ -41,20 +44,20 @@ def configure(conf):
 
         conf.env.ARCH_OSX = 'x86_64'
         conf.env.CXXFLAGS_OSX += ['-fobjc-arc', '-mmacosx-version-min=10.7']
-        conf.env.LINKFLAGS_OSX += ['-mmacosx-version-min=10.7']
-        
+        conf.env.LINKFLAGS_OSX += ['-mmacosx-version-min=10.7']        
         conf.env.MACOSX_DEPLOYMENT_TARGET = '10.7'
         
         conf.load('sparkle')
-
+    else:
+        conf.load('qt4')
+        
+        if Utils.unversioned_sys_platform () == "darwin":
+            conf.define('OSX_BUILD', 1)
+        
     conf.write_config_header('config.h')
 
 def build (bld):
-    if Utils.unversioned_sys_platform () != "darwin":
-        Logs.error ("Only OSX is supported so far")
-        return -1
-
-    if Utils.unversioned_sys_platform () == "darwin":
+    if bld.env.BUILD_OSX_NATIVE:
         bld (
             target = "NDNx Control Center",
             features=['cxxprogram', 'cxx'],
@@ -67,6 +70,17 @@ def build (bld):
             mac_plist = 'osx/Info.plist',
             mac_resources = [i.path_from(bld.path) for i in bld.path.ant_glob ('osx/Resources/**/*')],
             mac_frameworks = "osx/Frameworks/Sparkle.framework",
+            )
+    else:
+        bld (
+            target = "NDNx Control Center",
+            features=['qt4', 'cxxprogram', 'cxx'],
+            includes = ". linux",
+
+            use = "QTCORE QTGUI QTXML QTXMLPATTERNS QTDBUS",
+            
+            defines = "WAF",
+            source = bld.path.ant_glob (['linux/**/*.cpp', 'linux/**/*.ui', 'linux/**/*.qrc']),
             )
 
         
