@@ -15,11 +15,13 @@
 #include <QTimer>
 #include <QProcess>
 #include <QThread>
-#include <QXmlStreamReader>
 #include <QStandardItemModel>
 #include <QtXml>
 #include <QThread>
 #include <QSettings>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
 
 #include "fib-input-dialog.h"
 #include "quit-dialog.h"
@@ -29,6 +31,7 @@
 #define NDND_STOP_COMMAND "/usr/local/bin/ndndstop"
 #define NDND_STATUS_COMMAND "/usr/local/bin/ndndsmoketest"
 #define NDND_FIB_COMMAND "/usr/local/bin/ndndc"
+#define XSLT_PROC "xsltproc"
 
 #define ALLOW_SOFTWARE_UPDATES "AllowAutomaticUpdates"
 #define ENABLE_HUB_DISCOVERY "EnableHubDiscovery"
@@ -37,6 +40,8 @@
 
 #define AUTOSTART_DIRECTORY "/.config/autostart/"
 #define SHORTCUT_FILE "ndnxcontrolcenter.desktop"
+#define STATUS_XSLT_FILE "status.xslt"
+#define FIB_XSLT_FILE "status-to-fib.xslt"
 
 namespace Ui
 {
@@ -75,11 +80,15 @@ private:
     QTimer *daemonStatusTimer;
     QThread *statusUpdateThread;
 
+    QProcess *applyStatusXslt;
+    QProcess *applyFibXslt;
+
     QString statusXml;
     QString fibContentsXml;
 
     QStandardItemModel *model;
     int selectedRow;
+    int scrollPosition;
 
     QAction *statusIndicator;
     QAction *displayStatus;
@@ -99,6 +108,7 @@ private:
     bool shutdownOnExit;
 
     NetworkManager *networkManager;
+    QNetworkAccessManager *urlManager;
 
 private slots:
     void trayIconClicked(QSystemTrayIcon::ActivationReason);
@@ -121,6 +131,9 @@ private slots:
     void changeLoginStart();
     void changeShutdownExit();
     void copyFile();
+    void runXmlProc(QNetworkReply *reply);
+    void parseStatusXml();
+    void parseFibXml();
 };
 
 #endif // TRAYMENU_H

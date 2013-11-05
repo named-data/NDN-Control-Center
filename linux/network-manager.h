@@ -6,7 +6,7 @@
  */
 
 #include <QtDBus>
-#include <QThread>
+#include <QProcess>
 
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
@@ -28,7 +28,7 @@ public slots:
     void autoconfigDaemon();
 
 private:
-    QProcess * autoconfigProcess;
+    QProcess *autoconfigProcess;
     bool isAutoconfigRunning;
 
 private slots:

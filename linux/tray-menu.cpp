@@ -14,21 +14,14 @@
 #include <QMenu>
 #include <QCloseEvent>
 #include <QDesktopServices>
-#include <QMessageBox>
 #include <QUrl>
 #include <QCheckBox>
 #include <QLabel>
 #include <QHBoxLayout>
 #include <QLineEdit>
-#include <QProcess>
-#include <QXmlStreamReader>
-#include <QXmlQuery>
-#include <QDebug>
-#include <QtXml>
-#include <QStandardItemModel>
 #include <QDir>
-#include <QWidgetAction>
-#include <QTextStream>
+#include <QScrollBar>
+
 
 TrayMenu::TrayMenu(QWidget *parent) :
     QMainWindow(parent),
@@ -67,9 +60,14 @@ TrayMenu::TrayMenu(QWidget *parent) :
 
     daemonStatusTimer = new QTimer(statusUpdateThread);
     connect(daemonStatusTimer, SIGNAL(timeout()), this, SLOT(daemonStatusUpdate()));
-    daemonStatusTimer->start(1000);
+    daemonStatusTimer->start(2000);
 
     trayIcon->show();
+    model = NULL;
+    dialog = new FibInputDialog(this);
+
+    urlManager = new QNetworkAccessManager(this);
+    connect(urlManager, SIGNAL(finished(QNetworkReply*)), this, SLOT(runXmlProc(QNetworkReply*)));
 }
 
 void TrayMenu::loadSettings()
@@ -167,6 +165,7 @@ void TrayMenu::changeLoginStart()
         persistentSettings->setValue(ENABLE_START_ON_LOGIN, false);
 
         QProcess *process = new QProcess();
+        connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
         QStringList arguments;
         arguments << QDir::homePath() + AUTOSTART_DIRECTORY + SHORTCUT_FILE;
         process->start("rm", arguments);
@@ -177,6 +176,7 @@ void TrayMenu::makeAutostartDirectory()
 {
     QProcess *process = new QProcess();
     connect(process, SIGNAL(finished(int)), this, SLOT(copyFile()));
+    connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
     QStringList arguments;
     arguments << QDir::homePath() + AUTOSTART_DIRECTORY;
     process->start("mkdir", arguments);
@@ -185,6 +185,7 @@ void TrayMenu::makeAutostartDirectory()
 void TrayMenu::copyFile()
 {
     QProcess *process = new QProcess();
+    connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
     QStringList arguments;
     arguments << QApplication::applicationDirPath() + "/" + SHORTCUT_FILE << QDir::homePath() + AUTOSTART_DIRECTORY;
     process->start("cp",arguments);
@@ -206,7 +207,7 @@ void TrayMenu::changeShutdownExit()
 
 void TrayMenu::showFibInputDialog()
 {
-    dialog = new FibInputDialog(this);
+    dialog->clear();
     dialog->exec();
 }
 
@@ -229,45 +230,27 @@ void TrayMenu::createTrayIcon()
 {
     trayIconMenu = new QMenu(this);
 
-    statusIndicator = new QAction(tr("Inactive"), this);
+    statusIndicator = new QAction("Inactive", this);
     trayIconMenu->addAction(statusIndicator);
 
     trayIconMenu->addSeparator();
 
     displayStatus = new QAction("                           Sent / Recv   ", this);
-    //connect(displayStatus, SIGNAL(triggered()), this, SLOT(displayPopup()));
     trayIconMenu->addAction(displayStatus);
     interestSentRecv = new QAction("Interests      0 / 0", this);
     trayIconMenu->addAction(interestSentRecv);
     dataSentRecv = new QAction("Data               0 / 0", this);
     trayIconMenu->addAction(dataSentRecv);
 
-
     trayIconMenu->addSeparator();
 
-    open = new QAction(tr("Preferences..."), this);
+    open = new QAction("Preferences...", this);
     connect(open, SIGNAL(triggered()), this, SLOT(show()));
     trayIconMenu->addAction(open);
 
-    close = new QAction(tr("Quit..."), this);
+    close = new QAction("Quit...", this);
     connect(close, SIGNAL(triggered()), this, SLOT(confirmQuit()));
     trayIconMenu->addAction(close);
-
-
-
-
-    /*QWidgetAction * wa = new QWidgetAction(this);
-    wa->setDefaultWidget(new QPushButton("Default"));
-
-    trayIconMenu->setDefaultAction(wa);
-*/
-    //trayIconMenu->addAction();
-    /*QVBoxLayout *layout = new QVBoxLayout(wa->defaultWidget());
-
-    QLineEdit *edit = new QLineEdit("", wa->defaultWidget());
-    layout->addWidget(edit);
-
-    trayIconMenu->addAction(wa);*/
 
     trayIcon = new QSystemTrayIcon(this);
     trayIcon->setContextMenu(trayIconMenu);
@@ -291,15 +274,15 @@ void TrayMenu::createToolbar()
     toolBar->setIconSize(QSize(32,32));
     toolBar->resize(this->width(), 64);
 
-    openGeneralSettings = new QAction(tr("General"), this);
+    openGeneralSettings = new QAction("General", this);
     openGeneralSettings->setIcon(QIcon(":/resource/Resources/preferences-desktop.png"));
     connect(openGeneralSettings,SIGNAL(triggered()),this, SLOT(generalSettingsClicked()));
 
-    openForwardingSettings = new QAction(tr("Forwarding"), this);
+    openForwardingSettings = new QAction("Forwarding", this);
     openForwardingSettings->setIcon(QIcon(":/resource/Resources/emblem-web.png"));
     connect(openForwardingSettings,SIGNAL(triggered()),this, SLOT(forwardingSettingsClicked()));
 
-    openSecuritySettings = new QAction(tr("Security"), this);
+    openSecuritySettings = new QAction("Security", this);
     openSecuritySettings->setIcon(QIcon(":/resource/Resources/emblem-system.png"));
     connect(openSecuritySettings,SIGNAL(triggered()),this, SLOT(securitySettingsClicked()));
 
@@ -331,7 +314,7 @@ void TrayMenu::securitySettingsClicked()
 
 void TrayMenu::displayPopup()
 {
-    trayIcon->showMessage(tr("NDNx Status"), statusXml);
+    trayIcon->showMessage("NDNx Status", statusXml);
 }
 
 void TrayMenu::addFibEntry()
@@ -346,6 +329,7 @@ void TrayMenu::addFibEntry()
     dialog->hide();
 
     QProcess *process = new QProcess();
+    connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
     process->start(NDND_FIB_COMMAND, arguments);
 }
 
@@ -365,6 +349,7 @@ void TrayMenu::terminateDaemonAndClose()
     QProcess *process = new QProcess(this);
     process->start(NDND_STOP_COMMAND);
     connect(process,SIGNAL(finished(int)), qApp, SLOT(quit()));
+    connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
 }
 
 void TrayMenu::closeEvent(QCloseEvent *event)
@@ -399,29 +384,59 @@ void TrayMenu::setIcon(bool isConnected)
 
 void TrayMenu::daemonStatusUpdate()
 {
-    QXmlQuery query(QXmlQuery::XSLT20);
-    query.setFocus(QUrl("http://localhost:9695/?f=xml"));
+    urlManager->get(QNetworkRequest(QUrl("http://localhost:9695/?f=xml")));
+}
 
-    query.setQuery(QUrl("qrc:/resource/Resources/status.xslt")); // TODO: I suspect it's being read from HDD each time
-    query.evaluateTo(&statusXml);
+void TrayMenu::runXmlProc(QNetworkReply *reply)
+{
+    QByteArray buffer = reply->readAll();
+    applyStatusXslt = new QProcess();
 
-    if(statusXml == "") // there was an error during Query evaluation
+    QStringList arguments;
+    arguments << QApplication::applicationDirPath() + "/" + STATUS_XSLT_FILE << "-";
+    connect(applyStatusXslt,SIGNAL(finished(int)), this, SLOT(parseStatusXml()));
+    //connect(applyStatusXslt,SIGNAL(finished(int)), applyStatusXslt, SLOT(deleteLater()));
+    applyStatusXslt->start(XSLT_PROC,arguments);
+    applyStatusXslt->write(buffer);
+    applyStatusXslt->closeWriteChannel();
+
+    applyFibXslt = new QProcess();
+    QStringList args;
+    args << QApplication::applicationDirPath() + "/" + FIB_XSLT_FILE << "-";
+    connect(applyFibXslt,SIGNAL(finished(int)), this, SLOT(parseFibXml()));
+    //connect(applyFibXslt,SIGNAL(finished(int)), applyFibXslt, SLOT(deleteLater()));
+    applyFibXslt->start(XSLT_PROC,args);
+    applyFibXslt->write(buffer);
+    applyFibXslt->closeWriteChannel();
+}
+
+void TrayMenu::parseStatusXml()
+{
+    QByteArray stdout = applyStatusXslt->readAllStandardOutput();
+    QByteArray stderr = applyStatusXslt->readAllStandardError();
+    applyStatusXslt->deleteLater();
+
+    statusXml = QString(stdout);
+
+    if((statusXml == "") || (stderr.length()>0)) // there was an error during Query evaluation
     {
         daemonStarted = false;
         setIcon(false);
-        statusIndicator->setText(tr("Starting..."));
+        statusIndicator->setText("Starting...");
 
         QProcess *process = new QProcess();
         if(enableHubDiscovery)
             connect(process, SIGNAL(finished(int)), networkManager, SLOT(autoconfigDaemon()));
+
+        connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
         process->start(NDND_START_COMMAND);
     }
     else
     {
         daemonStarted = true;
         setIcon(true);
-        statusIndicator->setText(tr("Active"));
-        //qDebug() << statusXml;
+        statusIndicator->setText("Active");
+
         QString interestIn = statusXml.mid(statusXml.indexOf("<in>")+4, statusXml.indexOf("</in>") - (statusXml.indexOf("<in>")+4));
         QString interestOut = statusXml.mid(statusXml.indexOf("<out>")+5, statusXml.indexOf("</out>") - (statusXml.indexOf("<out>")+5));
         QString dataIn = statusXml.mid(statusXml.lastIndexOf("<in>")+4, statusXml.lastIndexOf("</in>") - (statusXml.lastIndexOf("<in>")+4));
@@ -460,12 +475,10 @@ void TrayMenu::daemonStatusUpdate()
         {
             m = interestOut.length() - QString("Sent").length();
             m *=3;
-            //qDebug() << "m=" << m;
             header = QString("%1%2").arg(padding).arg("  Sent / Recv",QString("  Sent / Recv").length() + m,' ');
         }
         else if(interestOut.length() - QString("Sent").length() < 0)
         {
-            //qDebug() << "truncating";
             padding.truncate(padding.length()-(QString("Sent").length() - interestOut.length()));
             header = padding + "Sent / Recv";
         }
@@ -478,9 +491,18 @@ void TrayMenu::daemonStatusUpdate()
         dataSentRecv->setText(dataStats);
         displayStatus->setText(header);
     }
+}
 
-    query.setQuery(QUrl("qrc:/resource/Resources/status-to-fib.xslt"));  // TODO: I suspect it's being read from HDD each time
-    query.evaluateTo(&fibContentsXml);
+void TrayMenu::parseFibXml()
+{
+    QByteArray stdout = applyFibXslt->readAllStandardOutput();
+    QByteArray stderr = applyFibXslt->readAllStandardError();
+    applyFibXslt->deleteLater();
+
+    fibContentsXml = QString(stdout);
+
+    if((stdout == "") || (stderr.length()>0))
+        return;
 
     if ((enableHubDiscovery) && (fibContentsXml.indexOf("ndn:/autoconf-route",0,Qt::CaseInsensitive) == -1))
     {
@@ -493,13 +515,21 @@ void TrayMenu::daemonStatusUpdate()
     xmldoc.setContent(fibContentsXml);
     root=xmldoc.documentElement();
 
+    if(model != NULL)
+    {
+        scrollPosition = ui->tableView->verticalScrollBar()->value();
+        model->clear();
+        delete model;
+    }
+
     model = new QStandardItemModel(root.childNodes().count(),3);
-    model->setHorizontalHeaderItem(0, new QStandardItem(tr("NDN prefix")));
-    model->setHorizontalHeaderItem(1, new QStandardItem(tr("Face ID")));
-    model->setHorizontalHeaderItem(2, new QStandardItem(tr("Endpoint")));
+    model->setHorizontalHeaderItem(0, new QStandardItem("NDN prefix"));
+    model->setHorizontalHeaderItem(1, new QStandardItem("Face ID"));
+    model->setHorizontalHeaderItem(2, new QStandardItem("Endpoint"));
 
     int row = 0;
     QDomNode fibEntry=root.firstChild();
+
     while (!fibEntry.isNull())
     {
         QDomNodeList properties = fibEntry.childNodes();
@@ -514,12 +544,20 @@ void TrayMenu::daemonStatusUpdate()
 
         fibEntry = fibEntry.nextSibling();
         row++;
-   }
+    }
 
     ui->tableView->setModel(model);
+    //ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    ui->tableView->setColumnWidth(0, 260);
+    ui->tableView->setColumnWidth(1, 57);
+    ui->tableView->setColumnWidth(2, 150);
 
     if(selectedRow >= 0)
         ui->tableView->selectRow(selectedRow);
+
+    if(scrollPosition >= 0)
+        ui->tableView->verticalScrollBar()->setValue(scrollPosition);
 }
 
 void TrayMenu::createTableView()
@@ -529,6 +567,7 @@ void TrayMenu::createTableView()
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     selectedRow = -1;
+    scrollPosition = -1;
 }
 
 void TrayMenu::selectTableRow()
@@ -553,6 +592,7 @@ void TrayMenu::deleteFibEntry()
     arguments << "del" << prefix->text() << "face" << faceID->text();
 
     QProcess *process = new QProcess();
+    connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
     process->start(NDND_FIB_COMMAND, arguments);
 }
 
@@ -572,6 +612,8 @@ TrayMenu::~TrayMenu()
     delete statusUpdateThread;
     delete daemonStatusTimer;
     delete dialog;
+    delete networkManager;
+    delete persistentSettings;
 }
 
 #if WAF

@@ -72,6 +72,14 @@ FibInputDialog::getTunnelType()
     return tunnelComboBox->currentText();
 }
 
+void
+FibInputDialog::clear()
+{
+    prefixTextField->setText("");
+    tunnelComboBox->setCurrentIndex(0);
+    endpointTextField->setText("");
+}
+
 #if WAF
 #include "fib-input-dialog.moc"
 #include "fib-input-dialog.cpp.moc"

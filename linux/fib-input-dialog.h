@@ -22,6 +22,7 @@ class FibInputDialog : public QDialog
 
 public:
     FibInputDialog(QWidget *parent = 0);
+    void clear();
     QString getPrefixName();
     QString getEndpoint();
     QString getTunnelType();
