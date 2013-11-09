@@ -602,7 +602,7 @@ void TrayMenu::deleteFibEntry()
 TrayMenu::~TrayMenu()
 {
     daemonStatusTimer->stop();
-    statusUpdateThread->exit();
+    statusUpdateThread->exit(0);
     delete ui;
     delete trayIcon;
     delete trayIconMenu;
@@ -613,7 +613,6 @@ TrayMenu::~TrayMenu()
     delete openSecuritySettings;
     delete toolBar;
     delete statusUpdateThread;
-    delete daemonStatusTimer;
     delete dialog;
     delete networkManager;
     delete persistentSettings;
