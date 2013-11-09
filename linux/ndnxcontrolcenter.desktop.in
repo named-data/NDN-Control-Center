@@ -1,7 +1,7 @@
 [Desktop Entry]
 Type=Application
 Name=NDNx Control Center
-Exec=/home/iliamo/Qtprojects/untitled2-build-desktop-Qt_4_8_1_in_PATH__System__Release/untitled2
+Exec=@BINDIR@/@BINARY@
 X-GNOME-Autostart-enabled=true
 X-KDE-autostart-after=panel
 X-GNOME-Autostart-Phase=Application

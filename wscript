@@ -5,7 +5,7 @@ APPNAME='ndnx-control-center'
 from waflib import Logs, Utils, Task, TaskGen
 
 def options(opt):
-    opt.load('compiler_c compiler_cxx qt4')
+    opt.load('compiler_c compiler_cxx qt4 gnu_dirs')
     opt.load('sparkle xcode', tooldir='waf-tools')
 
     grp = opt.add_option_group ('NDNx Control Center options')
@@ -50,8 +50,11 @@ def configure(conf):
         conf.load('sparkle')
     else:
         conf.load('qt4')
+        conf.load('gnu_dirs')
         conf.find_program('xsltproc', mandatory=True)
         conf.define('XSLTPROC', conf.env['XSLTPROC'])
+
+        conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/ndnx-control-center", conf.env))
         
         if Utils.unversioned_sys_platform () == "darwin":
             conf.define('OSX_BUILD', 1)
@@ -74,6 +77,15 @@ def build (bld):
             mac_frameworks = "osx/Frameworks/Sparkle.framework",
             )
     else:
+        bld (features = "subst",
+             source = bld.path.ant_glob(['linux/**/*.in']),
+             target = [node.change_ext('', '.in') for node in bld.path.ant_glob(['linux/**/*.in'])],
+             BINARY = "NDNx Control Center",
+             install_path = "${DATAROOTDIR}/ndnx-control-center"
+            )
+        bld.install_files("${DATAROOTDIR}/ndnx-control-center",
+                          bld.path.ant_glob(['linux/Resources/*']))
+
         bld (
             target = "NDNx Control Center",
             features=['qt4', 'cxxprogram', 'cxx'],

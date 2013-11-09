@@ -189,7 +189,7 @@ void TrayMenu::copyFile()
     QProcess *process = new QProcess();
     connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
     QStringList arguments;
-    arguments << QApplication::applicationDirPath() + "/" + SHORTCUT_FILE << QDir::homePath() + AUTOSTART_DIRECTORY;
+    arguments << QString(RESOURCES_DIR) + "/" + SHORTCUT_FILE << QDir::homePath() + AUTOSTART_DIRECTORY;
     process->start("cp",arguments);
 }
 
@@ -395,7 +395,7 @@ void TrayMenu::runXmlProc(QNetworkReply *reply)
     applyStatusXslt = new QProcess();
 
     QStringList arguments;
-    arguments << QApplication::applicationDirPath() + "/" + STATUS_XSLT_FILE << "-";
+    arguments << QString(RESOURCES_DIR) + "/" + STATUS_XSLT_FILE << "-";
     connect(applyStatusXslt,SIGNAL(finished(int)), this, SLOT(parseStatusXml()));
     //connect(applyStatusXslt,SIGNAL(finished(int)), applyStatusXslt, SLOT(deleteLater()));
     applyStatusXslt->start(XSLTPROC,arguments);
@@ -404,7 +404,7 @@ void TrayMenu::runXmlProc(QNetworkReply *reply)
 
     applyFibXslt = new QProcess();
     QStringList args;
-    args << QApplication::applicationDirPath() + "/" + FIB_XSLT_FILE << "-";
+    args << QString(RESOURCES_DIR) + "/" + FIB_XSLT_FILE << "-";
     connect(applyFibXslt,SIGNAL(finished(int)), this, SLOT(parseFibXml()));
     //connect(applyFibXslt,SIGNAL(finished(int)), applyFibXslt, SLOT(deleteLater()));
     applyFibXslt->start(XSLTPROC,args);
