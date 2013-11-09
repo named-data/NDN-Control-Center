@@ -251,7 +251,8 @@ void TrayMenu::createTrayIcon()
     trayIconMenu->addAction(open);
 
     close = new QAction("Quit...", this);
-    connect(close, SIGNAL(triggered()), this, SLOT(confirmQuit()));
+    // connect(close, SIGNAL(triggered()), this, SLOT(confirmQuit()));
+    connect(close, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIconMenu->addAction(close);
 
     trayIcon = new QSystemTrayIcon(this);
@@ -335,24 +336,24 @@ void TrayMenu::addFibEntry()
     process->start(NDND_FIB_COMMAND, arguments);
 }
 
-void TrayMenu::confirmQuit()
-{
-    if(shutdownOnExit)
-        terminateDaemonAndClose();
-    else
-    {
-        QuitDialog dialog(this);
-        dialog.exec();
-    }
-}
+// void TrayMenu::confirmQuit()
+// {
+//     if(shutdownOnExit)
+//         terminateDaemonAndClose();
+//     else
+//     {
+//         QuitDialog dialog(this);
+//         dialog.exec();
+//     }
+// }
 
-void TrayMenu::terminateDaemonAndClose()
-{
-    QProcess *process = new QProcess(this);
-    process->start(NDND_STOP_COMMAND);
-    connect(process,SIGNAL(finished(int)), qApp, SLOT(quit()));
-    connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
-}
+// void TrayMenu::terminateDaemonAndClose()
+// {
+//     QProcess *process = new QProcess(this);
+//     process->start(NDND_STOP_COMMAND);
+//     connect(process,SIGNAL(finished(int)), qApp, SLOT(quit()));
+//     connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
+// }
 
 void TrayMenu::closeEvent(QCloseEvent *event)
 {
@@ -424,14 +425,14 @@ void TrayMenu::parseStatusXml()
     {
         daemonStarted = false;
         setIcon(false);
-        statusIndicator->setText("Starting...");
+        statusIndicator->setText("Inactive");
 
-        QProcess *process = new QProcess();
-        if(enableHubDiscovery)
-            connect(process, SIGNAL(finished(int)), networkManager, SLOT(autoconfigDaemon()));
-
-        connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
-        process->start(NDND_START_COMMAND);
+        // QProcess *process = new QProcess();
+        // if(enableHubDiscovery)
+        //     connect(process, SIGNAL(finished(int)), networkManager, SLOT(autoconfigDaemon()));
+        // 
+        // connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
+        // process->start(NDND_START_COMMAND);
     }
     else
     {

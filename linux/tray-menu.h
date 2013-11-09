@@ -113,9 +113,9 @@ private slots:
     void openRoutingStatus();
     void openCertificationPage();
     void displayPopup();
-    void confirmQuit();
+    // void confirmQuit();
     void showFibInputDialog();
-    void terminateDaemonAndClose();
+    // void terminateDaemonAndClose();
     void addFibEntry();
     void daemonStatusUpdate();
     void selectTableRow();

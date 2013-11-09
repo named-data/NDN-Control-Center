@@ -27,13 +27,14 @@ def configure(conf):
         conf.end_msg ('ok')
 
     conf.define('NDNX_ROOT', conf.options.ndnx_root)
-    conf.define('NDND_START_COMMAND', '%s/bin/ndndstart' % conf.options.ndnx_root)
-    conf.define('NDND_STOP_COMMAND', '%s/bin/ndndstop' % conf.options.ndnx_root)
     conf.define('NDND_STATUS_COMMAND', '%s/bin/ndndsmoketest' % conf.options.ndnx_root)
     conf.define('NDND_FIB_COMMAND',  '%s/bin/ndndc' % conf.options.ndnx_root)
     conf.define('NDND_AUTOCONFIG_COMMAND', '%s/bin/ndnd-autoconfig' % conf.options.ndnx_root)
     
     if Utils.unversioned_sys_platform () == "darwin" and not conf.options.build_qt:
+        conf.define('NDND_START_COMMAND', '%s/bin/ndndstart' % conf.options.ndnx_root)
+        conf.define('NDND_STOP_COMMAND', '%s/bin/ndndstop' % conf.options.ndnx_root)
+
         conf.env.BUILD_OSX_NATIVE = 1
         
         conf.find_program('ibtool', var='IBTOOL', mandatory=False)
