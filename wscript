@@ -50,6 +50,8 @@ def configure(conf):
         conf.load('sparkle')
     else:
         conf.load('qt4')
+        conf.find_program('xsltproc', mandatory=True)
+        conf.define('XSLTPROC', conf.env['XSLTPROC'])
         
         if Utils.unversioned_sys_platform () == "darwin":
             conf.define('OSX_BUILD', 1)

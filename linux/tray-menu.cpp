@@ -5,6 +5,8 @@
  * @author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
+#include "config.h"
+
 #include "tray-menu.h"
 #include "ui_traymenu.h"   //generated from traymenu.ui
 #include "quit-dialog.h"
@@ -384,7 +386,7 @@ void TrayMenu::setIcon(bool isConnected)
 
 void TrayMenu::daemonStatusUpdate()
 {
-    urlManager->get(QNetworkRequest(QUrl("http://localhost:9695/?f=xml")));
+    urlManager->get(QNetworkRequest(QUrl("http://localhost:6363/?f=xml")));
 }
 
 void TrayMenu::runXmlProc(QNetworkReply *reply)
@@ -396,7 +398,7 @@ void TrayMenu::runXmlProc(QNetworkReply *reply)
     arguments << QApplication::applicationDirPath() + "/" + STATUS_XSLT_FILE << "-";
     connect(applyStatusXslt,SIGNAL(finished(int)), this, SLOT(parseStatusXml()));
     //connect(applyStatusXslt,SIGNAL(finished(int)), applyStatusXslt, SLOT(deleteLater()));
-    applyStatusXslt->start(XSLT_PROC,arguments);
+    applyStatusXslt->start(XSLTPROC,arguments);
     applyStatusXslt->write(buffer);
     applyStatusXslt->closeWriteChannel();
 
@@ -405,7 +407,7 @@ void TrayMenu::runXmlProc(QNetworkReply *reply)
     args << QApplication::applicationDirPath() + "/" + FIB_XSLT_FILE << "-";
     connect(applyFibXslt,SIGNAL(finished(int)), this, SLOT(parseFibXml()));
     //connect(applyFibXslt,SIGNAL(finished(int)), applyFibXslt, SLOT(deleteLater()));
-    applyFibXslt->start(XSLT_PROC,args);
+    applyFibXslt->start(XSLTPROC,args);
     applyFibXslt->write(buffer);
     applyFibXslt->closeWriteChannel();
 }

@@ -27,12 +27,6 @@
 #include "quit-dialog.h"
 #include "network-manager.h"
 
-#define NDND_START_COMMAND "/usr/local/bin/ndndstart"
-#define NDND_STOP_COMMAND "/usr/local/bin/ndndstop"
-#define NDND_STATUS_COMMAND "/usr/local/bin/ndndsmoketest"
-#define NDND_FIB_COMMAND "/usr/local/bin/ndndc"
-#define XSLT_PROC "xsltproc"
-
 #define ALLOW_SOFTWARE_UPDATES "AllowAutomaticUpdates"
 #define ENABLE_HUB_DISCOVERY "EnableHubDiscovery"
 #define ENABLE_START_ON_LOGIN "enableStartOnLogin"

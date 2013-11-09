@@ -5,6 +5,7 @@
  * @author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
+#include "config.h"
 #include "network-manager.h"
 
 NetworkManager::NetworkManager()

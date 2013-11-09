@@ -11,7 +11,6 @@
 #ifndef NETWORKMANAGER_H
 #define NETWORKMANAGER_H
 
-#define NDND_AUTOCONFIG_COMMAND "/usr/local/bin/ndnd-autoconfig"
 #define NM_STATE_DISCONNECTED 20
 #define NM_STATE_CONNECTING 40
 #define NM_STATE_CONNECTED_GLOBAL 70
