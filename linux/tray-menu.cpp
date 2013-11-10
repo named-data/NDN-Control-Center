@@ -23,7 +23,8 @@
 #include <QLineEdit>
 #include <QDir>
 #include <QScrollBar>
-
+#include <QHBoxLayout>
+#include <QVBoxLayout>
 
 TrayMenu::TrayMenu(QWidget *parent) :
     QMainWindow(parent),
@@ -50,10 +51,8 @@ TrayMenu::TrayMenu(QWidget *parent) :
     connect(ui->openRoutingStatusButton, SIGNAL(pressed()), this, SLOT(openRoutingStatus()));
     connect(ui->addFibButton, SIGNAL(pressed()), this, SLOT(showFibInputDialog()));
     connect(ui->deleteFibButton, SIGNAL(released()), this, SLOT(deleteFibEntry()));
-    connect(ui->softwareUpdateCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeSoftwareUpdate()));
     connect(ui->hubDiscoveryCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeHubDiscovery()));
     connect(ui->loginStartCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeLoginStart()));
-    connect(ui->shutdownCheckbox, SIGNAL(stateChanged(int)), this, SLOT(changeShutdownExit()));
     connect(ui->tableView, SIGNAL(clicked(QModelIndex)), this, SLOT(selectTableRow()));
     connect(ui->openNdnCertificationButton, SIGNAL(released()), this, SLOT(openCertificationPage()));
 
@@ -75,18 +74,6 @@ TrayMenu::TrayMenu(QWidget *parent) :
 void TrayMenu::loadSettings()
 {
     QVariant value;
-
-    value = persistentSettings->value(ALLOW_SOFTWARE_UPDATES);
-    if(!value.isNull())
-    {
-        allowAutomaticUpdates = value.toBool();
-        ui->softwareUpdateCheckbox->setChecked(allowAutomaticUpdates);
-    }
-    else
-    {
-        ui->softwareUpdateCheckbox->setChecked(true);
-        changeSoftwareUpdate();
-    }
 
     value = persistentSettings->value(ENABLE_HUB_DISCOVERY);
     if(!value.isNull())
@@ -110,32 +97,6 @@ void TrayMenu::loadSettings()
     {
         ui->loginStartCheckbox->setChecked(false);
         changeLoginStart();
-    }
-
-    value = persistentSettings->value(SHUTDOWN_ON_EXIT);
-    if(!value.isNull())
-    {
-        shutdownOnExit = value.toBool();
-        ui->shutdownCheckbox->setChecked(shutdownOnExit);
-    }
-    else
-    {
-        ui->shutdownCheckbox->setChecked(false);
-        changeShutdownExit();
-    }
-}
-
-void TrayMenu::changeSoftwareUpdate()
-{
-    if(ui->softwareUpdateCheckbox->isChecked())
-    {
-        allowAutomaticUpdates = true;
-        persistentSettings->setValue(ALLOW_SOFTWARE_UPDATES, true);
-    }
-    else
-    {
-        allowAutomaticUpdates = false;
-        persistentSettings->setValue(ALLOW_SOFTWARE_UPDATES, false);
     }
 }
 
@@ -193,20 +154,6 @@ void TrayMenu::copyFile()
     process->start("cp",arguments);
 }
 
-void TrayMenu::changeShutdownExit()
-{
-    if(ui->shutdownCheckbox->isChecked())
-    {
-        shutdownOnExit = true;
-        persistentSettings->setValue(SHUTDOWN_ON_EXIT, true);
-    }
-    else
-    {
-        shutdownOnExit = false;
-        persistentSettings->setValue(SHUTDOWN_ON_EXIT, false);
-    }
-}
-
 void TrayMenu::showFibInputDialog()
 {
     dialog->clear();
@@ -250,7 +197,7 @@ void TrayMenu::createTrayIcon()
     connect(open, SIGNAL(triggered()), this, SLOT(show()));
     trayIconMenu->addAction(open);
 
-    close = new QAction("Quit...", this);
+    close = new QAction("Quit", this);
     // connect(close, SIGNAL(triggered()), this, SLOT(confirmQuit()));
     connect(close, SIGNAL(triggered()), qApp, SLOT(quit()));
     trayIconMenu->addAction(close);
@@ -268,14 +215,13 @@ void TrayMenu::createTrayIcon()
 
 void TrayMenu::createToolbar()
 {
-    toolBar = new QToolBar(this);
-    toolBar->setFloatable(false);
-    toolBar->setMovable(false);
-    toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    toolBar->setAllowedAreas(Qt::TopToolBarArea);
-    toolBar->setOrientation(Qt::Horizontal);
-    toolBar->setIconSize(QSize(32,32));
-    toolBar->resize(this->width(), 64);
+    ui->toolBar->setFloatable(false);
+    ui->toolBar->setMovable(false);
+    ui->toolBar->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
+    ui->toolBar->setAllowedAreas(Qt::TopToolBarArea);
+    ui->toolBar->setOrientation(Qt::Horizontal);
+    ui->toolBar->setIconSize(QSize(32,32));
+    ui->toolBar->resize(this->width(), 64);
 
     openGeneralSettings = new QAction("General", this);
     openGeneralSettings->setIcon(QIcon(":/resource/Resources/preferences-desktop.png"));
@@ -289,9 +235,9 @@ void TrayMenu::createToolbar()
     openSecuritySettings->setIcon(QIcon(":/resource/Resources/emblem-system.png"));
     connect(openSecuritySettings,SIGNAL(triggered()),this, SLOT(securitySettingsClicked()));
 
-    toolBar->addAction(openGeneralSettings);
-    toolBar->addAction(openForwardingSettings);
-    toolBar->addAction(openSecuritySettings);
+    ui->toolBar->addAction(openGeneralSettings);
+    ui->toolBar->addAction(openForwardingSettings);
+    ui->toolBar->addAction(openSecuritySettings);
 }
 
 void TrayMenu::generalSettingsClicked()
@@ -335,25 +281,6 @@ void TrayMenu::addFibEntry()
     connect(process,SIGNAL(finished(int)),process, SLOT(deleteLater()));
     process->start(NDND_FIB_COMMAND, arguments);
 }
-
-// void TrayMenu::confirmQuit()
-// {
-//     if(shutdownOnExit)
-//         terminateDaemonAndClose();
-//     else
-//     {
-//         QuitDialog dialog(this);
-//         dialog.exec();
-//     }
-// }
-
-// void TrayMenu::terminateDaemonAndClose()
-// {
-//     QProcess *process = new QProcess(this);
-//     process->start(NDND_STOP_COMMAND);
-//     connect(process,SIGNAL(finished(int)), qApp, SLOT(quit()));
-//     connect(process,SIGNAL(finished(int)), process, SLOT(deleteLater()));
-// }
 
 void TrayMenu::closeEvent(QCloseEvent *event)
 {
@@ -550,12 +477,10 @@ void TrayMenu::parseFibXml()
     }
 
     ui->tableView->setModel(model);
-    //ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
-    ui->tableView->setColumnWidth(0, 260);
-    ui->tableView->setColumnWidth(1, 57);
-    ui->tableView->setColumnWidth(2, 150);
 
+    ui->tableView->setColumnWidth(0, ui->tableView->size().width() / 2 );
+    ui->tableView->setColumnWidth(1, ui->tableView->size().width() / 6 );
+    
     if(selectedRow >= 0)
         ui->tableView->selectRow(selectedRow);
 
@@ -565,12 +490,28 @@ void TrayMenu::parseFibXml()
 
 void TrayMenu::createTableView()
 {
-    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    ui->tableView->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    ui->tableView->horizontalHeader()->setStretchLastSection(true);
     ui->tableView->setSelectionMode(QAbstractItemView::SingleSelection);
     ui->tableView->setSelectionBehavior(QAbstractItemView::SelectRows);
 
     selectedRow = -1;
     scrollPosition = -1;
+
+    QHBoxLayout *hlayout = new QHBoxLayout();
+    hlayout->addWidget(ui->addFibButton,0, Qt::AlignLeft);
+    hlayout->addWidget(ui->deleteFibButton, 20, Qt::AlignLeft);
+
+    QVBoxLayout *vlayout = new QVBoxLayout();
+    vlayout->addWidget(ui->label);
+    vlayout->addWidget(ui->tableView);
+    vlayout->addLayout(hlayout);
+
+    ui->forwardingSettingsWidget->setLayout(vlayout);
+
+    QVBoxLayout *expanding = new QVBoxLayout();
+    expanding->addWidget(ui->forwardingSettingsWidget);
+    ui->centralWidget->setLayout(expanding); 
 }
 
 void TrayMenu::selectTableRow()
@@ -599,6 +540,15 @@ void TrayMenu::deleteFibEntry()
     process->start(NDND_FIB_COMMAND, arguments);
 }
 
+void TrayMenu::resizeEvent(QResizeEvent *  event)
+{
+    ui->tableView->setColumnWidth(0, ui->tableView->size().width() / 2);
+    ui->tableView->setColumnWidth(1, ui->tableView->size().width() / 6);
+}
+
+
+
+
 TrayMenu::~TrayMenu()
 {
     daemonStatusTimer->stop();
@@ -611,7 +561,6 @@ TrayMenu::~TrayMenu()
     delete openGeneralSettings;
     delete openForwardingSettings;
     delete openSecuritySettings;
-    delete toolBar;
     delete statusUpdateThread;
     delete dialog;
     delete networkManager;

@@ -63,13 +63,14 @@ private:
     void loadSettings();
     void makeAutostartDirectory();
 
+    void resizeEvent (QResizeEvent * event);
+
     bool daemonStarted;
 
     QSettings *persistentSettings;
 
     QSystemTrayIcon *trayIcon;
     QMenu *trayIconMenu;
-    QToolBar *toolBar;
 
     QTimer *daemonStatusTimer;
     QThread *statusUpdateThread;
@@ -96,10 +97,8 @@ private:
 
     FibInputDialog *dialog;
 
-    bool allowAutomaticUpdates;
     bool enableHubDiscovery;
     bool enableStartOnLogin;
-    bool shutdownOnExit;
 
     NetworkManager *networkManager;
     QNetworkAccessManager *urlManager;
@@ -120,10 +119,8 @@ private slots:
     void daemonStatusUpdate();
     void selectTableRow();
     void deleteFibEntry();
-    void changeSoftwareUpdate();
     void changeHubDiscovery();
     void changeLoginStart();
-    void changeShutdownExit();
     void copyFile();
     void runXmlProc(QNetworkReply *reply);
     void parseStatusXml();
