@@ -9,6 +9,7 @@
 #include "network-manager.h"
 
 NetworkManager::NetworkManager()
+  : isAutoconfigRunning(false)
 {
     if (!QDBusConnection::systemBus().isConnected())
     {
