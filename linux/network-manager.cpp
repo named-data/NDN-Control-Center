@@ -24,6 +24,11 @@ NetworkManager::NetworkManager()
                                           "/org/freedesktop/NetworkManager",
                                           "org.freedesktop.NetworkManager",
                                           "StateChanged", this, SLOT(stateChanged(uint)));
+
+    QDBusConnection::systemBus().connect("org.freedesktop.UPower",
+                                          "/org/freedesktop/UPower",
+                                          "org.freedesktop.UPower",
+                                          "Resuming", this, SLOT(autoconfigDaemon()));
 }
 
 void NetworkManager::stateChanged(uint state)
