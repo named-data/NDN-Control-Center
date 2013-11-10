@@ -79,16 +79,22 @@ def build (bld):
             )
     else:
         bld (features = "subst",
-             source = bld.path.ant_glob(['linux/**/*.in']),
-             target = [node.change_ext('', '.in') for node in bld.path.ant_glob(['linux/**/*.in'])],
-             BINARY = "NDNx\\ Control\\ Center",
+             source = 'linux/ndnxcontrolcenter.desktop.in',
+             target = 'linux/ndnxcontrolcenter.desktop',
+             BINARY = "ndnx-control-center",
              install_path = "${DATAROOTDIR}/ndnx-control-center"
+            )
+        bld (features = "subst",
+             source = 'linux/ndnx-control-center.desktop.in',
+             target = 'linux/ndnx-control-center.desktop',
+             BINARY = "ndnx-control-center",
+             install_path = "${DATAROOTDIR}/applications"
             )
         bld.install_files("${DATAROOTDIR}/ndnx-control-center",
                           bld.path.ant_glob(['linux/Resources/*']))
 
         bld (
-            target = "NDNx Control Center",
+            target = "ndnx-control-center",
             features=['qt4', 'cxxprogram', 'cxx'],
             includes = ". linux",
 
