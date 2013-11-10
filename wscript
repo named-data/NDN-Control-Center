@@ -81,7 +81,7 @@ def build (bld):
         bld (features = "subst",
              source = bld.path.ant_glob(['linux/**/*.in']),
              target = [node.change_ext('', '.in') for node in bld.path.ant_glob(['linux/**/*.in'])],
-             BINARY = "NDNx Control Center",
+             BINARY = "NDNx\\ Control\\ Center",
              install_path = "${DATAROOTDIR}/ndnx-control-center"
             )
         bld.install_files("${DATAROOTDIR}/ndnx-control-center",
