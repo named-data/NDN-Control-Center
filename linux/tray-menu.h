@@ -75,6 +75,7 @@ private:
     QTimer *daemonStatusTimer;
     QThread *statusUpdateThread;
 
+    QProcess *processLookup;
     QProcess *applyStatusXslt;
     QProcess *applyFibXslt;
 
@@ -125,6 +126,7 @@ private slots:
     void runXmlProc(QNetworkReply *reply);
     void parseStatusXml();
     void parseFibXml();
+    void parseProcessLookup();
 };
 
 #endif // TRAYMENU_H

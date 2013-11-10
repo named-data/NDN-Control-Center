@@ -30,6 +30,12 @@ TrayMenu::TrayMenu(QWidget *parent) :
     QMainWindow(parent),
     ui(new Ui::TrayMenu)
 {
+    processLookup = new QProcess(this);
+    QStringList arguments;
+    arguments << "-al";
+    connect(processLookup,SIGNAL(finished(int)), this, SLOT(parseProcessLookup()));
+    processLookup->start("ps",arguments);
+
     networkManager = new NetworkManager();
 
     QCoreApplication::setOrganizationName("UCLA");
@@ -547,7 +553,18 @@ void TrayMenu::resizeEvent(QResizeEvent *  event)
 }
 
 
+void TrayMenu::parseProcessLookup()
+{
+    QByteArray stdout = processLookup->readAllStandardOutput();
+    processLookup->deleteLater();
+     
+    QString s = QString(stdout);
 
+    if(s == "")
+      return;
+    else if(s.indexOf("ndnx-control") != s.lastIndexOf("ndnx-control"))
+      qApp->quit();
+}
 
 TrayMenu::~TrayMenu()
 {
