@@ -20,8 +20,8 @@ def options(opt):
 def configure(conf):
     conf.load('compiler_c compiler_cxx')
 
-    conf.start_msg('Checking for NDNx in %s' % conf.options.ndnx_root)
-    if not conf.find_file('ndnd ndndstatus ndndstart ndndstop', path_list='%s/bin' % conf.options.ndnx_root, mandatory=False):
+    conf.start_msg('Checking for ndnd-tlv in %s' % conf.options.ndnx_root)
+    if not conf.find_file('ndnd-tlv ndnd-tlv-status ndnd-tlv-start ndnd-tlv-stop', path_list='%s/bin' % conf.options.ndnx_root, mandatory=False):
         conf.fatal ('not found', 'RED')
     else:
         conf.end_msg ('ok')
@@ -32,8 +32,8 @@ def configure(conf):
     conf.define('NDND_AUTOCONFIG_COMMAND', '%s/bin/ndnd-autoconfig' % conf.options.ndnx_root)
     
     if Utils.unversioned_sys_platform () == "darwin" and not conf.options.build_qt:
-        conf.define('NDND_START_COMMAND', '%s/bin/ndndstart' % conf.options.ndnx_root)
-        conf.define('NDND_STOP_COMMAND', '%s/bin/ndndstop' % conf.options.ndnx_root)
+        conf.define('NDND_START_COMMAND', '%s/bin/ndnd-tlv-start' % conf.options.ndnx_root)
+        conf.define('NDND_STOP_COMMAND', '%s/bin/ndnd-tlv-stop' % conf.options.ndnx_root)
 
         conf.env.BUILD_OSX_NATIVE = 1
         
