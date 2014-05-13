@@ -1,4 +1,4 @@
-/* -*- Mode: objc; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
  * Copyright (c) 2013-2014, Regents of the University of California,
  *
@@ -16,21 +16,31 @@
  * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \author Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
- * \author Ilya Moiseenko <http://ilyamoiseenko.com/>
+ * \author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
-#import <Cocoa/Cocoa.h>
+#include <QDialog>
+#include <QLabel>
+#include <QDialogButtonBox>
+#include <QPushButton>
 
-@interface FibTableController : NSObject <NSTableViewDataSource, NSXMLParserDelegate>
+#ifndef NCC_QT_QUIT_DIALOG_H
+#define NCC_QT_QUIT_DIALOG_H
+
+class QuitDialog : public QDialog
 {
-  NSXMLDocument *m_document;
-}
+  Q_OBJECT
 
-@property NSTableView *m_tableView;
+public:
+  QuitDialog(QWidget *parent = 0);
 
-- (void)loadStatus:(NSXMLDocument *)document;
-- (NSString *)getFaceByRowIndex:(NSInteger)index;
-- (NSString *)getPrefixByRowIndex:(NSInteger)index;
+private:
+  QLabel *question;
+  QLabel *information;
+  QDialogButtonBox *buttonBox;
+  QPushButton *confirmButton;
+  QPushButton *noButton;
+  QPushButton *cancelButton;
+};
 
-@end
+#endif // NCC_QT_QUIT_DIALOG_H

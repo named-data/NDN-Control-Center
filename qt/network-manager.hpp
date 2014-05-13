@@ -1,4 +1,4 @@
-/* -*- Mode: objc; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
  * Copyright (c) 2013-2014, Regents of the University of California,
  *
@@ -16,21 +16,38 @@
  * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \author Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
- * \author Ilya Moiseenko <http://ilyamoiseenko.com/>
+ * \author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
-#import <Cocoa/Cocoa.h>
+#include <QtDBus>
+#include <QProcess>
 
-@interface FibTableController : NSObject <NSTableViewDataSource, NSXMLParserDelegate>
+#ifndef NCC_QT_NETWORK_MANAGER_HPP
+#define NCC_QT_NETWORK_MANAGER_HPP
+
+#define NM_STATE_DISCONNECTED 20
+#define NM_STATE_CONNECTING 40
+#define NM_STATE_CONNECTED_GLOBAL 70
+
+class NetworkManager : public QObject
 {
-  NSXMLDocument *m_document;
-}
+     Q_OBJECT
 
-@property NSTableView *m_tableView;
+public:
+    NetworkManager();
+    bool IsAutoconfigRunning();
 
-- (void)loadStatus:(NSXMLDocument *)document;
-- (NSString *)getFaceByRowIndex:(NSInteger)index;
-- (NSString *)getPrefixByRowIndex:(NSInteger)index;
+public slots:
+    void autoconfigDaemon();
 
-@end
+private:
+    QProcess *autoconfigProcess;
+    bool isAutoconfigRunning;
+
+private slots:
+    void stateChanged(uint state);
+    void autoconfigFinished();
+};
+
+
+#endif // NCC_QT_NETWORK_MANAGER_HPP

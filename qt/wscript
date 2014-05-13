@@ -1,0 +1,46 @@
+# -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
+
+from waflib import Logs, Utils, Task, TaskGen
+
+top = '..'
+
+def configure(conf):
+    conf.load(['gnu_dirs', 'qt4'])
+
+    # conf.find_program('xsltproc', mandatory=True)
+    # conf.define('XSLTPROC', conf.env['XSLTPROC'])
+
+    conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/nfd-control-center", conf.env))
+
+    if Utils.unversioned_sys_platform() == "darwin":
+        conf.define('OSX_BUILD', 1)
+
+def build(bld):
+    app = bld(
+        features=['qt4', 'cxxprogram', 'cxx'],
+        includes = ".. .",
+
+        use = "QTCORE QTGUI QTXML QTXMLPATTERNS QTDBUS",
+
+        defines = "WAF",
+        source = bld.path.ant_glob(['*.cpp', '**/*.ui', '**/*.qrc']),
+        )
+
+    if Utils.unversioned_sys_platform() != "darwin":
+        app.target = "../nfd-control-center",
+
+        bld(features = "subst",
+             source = 'nfd-control-center.desktop.in',
+             target = 'nfd-control-center.desktop',
+             BINARY = "nfd-control-center",
+             install_path = "${DATAROOTDIR}/nfd-control-center"
+            )
+
+        bld.install_files("${DATAROOTDIR}/nfd-control-center",
+                      bld.path.ant_glob(['Resources/*']))
+    else:
+        app.target = "../NFD Control Center"
+        app.mac_app = True,
+        app.mac_plist = '../osx/Info.plist',
+        app.mac_resources = [i.path_from(bld.path)
+                               for i in bld.path.ant_glob('../osx/Resources/**/*')],

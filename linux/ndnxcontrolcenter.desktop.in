@@ -1,7 +1,0 @@
-[Desktop Entry]
-Type=Application
-Name=NDNx Control Center
-Exec=@BINDIR@/@BINARY@
-X-GNOME-Autostart-enabled=true
-X-KDE-autostart-after=panel
-X-GNOME-Autostart-Phase=Application

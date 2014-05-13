@@ -5,15 +5,15 @@
     <key>CFBundleDevelopmentRegion</key>
     <string>English</string>
     <key>CFBundleExecutable</key>
-    <string>NDNx Control Center</string>
+    <string>NFD Control Center</string>
     <key>CFBundleIconFile</key>
-    <string>ndnx-main.icns</string>
+    <string>nfd-main.icns</string>
     <key>CFBundleIdentifier</key>
     <string>net.named-data.control-center</string>
     <key>CFBundleInfoDictionaryVersion</key>
     <string>6.0</string>
     <key>CFBundleName</key>
-    <string>NDNx Control Center</string>
+    <string>NFD Control Center</string>
     <key>CFBundlePackageType</key>
     <string>APPL</string>
     <key>CFBundleSignature</key>

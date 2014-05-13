@@ -1,12 +1,26 @@
-/* -*- Mode: obj; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
-/*
- * @copyright See LICENCE for copyright and license information.
+/* -*- Mode: objc; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/**
+ * Copyright (c) 2013-2014, Regents of the University of California,
  *
- * @author Alexander Afanasyev <alexander.afanasyev@ucla.edu>
- * @author Ilya Moiseenko <iliamo@ucla.edu>
+ * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
+ * authors and contributors.
+ *
+ * NFD Control Center is free software: you can redistribute it and/or modify it under the
+ * terms of the GNU General Public License as published by the Free Software Foundation,
+ * either version 3 of the License, or (at your option) any later version.
+ *
+ * NFD Control Center is distributed in the hope that it will be useful, but WITHOUT ANY
+ * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
+ * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License along with NFD
+ * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
+ *
+ * \author Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
+ * \author Ilya Moiseenko <http://ilyamoiseenko.com/>
  */
 
-#include "config.h"
+#include "config.hpp"
 #import "menu-delegate.h"
 #import "ndnd-status-operation.h"
 #import "tight-menu-item-view.h"
@@ -28,9 +42,9 @@
   interestRecv = @"N/A";
   dataSent = @"N/A";
   dataRecv = @"N/A";
-  
+
   m_autoconfInProgress = false;
-  m_operationQueue = [[NSOperationQueue alloc] init];
+  // m_operationQueue = [[NSOperationQueue alloc] init];
   return self;
 }
 
@@ -45,30 +59,33 @@
                   nil
      ];
   [[NSUserDefaults standardUserDefaults] registerDefaults:appDefaults];
- 
+
    // Other initialization...
 
-  m_daemonStarted = false; 
+  m_daemonStarted = false;
 
   NSBundle *bundle = [NSBundle bundleForClass:[self class]];
   m_connectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatConnected" ofType:@"png"]];
   m_disconnectedIcon = [[NSImage alloc] initWithContentsOfFile:[bundle pathForResource:@"FlatDisconnected" ofType:@"png"]];
-  m_statusXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status" ofType:@"xslt"]];
-  m_statusToFibXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status-to-fib" ofType:@"xslt"]];
-  
-  [NSTimer scheduledTimerWithTimeInterval: 1.0
-           target: self
-           selector:@selector(onTick:)
-           userInfo: nil
-           repeats:YES];
-  [self updateStatus];
 
-  m_systemEvents = [[SystemEvents alloc] init];
+  [statusItem setImage:m_disconnectedIcon];
+
+  // m_statusXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status" ofType:@"xslt"]];
+  // m_statusToFibXslt = [NSData dataWithContentsOfFile:[bundle pathForResource:@"status-to-fib" ofType:@"xslt"]];
+
+  // [NSTimer scheduledTimerWithTimeInterval: 1.0
+  //          target: self
+  //          selector:@selector(onTick:)
+  //          userInfo: nil
+  //          repeats:YES];
+  // [self updateStatus];
+
+  // m_systemEvents = [[SystemEvents alloc] init];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification
 {
-  [m_systemEvents disable];
+  // [m_systemEvents disable];
 }
 
 -(void)awakeFromNib
@@ -81,8 +98,7 @@
   //[statusItem setTarget:self];
 
   [statusItem setTitle:@""];
-  [statusItem setImage:m_disconnectedIcon];
-  
+
   float menuItemHeight = 20;
 
   NSRect viewRect = NSMakeRect(0, 0, /* width autoresizes */ 1, menuItemHeight);
@@ -91,7 +107,7 @@
 
   [connectionStatus setView:connectionStatusView];
   [connectionStatus setTarget:self];
-  
+
   [daemonStatus setView: daemonStatusView];
   [daemonStatus setTarget:self];
 }
@@ -105,12 +121,12 @@
   if ([[NSUserDefaults standardUserDefaults] boolForKey:@"shutdownNdndOnExit"]) {
     [m_operationQueue cancelAllOperations];
 
-    [m_operationQueue addOperationWithBlock:^{
-        NSTask *task = [[NSTask alloc] init];
-        [task setLaunchPath: @NDND_STOP_COMMAND];
-        [task launch];
-        [task waitUntilExit];
-      }];
+    // [m_operationQueue addOperationWithBlock:^{
+    //     NSTask *task = [[NSTask alloc] init];
+    //     [task setLaunchPath: @NDND_STOP_COMMAND];
+    //     [task launch];
+    //     [task waitUntilExit];
+    //   }];
 
     [m_operationQueue waitUntilAllOperationsAreFinished];
     [NSApp terminate:self];
@@ -130,12 +146,12 @@
       // "YES" stop ndnd
       [m_operationQueue cancelAllOperations];
 
-      [m_operationQueue addOperationWithBlock:^{
-          NSTask *task = [[NSTask alloc] init];
-          [task setLaunchPath: @NDND_STOP_COMMAND];
-          [task launch];
-          [task waitUntilExit];
-        }];
+      // [m_operationQueue addOperationWithBlock:^{
+      //     NSTask *task = [[NSTask alloc] init];
+      //     [task setLaunchPath: @NDND_STOP_COMMAND];
+      //     [task launch];
+      //     [task waitUntilExit];
+      //   }];
 
       [m_operationQueue waitUntilAllOperationsAreFinished];
       [NSApp terminate:self];
@@ -169,102 +185,102 @@
 
 - (void)statusUpdated:(NSXMLDocument*)document
 {
-  if (!m_daemonStarted) {
-    m_daemonStarted = true;
-    [connectionStatusView setStatus:@"Active"];
-    
-    [statusItem setImage:m_connectedIcon];
-  }
+  // if (!m_daemonStarted) {
+  //   m_daemonStarted = true;
+  //   [connectionStatusView setStatus:@"Active"];
 
-  NSXMLDocument *statusXml = [document objectByApplyingXSLT:m_statusXslt
-                              arguments:nil
-                              error:nil];
+  //   [statusItem setImage:m_connectedIcon];
+  // }
 
-  NSXMLDocument *statusFibXml = [document objectByApplyingXSLT:m_statusToFibXslt
-                                 arguments:nil
-                                 error:nil];
-  
-  NSXMLNode *element = [[statusXml rootElement] childAtIndex:0]; //data
-  [self setDataRecv:[[element childAtIndex:0] stringValue]];
-  [self setDataSent:[[element childAtIndex:1] stringValue]];
-  
-  element = [[statusXml rootElement] childAtIndex:1]; //interests
-  [self setInterestRecv:[[element childAtIndex:0] stringValue]];
-  [self setInterestSent:[[element childAtIndex:1] stringValue]];
+  // NSXMLDocument *statusXml = [document objectByApplyingXSLT:m_statusXslt
+  //                             arguments:nil
+  //                             error:nil];
 
-  [preferencesDelegate updateFibStatus:statusFibXml];
+  // NSXMLDocument *statusFibXml = [document objectByApplyingXSLT:m_statusToFibXslt
+  //                                arguments:nil
+  //                                error:nil];
 
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) { 
-    NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
-    if ([autoconf count] == 0)
-      {
-        [self restartDaemon:nil];
-      }
-  }
+  // NSXMLNode *element = [[statusXml rootElement] childAtIndex:0]; //data
+  // [self setDataRecv:[[element childAtIndex:0] stringValue]];
+  // [self setDataSent:[[element childAtIndex:1] stringValue]];
+
+  // element = [[statusXml rootElement] childAtIndex:1]; //interests
+  // [self setInterestRecv:[[element childAtIndex:0] stringValue]];
+  // [self setInterestSent:[[element childAtIndex:1] stringValue]];
+
+  // [preferencesDelegate updateFibStatus:statusFibXml];
+
+  // if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) {
+  //   NSArray *autoconf = [[statusFibXml rootElement] nodesForXPath:@"//fib/prefix[text()='ndn:/autoconf-route']" error:nil];
+  //   if ([autoconf count] == 0)
+  //     {
+  //       [self restartDaemon:nil];
+  //     }
+  // }
 }
 
 - (void)statusUnavailable:(id)none
 {
-  // try start ndnd if it is not started yet
-  if (m_daemonStarted) {
-    m_daemonStarted = false;
-    
-    [connectionStatusView setStatus:@"Starting..."];
-    
-    [statusItem setImage:m_disconnectedIcon];
-  }
+  // // try start ndnd if it is not started yet
+  // if (m_daemonStarted) {
+  //   m_daemonStarted = false;
 
-  [self setInterestSent:@"N/A"];
-  [self setInterestRecv:@"N/A"];
-  [self setDataSent:@"N/A"];
-  [self setDataRecv:@"N/A"];
+  //   [connectionStatusView setStatus:@"Starting..."];
 
-  [preferencesDelegate updateFibStatus:nil];
+  //   [statusItem setImage:m_disconnectedIcon];
+  // }
 
-  m_autoconfInProgress = true;
-  
-  NSOperation *startOp = [NSBlockOperation blockOperationWithBlock:^{
-      NSTask *task = [[NSTask alloc] init];
-      [task setLaunchPath: @NDND_START_COMMAND];
-      [task launch];
-    }];
+  // [self setInterestSent:@"N/A"];
+  // [self setInterestRecv:@"N/A"];
+  // [self setDataSent:@"N/A"];
+  // [self setDataRecv:@"N/A"];
 
-  if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) {
-    NSOperation *autoconfOp = [NSBlockOperation blockOperationWithBlock:^{
-        NSTask *task = [[NSTask alloc] init];
-        [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
-        [task launch];
-        [task waitUntilExit];
+  // [preferencesDelegate updateFibStatus:nil];
 
-        m_autoconfInProgress = false;
-      }];
+  // m_autoconfInProgress = true;
 
-    [autoconfOp addDependency:startOp];
-    [m_operationQueue addOperation:autoconfOp];
-  }
+  // // NSOperation *startOp = [NSBlockOperation blockOperationWithBlock:^{
+  // //     NSTask *task = [[NSTask alloc] init];
+  // //     [task setLaunchPath: @NDND_START_COMMAND];
+  // //     [task launch];
+  // //   }];
 
-  [m_operationQueue addOperation:startOp];
+  // // if ([[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"]) {
+  // //   NSOperation *autoconfOp = [NSBlockOperation blockOperationWithBlock:^{
+  // //       NSTask *task = [[NSTask alloc] init];
+  // //       [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
+  // //       [task launch];
+  // //       [task waitUntilExit];
+
+  // //       m_autoconfInProgress = false;
+  // //     }];
+
+  // //   [autoconfOp addDependency:startOp];
+  // //   [m_operationQueue addOperation:autoconfOp];
+  // // }
+
+  // // [m_operationQueue addOperation:startOp];
 }
 
 -(void)restartDaemon:(id)none
 {
-  if (![[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"])
-    return;
-    
-  if (m_autoconfInProgress)
-    return;
+  // if (![[NSUserDefaults standardUserDefaults] boolForKey:@"enableHubDiscovery"])
+  //   return;
 
-  NSLog (@"No automatically detected route configured, trying to get one");
-  
-  m_autoconfInProgress = true;
-  [m_operationQueue addOperationWithBlock:^{
-      NSTask *task = [[NSTask alloc] init];
-      [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
-      [task launch];
-      [task waitUntilExit];
+  // if (m_autoconfInProgress)
+  //   return;
 
-      m_autoconfInProgress = false;
-    }];
+  // NSLog(@"No automatically detected route configured, trying to get one");
+
+  // // m_autoconfInProgress = true;
+  // // [m_operationQueue addOperationWithBlock:^{
+  // //     NSTask *task = [[NSTask alloc] init];
+  // //     [task setLaunchPath: @NDND_AUTOCONFIG_COMMAND];
+  // //     [task launch];
+  // //     [task waitUntilExit];
+
+  // //     m_autoconfInProgress = false;
+  // //   }];
 }
 
 @end

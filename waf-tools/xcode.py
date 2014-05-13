@@ -150,7 +150,7 @@ class PBXGroup(XCodeNode):
 	def add(self, root, sources):
 		folders = {}
 		def folder(n):
-			if n == root:
+			if not n.is_child_of(root):
 				return self
 			try:
 				return folders[n]
@@ -308,5 +308,3 @@ class xcode(Build.BuildContext):
 		node.mkdir()
 		node = node.make_node('project.pbxproj')
 		p.write(open(node.abspath(), 'w'))
-
-

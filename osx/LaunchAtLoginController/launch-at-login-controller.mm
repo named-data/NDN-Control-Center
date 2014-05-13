@@ -49,14 +49,14 @@ void sharedFileListDidChange(LSSharedFileListRef inList, void *context)
     self = [super init];
     loginItems = LSSharedFileListCreate(NULL, kLSSharedFileListSessionLoginItems, NULL);
     LSSharedFileListAddObserver(loginItems, CFRunLoopGetMain(),
-        (CFStringRef)NSDefaultRunLoopMode, sharedFileListDidChange, (voidPtr)CFBridgingRetain(self));
+        (__bridge CFStringRef)NSDefaultRunLoopMode, sharedFileListDidChange, (voidPtr)CFBridgingRetain(self));
     return self;
 }
 
 - (void) dealloc
 {
     LSSharedFileListRemoveObserver(loginItems, CFRunLoopGetMain(),
-        (CFStringRef)NSDefaultRunLoopMode, sharedFileListDidChange, (__bridge void *)(self));
+        (__bridge CFStringRef)NSDefaultRunLoopMode, sharedFileListDidChange, (__bridge void *)(self));
     CFRelease(loginItems);
 }
 

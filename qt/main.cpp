@@ -1,4 +1,4 @@
-/* -*- Mode: objc; c-file-style: "gnu"; indent-tabs-mode:nil -*- */
+/* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
  * Copyright (c) 2013-2014, Regents of the University of California,
  *
@@ -16,21 +16,17 @@
  * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  *
- * \author Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
- * \author Ilya Moiseenko <http://ilyamoiseenko.com/>
+ * \author Ilya Moiseenko <iliamo@ucla.edu>
  */
 
-#import <Cocoa/Cocoa.h>
+#include "tray-menu.hpp"
 
-@interface FibTableController : NSObject <NSTableViewDataSource, NSXMLParserDelegate>
+#include <QtGui/QApplication>
+
+int main(int argc, char *argv[])
 {
-  NSXMLDocument *m_document;
+  QApplication a(argc, argv);
+  TrayMenu w;
+
+  return a.exec();
 }
-
-@property NSTableView *m_tableView;
-
-- (void)loadStatus:(NSXMLDocument *)document;
-- (NSString *)getFaceByRowIndex:(NSInteger)index;
-- (NSString *)getPrefixByRowIndex:(NSInteger)index;
-
-@end
