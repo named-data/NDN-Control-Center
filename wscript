@@ -38,7 +38,7 @@ def configure(conf):
 
     conf.check_boost(lib="system thread")
 
-    if not conf.options.with_qt4 and not not conf.options.with_qt4 and Utils.unversioned_sys_platform() == "darwin":
+    if not conf.options.with_qt4 and not conf.options.with_qt5 and Utils.unversioned_sys_platform() == "darwin":
         conf.env.BUILD_OSX_NATIVE = 1
         conf.recurse('osx')
     else:

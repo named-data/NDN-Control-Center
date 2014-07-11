@@ -70,7 +70,7 @@ public:
   };
 
   explicit
-  ForwarderStatusModel(Face& face, QObject* parent = 0);
+  ForwarderStatusModel(QObject* parent = 0);
 
   int
   rowCount(const QModelIndex& parent = QModelIndex()) const;
@@ -83,9 +83,6 @@ public:
 
   QHash<int, QByteArray>
   roleNames() const;
-
-  Q_INVOKABLE void
-  fetchVersionInformation();
 
   void
   clear();
@@ -102,7 +99,6 @@ private slots:
   updateStatus(ndn::shared_ptr<const ndn::Data> data);
 
 private:
-  Face& m_face;
   QList<ForwarderStatusItem> m_items;
 };
 

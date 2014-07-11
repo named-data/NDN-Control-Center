@@ -39,18 +39,21 @@
 
 namespace ndn {
 
-TrayMenu::TrayMenu()
+TrayMenu::TrayMenu(QQmlContext* context)
+  : m_context(context)
+  , m_isNfdRunning(false)
 {
   menu = new QMenu(this);
   pref = new QAction("Preferences...", menu);
   quit = new QAction("Quit", menu);
 
-  // connect(start, SIGNAL(triggered()), this, SLOT(startNfd()));
-  // connect(stop, SIGNAL(triggered()), this, SLOT(stopNfd()));
   connect(pref, SIGNAL(triggered()), this, SIGNAL(showApp()));
   connect(quit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
-  connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)));
+  connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
+          Qt::QueuedConnection);
+
+  m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
 
   // menu->addAction(start);
   // menu->addAction(stop);
@@ -69,25 +72,11 @@ TrayMenu::~TrayMenu()
 }
 
 Q_INVOKABLE void
-TrayMenu::checkNfdRunning()
-{
-  // Face face;
-  // Interest interest("/localhost/nfd/status");
-  // face.expressInterest(interest, 0, 0);
-  // try {
-  //   face.processEvents();
-  //   tray->setIcon(QIcon(CONNECT_ICON));
-  // } catch (Tlv::Error) {
-  //   tray->setIcon(QIcon(DISCONNECT_ICON));
-  // }
-}
-
-Q_INVOKABLE void
 TrayMenu::autoConfig()
 {
-  std::cout << "auto config" <<std::endl;
+  std::cout << "auto config" << std::endl;
   QProcess* proc = new QProcess();
-  connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+  connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
   proc->start(NFD_AUTOCONFIG_COMMAND);
 }
 
@@ -108,6 +97,17 @@ TrayMenu::iconActivated(QSystemTrayIcon::ActivationReason reason)
     break;
   default:
     break;
+  }
+}
+
+Q_INVOKABLE void
+TrayMenu::startStopNfd()
+{
+  if (!m_isNfdRunning) {
+    startNfd();
+  }
+  else {
+    stopNfd();
   }
 }
 
@@ -142,11 +142,15 @@ TrayMenu::stopNfd()
 void
 TrayMenu::updateNfdActivityIcon(bool isActive)
 {
+  m_isNfdRunning = isActive;
+
   if (isActive) {
     tray->setIcon(QIcon(CONNECT_ICON));
+    m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Stop NFD")));
   }
   else {
     tray->setIcon(QIcon(DISCONNECT_ICON));
+    m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
   }
 }
 

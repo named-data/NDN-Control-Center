@@ -19,6 +19,7 @@
 
 #include <QtQml/QQmlApplicationEngine>
 #include <QtWidgets/QApplication>
+#include <QtWidgets/QPushButton>
 #include <QtQml/QQmlContext>
 
 #include "forwarder-status.hpp"
@@ -26,6 +27,7 @@
 #include "tray-menu.hpp"
 
 #include <ndn-cxx/face.hpp>
+#include <ndn-cxx/util/scheduler.hpp>
 #include <boost/thread.hpp>
 
 namespace ndn {
@@ -35,12 +37,13 @@ class Ncc
 public:
   Ncc()
     : m_isActive(true)
-    , m_forwarderModel(m_face)
+    , m_scheduler(m_face.getIoService())
     , m_fibModel(m_face)
+    , m_tray(m_engine.rootContext())
   {
     QQmlContext* context = m_engine.rootContext();
 
-    context->setContextProperty("forwarderModel", &m_forwarderModel);
+    context->setContextProperty("forwarderModel", &m_forwarderStatusModel);
     context->setContextProperty("fibModel", &m_fibModel);
     context->setContextProperty("trayModel", &m_tray);
 
@@ -63,12 +66,12 @@ public:
         try {
           while (m_isActive) {
             m_face.expressInterest(Interest("/localhost/nfd/status"),
-                                   bind(&Ncc::onStatusRetrieved, this),
+                                   bind(&Ncc::onStatusRetrieved, this, _2),
                                    bind(&Ncc::onStatusTimeout, this));
             m_face.processEvents(time::milliseconds::zero(), true);
           }
         }
-        catch (const std::exception&) {
+        catch (const std::exception&e) {
           emit m_tray.nfdActivityUpdate(false);
 #ifdef BOOST_THREAD_USES_CHRONO
           boost::this_thread::sleep_for(retryTimeout);
@@ -84,9 +87,12 @@ public:
   }
 
   void
-  onStatusRetrieved()
+  onStatusRetrieved(const Data& data)
   {
     emit m_tray.nfdActivityUpdate(true);
+    emit m_forwarderStatusModel.onDataReceived(data.shared_from_this());
+
+    m_scheduler.scheduleEvent(time::seconds(6), bind(&Ncc::requestNfdStatus, this));
   }
 
   void
@@ -95,9 +101,7 @@ public:
     emit m_tray.nfdActivityUpdate(false);
 
     std::cerr << "Should not really happen, most likely a serious problem" << std::endl;
-    m_face.expressInterest(Interest("/localhost/nfd/status"),
-                           bind(&Ncc::onStatusRetrieved, this),
-                           bind(&Ncc::onStatusTimeout, this));
+    m_scheduler.scheduleEvent(time::seconds(6), bind(&Ncc::requestNfdStatus, this));
   }
 
   void
@@ -105,8 +109,20 @@ public:
   {
     m_isActive = false;
     m_face.shutdown();
+    m_scheduler.cancelAllEvents();
     m_nfdThread.interrupt();
     m_nfdThread.join();
+  }
+
+private:
+  void
+  requestNfdStatus()
+  {
+    Interest interest("/localhost/nfd/status");
+    interest.setMustBeFresh(true);
+    m_face.expressInterest(interest,
+                           bind(&Ncc::onStatusRetrieved, this, _2),
+                           bind(&Ncc::onStatusTimeout, this));
   }
 
 private:
@@ -114,10 +130,11 @@ private:
   boost::thread m_nfdThread;
 
   Face m_face;
+  Scheduler m_scheduler;
 
   QQmlApplicationEngine m_engine;
 
-  ForwarderStatusModel m_forwarderModel;
+  ForwarderStatusModel m_forwarderStatusModel;
   FibStatusModel m_fibModel;
   TrayMenu m_tray;
 };

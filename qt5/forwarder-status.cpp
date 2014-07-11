@@ -33,12 +33,12 @@
 
 namespace ndn {
 
-ForwarderStatusModel::ForwarderStatusModel(Face& face, QObject* parent/* = 0*/)
+ForwarderStatusModel::ForwarderStatusModel(QObject* parent/* = 0*/)
   : QAbstractListModel(parent)
-  , m_face(face)
 {
   connect(this, SIGNAL(onDataReceived(ndn::shared_ptr<const ndn::Data>)), this,
-          SLOT(updateStatus(ndn::shared_ptr<const ndn::Data>)));
+          SLOT(updateStatus(ndn::shared_ptr<const ndn::Data>)),
+          Qt::QueuedConnection);
 }
 
 int
@@ -79,16 +79,6 @@ ForwarderStatusModel::roleNames() const
   roles[TypeRole] = "type";
   roles[ValueRole] = "value";
   return roles;
-}
-
-Q_INVOKABLE void
-ForwarderStatusModel::fetchVersionInformation()
-{
-  Interest interest("/localhost/nfd/status");
-  interest.setMustBeFresh(true);
-  m_face.expressInterest(interest,
-                         bind(&ForwarderStatusModel::afterFetchedVersionInformation, this, _2),
-                         bind(&ForwarderStatusModel::onTimeout, this, _1));
 }
 
 void

@@ -28,6 +28,8 @@
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
 
+#include <QtQml/QQmlContext>
+
 namespace ndn {
 
 class TrayMenu : public QWidget
@@ -42,15 +44,16 @@ signals:
   nfdActivityUpdate(bool isActive);
 
 public:
-  TrayMenu();
+  explicit
+  TrayMenu(QQmlContext* context);
 
   ~TrayMenu();
 
   Q_INVOKABLE void
-  checkNfdRunning();
+  autoConfig();
 
   Q_INVOKABLE void
-  autoConfig();
+  startStopNfd();
 
 private slots:
 
@@ -70,12 +73,12 @@ private slots:
   updateNfdActivityIcon(bool isActive);
 
 private:
+  QQmlContext* m_context;
+  bool m_isNfdRunning;
   QSystemTrayIcon *tray;
   QMenu* menu;
   QAction* pref;
   QAction* quit;
-  // QAction* start;
-  // QAction* stop;
 };
 
 } // namespace ndn

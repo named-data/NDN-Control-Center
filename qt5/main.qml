@@ -52,11 +52,11 @@ ApplicationWindow {
                                 }
                             }
                         }
-                        CheckBox {
-                            id: checkUpdate
-                            enabled: false
-                            text: "Check for software updates"
-                        }
+                        // CheckBox {
+                        //     id: checkUpdate
+                        //     enabled: false
+                        //     text: "Check for software updates"
+                        // }
                     }
                 }
                 GroupBox {
@@ -86,34 +86,48 @@ ApplicationWindow {
                         }
                     }
                 }
+                Button {
+                    id: startStopButton
+                    text: startStopButtonText
+
+                    anchors.top: status.bottom
+                    anchors.left: parent.left
+                    anchors.right: parent.right
+                    anchors.topMargin: 20
+                    anchors.leftMargin: 20
+                    anchors.rightMargin: 20
+                    anchors.bottomMargin: 20
+
+                    onClicked: trayModel.startStopNfd()
+                }
             }
         }
-        Tab {
-            title: "FIB status"
-            TableView {
-                anchors.fill: parent
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                TableViewColumn{
-                    role: "prefix"
-                    title: "NDN prefix"
-                    width: 300
-                }
-                TableViewColumn{
-                    role: "faceId"
-                    title: "Face ID"
-                    width: 50
-                }
-                TableViewColumn{
-                    role: "cost"
-                    title: "Cost"
-                    width: 50
-                }
-                model: fibModel
-            }
-        }
+        // Tab {
+        //     title: "FIB status"
+        //     TableView {
+        //         anchors.fill: parent
+        //         anchors.topMargin: 20
+        //         anchors.bottomMargin: 20
+        //         anchors.leftMargin: 20
+        //         anchors.rightMargin: 20
+        //         TableViewColumn{
+        //             role: "prefix"
+        //             title: "NDN prefix"
+        //             width: 300
+        //         }
+        //         TableViewColumn{
+        //             role: "faceId"
+        //             title: "Face ID"
+        //             width: 50
+        //         }
+        //         TableViewColumn{
+        //             role: "cost"
+        //             title: "Cost"
+        //             width: 50
+        //         }
+        //         model: fibModel
+        //     }
+        // }
         Tab {
             title: "Forwarder status"
             TableView {
@@ -158,18 +172,10 @@ ApplicationWindow {
             window.raise()
         }
     }
-    Timer {
-        interval: 1000; running: true; repeat: true
-        onTriggered: {
-            trayModel.checkNfdRunning()
-            fibModel.fetchFibInformation()
-        }
-    }
-
-    Timer {
-        interval: 5500; running: true; repeat: true
-        onTriggered: {
-            forwarderModel.fetchVersionInformation()
-        }
-    }
+    // Timer {
+    //     interval: 1000; running: true; repeat: true
+    //     onTriggered: {
+    //         fibModel.fetchFibInformation()
+    //     }
+    // }
 }
