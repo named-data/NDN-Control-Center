@@ -29,7 +29,7 @@ def check_sparkle(self, *k, **kw):
                 # Download to local path and retry
                 Logs.info("Sparkle framework not found, trying to download it to 'build/'")
 
-                urllib.urlretrieve("http://sparkle.andymatuschak.org/files/Sparkle%201.5b6.zip", "build/Sparkle.zip")
+                urllib.urlretrieve("https://github.com/sparkle-project/Sparkle/releases/download/1.7.1/Sparkle-1.7.1.zip", "build/Sparkle.zip")
                 if os.path.exists('build/Sparkle.zip'):
                     # try:
                         subprocess.check_call(['unzip', '-qq', 'build/Sparkle.zip', '-d', 'build/Sparkle'])
