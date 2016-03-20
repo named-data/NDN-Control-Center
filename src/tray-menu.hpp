@@ -75,10 +75,11 @@ private slots:
 private:
   QQmlContext* m_context;
   bool m_isNfdRunning;
-  QSystemTrayIcon *tray;
-  QMenu* menu;
-  QAction* pref;
-  QAction* quit;
+  QSystemTrayIcon* m_tray;
+  QMenu* m_menu;
+  QAction* m_entryPref;
+  QAction* m_entrySec;
+  QAction* m_entryQuit;
 };
 
 } // namespace ndn

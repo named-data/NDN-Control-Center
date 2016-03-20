@@ -42,29 +42,31 @@ namespace ndn {
 TrayMenu::TrayMenu(QQmlContext* context)
   : m_context(context)
   , m_isNfdRunning(false)
-{
-  menu = new QMenu(this);
-  pref = new QAction("Preferences...", menu);
-  quit = new QAction("Quit", menu);
+  , m_menu(new QMenu(this))
+  , m_entryPref(new QAction("Preferences...", m_menu))
+  , m_entrySec(new QAction("Security", m_menu))
+  , m_entryQuit(new QAction("Quit", m_menu))
 
-  connect(pref, SIGNAL(triggered()), this, SIGNAL(showApp()));
-  connect(quit, SIGNAL(triggered()), this, SLOT(quitApp()));
+{
+  connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
+  connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
           Qt::QueuedConnection);
 
   m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
 
-  // menu->addAction(start);
-  // menu->addAction(stop);
-  menu->addAction(pref);
-  menu->addAction(quit);
-  tray = new QSystemTrayIcon(this);
-  tray->setContextMenu(menu);
-  connect(tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
+  // m_menu->addAction(start);
+  // m_menu->addAction(stop);
+  m_menu->addAction(m_entryPref);
+  m_menu->addAction(m_entrySec);
+  m_menu->addAction(m_entryQuit);
+  m_tray = new QSystemTrayIcon(this);
+  m_tray->setContextMenu(m_menu);
+  connect(m_tray, SIGNAL(activated(QSystemTrayIcon::ActivationReason)),
           this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
-  tray->setIcon(QIcon(DISCONNECT_ICON));
-  tray->show();
+  m_tray->setIcon(QIcon(DISCONNECT_ICON));
+  m_tray->show();
 }
 
 TrayMenu::~TrayMenu()
@@ -145,11 +147,11 @@ TrayMenu::updateNfdActivityIcon(bool isActive)
   m_isNfdRunning = isActive;
 
   if (isActive) {
-    tray->setIcon(QIcon(CONNECT_ICON));
+    m_tray->setIcon(QIcon(CONNECT_ICON));
     m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Stop NFD")));
   }
   else {
-    tray->setIcon(QIcon(DISCONNECT_ICON));
+    m_tray->setIcon(QIcon(DISCONNECT_ICON));
     m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
   }
 }
