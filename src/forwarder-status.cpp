@@ -101,7 +101,7 @@ ForwarderStatusModel::updateStatus(shared_ptr<const Data> data)
   beginResetModel();
   m_items.clear();
   nfd::ForwarderStatus status(data->getContent());
-  addItem(ForwarderStatusItem("version",       QString::number(status.getNfdVersion())));
+  addItem(ForwarderStatusItem("version",       QString::fromStdString(status.getNfdVersion())));
   addItem(ForwarderStatusItem("startTime",     QString::fromStdString(time::toIsoString(status.getStartTimestamp()))));
   addItem(ForwarderStatusItem("currentTime",   QString::fromStdString(time::toIsoString(status.getCurrentTimestamp()))));
   addItem(ForwarderStatusItem("nNameTreeEntries", QString::number(status.getNNameTreeEntries())));

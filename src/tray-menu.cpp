@@ -77,7 +77,7 @@ TrayMenu::autoConfig()
   std::cout << "auto config" << std::endl;
   QProcess* proc = new QProcess();
   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-  proc->start(NFD_AUTOCONFIG_COMMAND);
+  // proc->start(NFD_AUTOCONFIG_COMMAND);
 }
 
 void
@@ -114,29 +114,29 @@ TrayMenu::startStopNfd()
 void
 TrayMenu::startNfd()
 {
-  QProcess * proc = new QProcess();
-  connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-#ifdef __linux__
-  proc->start("gksudo", QStringList() << NFD_START_COMMAND);
-#else
-  proc->start("osascript", QStringList()
-              << "-e"
-              << "do shell script \"" NFD_START_COMMAND "\" with administrator privileges");
-#endif
+//   QProcess * proc = new QProcess();
+//   connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+// #ifdef __linux__
+//   proc->start("gksudo", QStringList() << NFD_START_COMMAND);
+// #else
+//   proc->start("osascript", QStringList()
+//               << "-e"
+//               << "do shell script \"" NFD_START_COMMAND "\" with administrator privileges");
+// #endif
 }
 
 void
 TrayMenu::stopNfd()
 {
-  QProcess * proc = new QProcess();
-  connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-#ifdef __linux__
-  proc->start("gksudo", QStringList() << NFD_STOP_COMMAND);
-#else
-  proc->start("osascript", QStringList()
-              << "-e"
-              << "do shell script \"" NFD_STOP_COMMAND "\" with administrator privileges");
-#endif
+//   QProcess * proc = new QProcess();
+//   connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+// #ifdef __linux__
+//   proc->start("gksudo", QStringList() << NFD_STOP_COMMAND);
+// #else
+//   proc->start("osascript", QStringList()
+//               << "-e"
+//               << "do shell script \"" NFD_STOP_COMMAND "\" with administrator privileges");
+// #endif
 }
 
 void
