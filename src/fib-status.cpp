@@ -65,9 +65,9 @@ FibStatusModel::data(const QModelIndex & index, int role) const
   if (role == PrefixRole) {
     return item.prefix();
   } else if (role == FaceIdRole) {
-    return item.faceId();
+    return static_cast<uint>(item.faceId());
   } else if (role == CostRole) {
-    return item.cost();
+    return static_cast<uint>(item.cost());
   }
 
   return QVariant();

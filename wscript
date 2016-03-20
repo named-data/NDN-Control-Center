@@ -37,7 +37,7 @@ def build(bld):
         )
 
     if Utils.unversioned_sys_platform() != "darwin":
-        app.target = "nfd-control-center",
+        app.target = "nfd-control-center"
 
         bld(features = "subst",
              source = 'src/nfd-control-center.desktop.in',

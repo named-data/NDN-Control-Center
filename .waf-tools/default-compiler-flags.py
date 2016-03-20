@@ -108,6 +108,7 @@ class GccBasicFlags(CompilerFlags):
                               '-Werror',
                               '-Wno-unused-parameter',
                               '-Wno-error=maybe-uninitialized', # Bug #1615
+                              '-fPIC',
                               ]
         return flags
 
@@ -119,6 +120,7 @@ class GccBasicFlags(CompilerFlags):
                               '-Wall',
                               '-Wextra',
                               '-Wno-unused-parameter',
+                              '-fPIC',
                               ]
         return flags
 
