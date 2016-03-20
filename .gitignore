@@ -1,7 +1,9 @@
 .DS*
-.waf*
+.waf-1*
+.waf3-1*
 build
 .lock-*
 osx/Frameworks/Sparkle*
 waf-tools/*.pyc
 ndnx-control-center.xcodeproj
+*.pyc

@@ -15,7 +15,7 @@ $ waf configure xcode
 # TODO: support iOS projects
 
 from waflib import Context, TaskGen, Build, Utils
-import os, sys, random, time
+import os, sys
 
 HEADERS_GLOB = '**/(*.h|*.hpp|*.H|*.inl)'
 
@@ -174,7 +174,7 @@ class PBXLegacyTarget(XCodeNode):
 		if not target:
 			self.buildArgumentsString = "%s %s" % (sys.argv[0], action)
 		else:
-			self.buildArgumentsString = "%s %s --targets='%s'" % (sys.argv[0], action, target)
+			self.buildArgumentsString = "%s %s --targets=%s" % (sys.argv[0], action, target)
 		self.buildPhases = []
 		self.buildToolPath = sys.executable
 		self.buildWorkingDirectory = ""
@@ -192,7 +192,7 @@ class PBXShellScriptBuildPhase(XCodeNode):
 		self.outputPaths = []
 		self.runOnlyForDeploymentPostProcessing = 0
 		self.shellPath = "/bin/sh"
-		self.shellScript = "%s %s %s --targets='%s'" % (sys.executable, sys.argv[0], action, target)
+		self.shellScript = "%s %s %s --targets=%s" % (sys.executable, sys.argv[0], action, target)
 
 class PBXNativeTarget(XCodeNode):
 	def __init__(self, action, target, node, env):
@@ -213,7 +213,7 @@ class PBXProject(XCodeNode):
 		XCodeNode.__init__(self)
 		self.buildConfigurationList = XCConfigurationList([XCBuildConfiguration('waf', {})])
 		self.compatibilityVersion = version[0]
-		self.hasScannedForEncodings = 1;
+		self.hasScannedForEncodings = 1
 		self.mainGroup = PBXGroup(name)
 		self.projectRoot = ""
 		self.projectDirPath = ""
@@ -308,3 +308,5 @@ class xcode(Build.BuildContext):
 		node.mkdir()
 		node = node.make_node('project.pbxproj')
 		p.write(open(node.abspath(), 'w'))
+
+
