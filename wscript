@@ -51,6 +51,6 @@ def build(bld):
     else:
         app.target = "NFD Control Center"
         app.mac_app = True
-        # app.mac_plist = 'src/Info.plist'
+        app.mac_plist = 'src/Info.plist'
         # app.mac_resources = [i.path_from(bld.path)
         #                      for i in bld.path.parent.ant_glob('src/Resources/*')]

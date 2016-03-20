@@ -148,6 +148,7 @@ main(int argc, char *argv[])
 {
   qRegisterMetaType<ndn::shared_ptr<const ndn::Data> >();
 
+  QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);
 
   ndn::Ncc controlCenterGui;
