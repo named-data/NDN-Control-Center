@@ -17,70 +17,44 @@
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NDN_NCC_KEY_VIEWER_DIALOG_HPP
-#define NDN_NCC_KEY_VIEWER_DIALOG_HPP
-
-#include "key-tree-model.hpp"
 #include "cert-tree-model.hpp"
-#include <ndn-cxx/security/key-chain.hpp>
 
-#include <QDialog>
-
-
-namespace Ui {
-class KeyViewerDialog;
-}
+#ifdef WAF
+#include "cert-tree-model.moc"
+#endif
 
 namespace ndn {
 namespace ncc {
 
-class KeyViewerDialog : public QDialog
+CertTreeModel::CertTreeModel(int row, int column, QObject* parent)
+  : QStandardItemModel(row, column, parent)
 {
-  Q_OBJECT
+}
 
-public:
-  KeyViewerDialog(QWidget *parent = 0);
-
-  virtual
-  ~KeyViewerDialog();
-
-  void
-  updateModel();
-
-private:
-  KeyTreeItem*
-  createIdentityNode(const Name& identity);
-
-  KeyTreeItem*
-  createKeyNode(const Name& keyName, KeyTreeItem* idItem);
-
-signals:
-  void
-  clicked(const QModelIndex &index);
-
-public slots:
-  void
-  present();
-
-private slots:
-  void
-  displayCert(const QModelIndex& index);
-  // void insertChild();
-  // bool insertColumn();
-  // void insertRow();
-  // bool removeColumn();
-  // void removeRow();
-
-private:
-  Ui::KeyViewerDialog* ui;
-
-  shared_ptr<KeyTreeModel> m_model;
-  shared_ptr<KeyChain> m_keyChain;
-
-  shared_ptr<CertTreeModel> m_tableModel;
-};
+QVariant
+CertTreeModel::data(const QModelIndex& index, int role) const
+{
+  switch (role) {
+  case Qt::FontRole:
+    {
+      QFont font;
+      if (index.column() == 0) {
+        font.setBold(true);
+      }
+      return font;
+    }
+  case Qt::BackgroundRole:
+    {
+      QBrush brush(Qt::white, Qt::SolidPattern);
+      if (index.row() % 2 == 0) {
+        brush.setColor(Qt::lightGray);
+      }
+      return brush;
+    }
+  default:
+    return QStandardItemModel::data(index, role);
+  }
+}
 
 } // namespace ncc
 } // namespace ndn
-
-#endif // NDN_NCC_KEY_VIEWER_DIALOG_HPP

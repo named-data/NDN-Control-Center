@@ -24,10 +24,12 @@
 namespace ndn {
 namespace ncc {
 
-KeyTreeItem::KeyTreeItem(const QVariant& name, const QVariant& data, Type type, KeyTreeItem* parent)
+KeyTreeItem::KeyTreeItem(const QVariant& name, const QVariant& data,
+                         Type type, KeyTreeItem* parent)
   : m_name(name)
   , m_data(data)
   , m_type(type)
+  , m_isDefault(false)
   , m_parentItem(parent)
 {
 }
@@ -35,6 +37,12 @@ KeyTreeItem::KeyTreeItem(const QVariant& name, const QVariant& data, Type type, 
 KeyTreeItem::~KeyTreeItem()
 {
   qDeleteAll(m_childItems);
+}
+
+void
+KeyTreeItem::setDefault(bool isDefault)
+{
+  m_isDefault = isDefault;
 }
 
 void

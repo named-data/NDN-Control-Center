@@ -47,6 +47,15 @@ public:
   ~KeyTreeItem();
 
   void
+  setDefault(bool isDefault);
+
+  bool
+  isDefault()
+  {
+    return m_isDefault;
+  }
+
+  void
   setParent(KeyTreeItem* parent);
 
   void
@@ -81,6 +90,7 @@ private:
   QVariant m_name;
   QVariant m_data;
   Type m_type;
+  bool m_isDefault;
   KeyTreeItem* m_parentItem;
 };
 

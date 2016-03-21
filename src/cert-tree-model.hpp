@@ -17,70 +17,27 @@
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef NDN_NCC_KEY_VIEWER_DIALOG_HPP
-#define NDN_NCC_KEY_VIEWER_DIALOG_HPP
+#ifndef NDN_NCC_CERT_TREE_MODEL_HPP
+#define NDN_NCC_CERT_TREE_MODEL_HPP
 
-#include "key-tree-model.hpp"
-#include "cert-tree-model.hpp"
-#include <ndn-cxx/security/key-chain.hpp>
-
-#include <QDialog>
-
-
-namespace Ui {
-class KeyViewerDialog;
-}
+#include <QStandardItemModel>
 
 namespace ndn {
 namespace ncc {
 
-class KeyViewerDialog : public QDialog
+class CertTreeModel : public QStandardItemModel
 {
   Q_OBJECT
 
 public:
-  KeyViewerDialog(QWidget *parent = 0);
+  explicit
+  CertTreeModel(int row, int column, QObject* parent = 0);
 
-  virtual
-  ~KeyViewerDialog();
-
-  void
-  updateModel();
-
-private:
-  KeyTreeItem*
-  createIdentityNode(const Name& identity);
-
-  KeyTreeItem*
-  createKeyNode(const Name& keyName, KeyTreeItem* idItem);
-
-signals:
-  void
-  clicked(const QModelIndex &index);
-
-public slots:
-  void
-  present();
-
-private slots:
-  void
-  displayCert(const QModelIndex& index);
-  // void insertChild();
-  // bool insertColumn();
-  // void insertRow();
-  // bool removeColumn();
-  // void removeRow();
-
-private:
-  Ui::KeyViewerDialog* ui;
-
-  shared_ptr<KeyTreeModel> m_model;
-  shared_ptr<KeyChain> m_keyChain;
-
-  shared_ptr<CertTreeModel> m_tableModel;
+  QVariant
+  data(const QModelIndex& index, int role) const Q_DECL_OVERRIDE;
 };
 
 } // namespace ncc
 } // namespace ndn
 
-#endif // NDN_NCC_KEY_VIEWER_DIALOG_HPP
+#endif // NDN_NCC_CERT_TREE_MODEL_HPP

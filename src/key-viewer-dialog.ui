@@ -27,7 +27,7 @@
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
-    <layout class="QHBoxLayout" name="horizontalLayout" stretch="1,1">
+    <layout class="QHBoxLayout" name="horizontalLayout" stretch="3,2">
      <property name="sizeConstraint">
       <enum>QLayout::SetMaximumSize</enum>
      </property>
@@ -35,7 +35,11 @@
       <widget class="QTreeView" name="treeView"/>
      </item>
      <item>
-      <widget class="QTableView" name="tableView"/>
+      <widget class="QTreeView" name="certView">
+       <property name="indentation">
+        <number>0</number>
+       </property>
+      </widget>
      </item>
     </layout>
    </item>

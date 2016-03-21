@@ -23,6 +23,8 @@
 
 #include <iostream>
 
+#include <Qt>
+
 
 #ifdef WAF
 #include "key-viewer-dialog.moc"
@@ -30,6 +32,8 @@
 
 namespace ndn {
 namespace ncc {
+
+static int N_ROWS = 30;
 
 KeyViewerDialog::KeyViewerDialog(QWidget *parent)
   : QDialog(parent)
@@ -40,6 +44,12 @@ KeyViewerDialog::KeyViewerDialog(QWidget *parent)
 
   ui->treeView->setModel(m_model.get());
   ui->treeView->show();
+
+  m_tableModel = make_shared<CertTreeModel>(N_ROWS, 2);
+  m_tableModel->setHeaderData(0, Qt::Horizontal,"Field");
+  m_tableModel->setHeaderData(1, Qt::Horizontal,"Value");
+  ui->certView->setModel(m_tableModel.get());
+  ui->certView->show();
 
   connect(ui->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(displayCert(const QModelIndex&)));
 }
@@ -62,7 +72,9 @@ KeyViewerDialog::present()
   std::vector<Name> defaultIdentities;
   m_keyChain->getAllIdentities(defaultIdentities, true);
   for (const auto& identity : defaultIdentities) {
-    newModel->addChild(createIdentityNode(identity));
+    auto idItem = createIdentityNode(identity);
+    idItem->setDefault(true);
+    newModel->addChild(idItem);
   }
 
   std::vector<Name> otherIdentities;
@@ -97,7 +109,10 @@ KeyViewerDialog::displayCert(const QModelIndex& index)
     parent = m_model->index(0, 0, parent);
   }
 
-  shared_ptr<QStandardItemModel> tableModel;
+  shared_ptr<CertTreeModel> tableModel = make_shared<CertTreeModel>(N_ROWS, 2);
+  tableModel->setHeaderData(0, Qt::Horizontal,"Field");
+  tableModel->setHeaderData(1, Qt::Horizontal,"Value");
+
   item = static_cast<KeyTreeItem*>(parent.internalPointer());
   if (item->type() == KeyTreeItem::Type::CERT) {
     std::cerr << item->name().toString().toStdString() << std::endl;
@@ -105,9 +120,9 @@ KeyViewerDialog::displayCert(const QModelIndex& index)
     shared_ptr<IdentityCertificate> cert =
       m_keyChain->getCertificate(Name(item->name().toString().toStdString()));
 
-    tableModel = make_shared<QStandardItemModel>(5, 2);
     tableModel->setItem(0, 0, new QStandardItem(QString("Name")));
     tableModel->setItem(0, 1, new QStandardItem(item->name().toString()));
+    // tableModel->setData(tableModel->index(0, 0), Qt::red, Qt::BackgroundRole);
 
     tableModel->setItem(1, 0, new QStandardItem(QString("NotBefore")));
     tableModel->setItem(1, 1, new QStandardItem(QString::fromStdString(time::toIsoString(cert->getNotBefore()))));
@@ -123,14 +138,11 @@ KeyViewerDialog::displayCert(const QModelIndex& index)
     tableModel->setItem(4, 1, new QStandardItem(QString::fromStdString(signerName.toUri())));
   }
   else {
-    tableModel = make_shared<QStandardItemModel>(5, 2);
+    tableModel->setItem(0, 0, new QStandardItem(QString("")));
+    tableModel->setItem(0, 1, new QStandardItem(QString("")));
   }
-  ui->tableView->setModel(tableModel.get());
-  ui->tableView->resizeColumnsToContents();
-  QHeaderView* header = ui->tableView->horizontalHeader();
-  header->setStretchLastSection(true);
-  ui->tableView->setHorizontalHeader(header);
-  ui->tableView->show();
+  ui->certView->setModel(tableModel.get());
+  ui->certView->show();
   m_tableModel = tableModel;
 }
 
@@ -144,7 +156,9 @@ KeyViewerDialog::createIdentityNode(const Name& identity)
   std::vector<Name> defaultKeys;
   m_keyChain->getAllKeyNamesOfIdentity(identity, defaultKeys, true);
   for (const auto& keyName : defaultKeys) {
-    idItem->appendChild(createKeyNode(keyName, idItem));
+    auto keyItem = createKeyNode(keyName, idItem);
+    keyItem->setDefault(true);
+    idItem->appendChild(keyItem);
   }
 
   std::vector<ndn::Name> otherKeys;
@@ -167,10 +181,12 @@ KeyViewerDialog::createKeyNode(const Name& keyName, KeyTreeItem* idItem)
   std::vector<Name> defaultCertificates;
   m_keyChain->getAllCertificateNamesOfKey(keyName, defaultCertificates, true);
   for (const auto& certName : defaultCertificates) {
-    keyItem->appendChild(new KeyTreeItem(QVariant(QString::fromStdString(certName.toUri())),
-                                         QVariant(QString::fromStdString(certName[-1].toUri())),
-                                         KeyTreeItem::Type::CERT,
-                                         keyItem));
+    auto certItem = new KeyTreeItem(QVariant(QString::fromStdString(certName.toUri())),
+                                    QVariant(QString::fromStdString(certName[-1].toUri())),
+                                    KeyTreeItem::Type::CERT,
+                                    keyItem);
+    certItem->setDefault(true);
+    keyItem->appendChild(certItem);
   }
 
   std::vector<ndn::Name> otherCertificates;

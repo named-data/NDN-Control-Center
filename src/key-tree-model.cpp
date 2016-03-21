@@ -21,6 +21,9 @@
 #include "key-tree-item.hpp"
 
 #include <QStringList>
+#include <QFont>
+#include <QBrush>
+#include <iostream>
 
 
 #ifdef WAF
@@ -84,12 +87,33 @@ KeyTreeModel::data(const QModelIndex& index, int role) const
   if (!index.isValid())
     return QVariant();
 
-  if (role != Qt::DisplayRole)
-    return QVariant();
 
   KeyTreeItem* item = static_cast<KeyTreeItem*>(index.internalPointer());
-
-  return item->data();
+  switch (role) {
+  case Qt::DisplayRole:
+    {
+      return item->data();
+    }
+  case Qt::FontRole:
+    {
+      QFont font;
+      if (item->isDefault()) {
+        font.setBold(true);
+      }
+      return font;
+    }
+  // case Qt::BackgroundRole:
+  //   {
+  //     std::cerr << "brush" << std::endl;
+  //     QBrush brush(Qt::white, Qt::SolidPattern);
+  //     if (index.row() % 2 == 0) {
+  //       brush.setColor(Qt::cyan);
+  //     }
+  //     return brush;
+  //   }
+  default:
+    return QVariant();
+  }
 }
 
 Qt::ItemFlags
