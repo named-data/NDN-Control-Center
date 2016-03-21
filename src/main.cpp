@@ -73,6 +73,7 @@ public:
         }
         catch (const std::exception&e) {
           emit m_tray.nfdActivityUpdate(false);
+          m_face.shutdown();
 #ifdef BOOST_THREAD_USES_CHRONO
           boost::this_thread::sleep_for(retryTimeout);
 #else

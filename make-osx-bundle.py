@@ -221,87 +221,113 @@ class AppBundle(object):
 
     return
 
-  def copy_qt_plugins(self):
+  def copy_etc(self, rsrcs):
     '''
-      Copy over any needed Qt plugins.
+      Copy needed config files into our bundle.
     '''
+    print ' * Copying needed config files'
+    rsrcpath = os.path.join(self.bundle, 'Contents', 'etc')
+    if not os.path.exists(rsrcpath):
+      os.mkdir(rsrcpath)
 
-    print ' * Copying Qt and preparing plugins'
+    # Copy resources already in the bundle
+    for rsrc in rsrcs:
+      b = os.path.basename(rsrc)
+      if os.path.isdir(rsrc):
+        shutil.copytree(rsrc, os.path.join(rsrcpath, b), symlinks=True)
+      elif os.path.isfile(rsrc):
+        shutil.copy(rsrc, os.path.join(rsrcpath, b))
 
-    src = os.popen('qmake -query QT_INSTALL_PLUGINS').read().strip()
-    dst = os.path.join(self.bundle, 'Contents', 'QtPlugins')
-    shutil.copytree(src, dst, symlinks=False)
+    return  
+  # def copy_qt_plugins(self):
+  #   '''
+  #     Copy over any needed Qt plugins.
+  #   '''
 
-    top = dst
-    files = {}
+  #   print ' * Copying Qt and preparing plugins'
 
-    def cb(arg, dirname, fnames):
-      if dirname == top:
-        return
-      files[os.path.basename(dirname)] = fnames
+  #   src = os.popen('qmake -query QT_INSTALL_PLUGINS').read().strip()
+  #   dst = os.path.join(self.bundle, 'Contents', 'QtPlugins')
+  #   shutil.copytree(src, dst, symlinks=False)
 
-    os.path.walk(top, cb, None)
+  #   top = dst
+  #   files = {}
 
-    exclude = ( 'phonon_backend', 'designer', 'script' )
+  #   def cb(arg, dirname, fnames):
+  #     if dirname == top:
+  #       return
+  #     files[os.path.basename(dirname)] = fnames
 
-    for dir, files in files.items():
-      absdir = dst + '/' + dir
-      if dir in exclude:
-        shutil.rmtree(absdir)
-        continue
-      for file in files:
-        abs = absdir + '/' + file
-        if file.endswith('_debug.dylib'):
-          os.remove(abs)
-        else:
-          os.system('install_name_tool -id "%s" "%s"' % (file, abs))
-          self.handle_binary_libs(abs)
+  #   os.path.walk(top, cb, None)
 
+  #   exclude = ( 'phonon_backend', 'designer', 'script' )
+
+  #   for dir, files in files.items():
+  #     absdir = dst + '/' + dir
+  #     if dir in exclude:
+  #       shutil.rmtree(absdir)
+  #       continue
+  #     for file in files:
+  #       abs = absdir + '/' + file
+  #       if file.endswith('_debug.dylib'):
+  #         os.remove(abs)
+  #       else:
+  #         os.system('install_name_tool -id "%s" "%s"' % (file, abs))
+  #         self.handle_binary_libs(abs)
+
+  def macdeployqt(self):
+    Popen(['macdeployqt', self.bundle, '-qmldir=src', '-executable=%s' % self.binary]).communicate()
+  
   def copy_ndn_deps(self, path):
     '''
       Copy over NDN dependencies (NFD and related apps)
     '''
     print ' * Copying NDN dependencies'
 
-    src = path
-    dst = os.path.join(self.bundle, 'Contents', 'Resources', 'platform')
+    src = os.path.join(path, 'bin')
+    dst = os.path.join(self.bundle, 'Contents', 'Platform')
     shutil.copytree(src, dst, symlinks=False)
 
-    top = dst
-    files = {}
-
-    def cb(arg, dirname, fnames):
-      if dirname == top:
-        return
-      files[dirname] = fnames
-
-    os.path.walk(top, cb, None)
-
-    # Cleanup debug folders stuff
-    excludeDirs = ['include', 'pkgconfig']
-    excludeFiles = ['libndn-cxx.dylib', 'nfd-start', 'nfd-stop']
-
-    for dir, files in files.items():
-      basename = os.path.basename(dir)
-      if basename in excludeDirs:
-        shutil.rmtree(dir)
-        continue
+    for subdir, dirs, files in os.walk(dst):
       for file in files:
-        if file in excludeFiles:
-          abs = dir + '/' + file
-          os.remove(abs)
-      
-    top = dst
-    files = {}
-
-    os.path.walk(top, cb, None)
+        abs = subdir + "/" + file
+        self.handle_binary_libs(abs)
     
-    for dir, files in files.items():
-      for file in files:
-        abs = dir + '/' + file
-        type = Popen(['file', '-b', abs], stdout=PIPE).communicate()[0].strip()
-        if type.startswith('Mach-O'):
-          self.handle_binary_libs(abs)
+    # top = dst
+    # files = {}
+
+    # def cb(arg, dirname, fnames):
+    #   if dirname == top:
+    #     return
+    #   files[dirname] = fnames
+
+    # os.path.walk(top, cb, None)
+
+    # # Cleanup debug folders stuff
+    # excludeDirs = ['include', 'pkgconfig', 'lib'] # lib already processed
+    # excludeFiles = ['libndn-cxx.dylib', 'nfd-start', 'nfd-stop']
+
+    # for dir, files in files.items():
+    #   basename = os.path.basename(dir)
+    #   if basename in excludeDirs:
+    #     shutil.rmtree(dir)
+    #     continue
+    #   for file in files:
+    #     if file in excludeFiles:
+    #       abs = dir + '/' + file
+    #       os.remove(abs)
+      
+    # top = dst
+    # files = {}
+
+    # os.path.walk(top, cb, None)
+    
+    # for dir, files in files.items():
+    #   for file in files:
+    #     abs = dir + '/' + file
+    #     type = Popen(['file', '-b', abs], stdout=PIPE).communicate()[0].strip()
+    #     if type.startswith('Mach-O'):
+    #       self.handle_binary_libs(abs)
     
 
   def set_min_macosx_version(self, version):
@@ -416,11 +442,13 @@ if __name__ == '__main__':
   # Do the finishing touches to our Application bundle before release
   shutil.rmtree('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ignore_errors=True)
   a = AppBundle('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ver, 'build/NFD Control Center.app')
-  a.copy_qt_plugins()
-  a.handle_libs()
+  # a.copy_qt_plugins()
+  # a.handle_libs()
   a.copy_ndn_deps("build/deps")
-  a.copy_resources(['qt.conf'])
+  # a.copy_resources(['qt.conf'])
+  a.copy_etc(['nfd.conf'])
   a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
+  a.macdeployqt()
   a.done()
 
   # Sign our binaries, etc.

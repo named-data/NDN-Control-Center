@@ -13,7 +13,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
- * You should have received a copy of the GNU General Public License along with NFD
+         * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -53,7 +53,6 @@ TrayMenu::TrayMenu(QQmlContext* context)
 #endif
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
-
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
@@ -131,29 +130,33 @@ TrayMenu::startStopNfd()
 void
 TrayMenu::startNfd()
 {
+#ifdef OSX_BUILD
+  QProcess* proc = new QProcess();
+  connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+  proc->startDetached((QCoreApplication::applicationDirPath().toStdString() + "/../Platform/nfd").c_str(),
+                      QStringList()
+                        << "--config"
+                        << (QCoreApplication::applicationDirPath().toStdString() + "/../etc/nfd.conf").c_str());
+// #endif
 //   QProcess * proc = new QProcess();
-//   connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+//   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
 // #ifdef __linux__
 //   proc->start("gksudo", QStringList() << NFD_START_COMMAND);
 // #else
 //   proc->start("osascript", QStringList()
 //               << "-e"
 //               << "do shell script \"" NFD_START_COMMAND "\" with administrator privileges");
-// #endif
+#endif
 }
 
 void
 TrayMenu::stopNfd()
 {
-//   QProcess * proc = new QProcess();
-//   connect(proc,SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-// #ifdef __linux__
-//   proc->start("gksudo", QStringList() << NFD_STOP_COMMAND);
-// #else
-//   proc->start("osascript", QStringList()
-//               << "-e"
-//               << "do shell script \"" NFD_STOP_COMMAND "\" with administrator privileges");
-// #endif
+#ifdef OSX_BUILD
+  QProcess* proc = new QProcess();
+  connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+  proc->startDetached("killall", QStringList() << "nfd");
+#endif
 }
 
 Q_INVOKABLE void
@@ -244,18 +247,6 @@ TrayMenu::enableCli()
                                      helperTool,
                                      kAuthorizationFlagDefaults,
                                      (char**)args.data(), NULL);
-
-  // QVector<char *> args;
-  // QVector<QByteArray> utf8Args;
-  // for (const QString &argument : arguments) {
-  //   utf8Args.push_back(argument.toUtf8());
-  //   args.push_back(utf8Args.last().data());
-  // }
-  // args.push_back(0);
-
-  // const QByteArray utf8Program = program.toUtf8();
-  // status = AuthorizationExecuteWithPrivileges(authorizationRef, utf8Program.data(),
-  //                                             kAuthorizationFlagDefaults, args.data(), 0);
 
   AuthorizationFree(authorizationRef, kAuthorizationFlagDestroyRights);
 #endif

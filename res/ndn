@@ -10,4 +10,4 @@ if [[ $# -eq 0 ]] ; then
     exit 1
 fi
 
-/Applications/NDN.app/Contents/Resources/platform/bin/"$@"
+/Applications/NDN.app/Contents/Platform/"$@"
