@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/Applications/NDN.app/Contents/Resources/ndn/bin/"$@"

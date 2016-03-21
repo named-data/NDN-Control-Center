@@ -257,6 +257,54 @@ class AppBundle(object):
           os.system('install_name_tool -id "%s" "%s"' % (file, abs))
           self.handle_binary_libs(abs)
 
+  def copy_ndn_deps(self, path):
+    '''
+      Copy over NDN dependencies (NFD and related apps)
+    '''
+    print ' * Copying NDN dependencies'
+
+    src = path
+    dst = os.path.join(self.bundle, 'Contents', 'Resources', 'ndn')
+
+    shutil.copytree(src, dst, symlinks=False)
+
+    top = dst
+    files = {}
+
+    def cb(arg, dirname, fnames):
+      if dirname == top:
+        return
+      files[dirname] = fnames
+
+    os.path.walk(top, cb, None)
+
+    # Cleanup debug folders stuff
+    excludeDirs = ['include', 'pkgconfig']
+    excludeFiles = ['libndn-cxx.dylib', 'ndn-start', 'ndn-stop']
+
+    for dir, files in files.items():
+      basename = os.path.basename(dir)
+      if basename in excludeDirs:
+        shutil.rmtree(dir)
+        continue
+      for file in files:
+        if file in excludeFiles:
+          abs = dir + '/' + file
+          os.remove(abs)
+      
+    top = dst
+    files = {}
+
+    os.path.walk(top, cb, None)
+    
+    for dir, files in files.items():
+      for file in files:
+        abs = dir + '/' + file
+        type = Popen(['file', '-b', abs], stdout=PIPE).communicate()[0].strip()
+        if type.startswith('Mach-O'):
+          self.handle_binary_libs(abs)
+    
+
   def set_min_macosx_version(self, version):
     '''
       Set the minimum version of Mac OS X version that this App will run on.
@@ -369,26 +417,27 @@ if __name__ == '__main__':
   # Do the finishing touches to our Application bundle before release
   shutil.rmtree('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ignore_errors=True)
   a = AppBundle('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ver, 'build/NFD Control Center.app')
-  a.copy_qt_plugins()
-  a.handle_libs()
-  a.copy_resources(['qt.conf'])
-  a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
-  a.done()
+  # a.copy_qt_plugins()
+  # a.handle_libs()
+  a.copy_ndn_deps("build/deps")
+  # a.copy_resources(['qt.conf'])
+  # a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
+  # a.done()
 
-  # Sign our binaries, etc.
-  if options.codesign:
-    print ' * Signing binaries with identity `%s\'' % options.codesign
-    binaries = (
-      'build/%s/ChronoChat.app' % (MIN_SUPPORTED_VERSION),
-    )
+  # # Sign our binaries, etc.
+  # if options.codesign:
+  #   print ' * Signing binaries with identity `%s\'' % options.codesign
+  #   binaries = (
+  #     'build/%s/ChronoChat.app' % (MIN_SUPPORTED_VERSION),
+  #   )
 
-    codesign(binaries)
-    print ''
+  #   codesign(binaries)
+  #   print ''
 
-  # Create diskimage
-  title = "NDN-%s-%s" % (ver, MIN_SUPPORTED_VERSION)
-  fn = "build/%s.dmg" % title
-  d = DiskImage(fn, title)
-  d.symlink('/Applications', '/Applications')
-  d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
-  d.create()
+  # # Create diskimage
+  # title = "NDN-%s-%s" % (ver, MIN_SUPPORTED_VERSION)
+  # fn = "build/%s.dmg" % title
+  # d = DiskImage(fn, title)
+  # d.symlink('/Applications', '/Applications')
+  # d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
+  # d.create()
