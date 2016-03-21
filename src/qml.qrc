@@ -1,13 +1,13 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
-        <file>resources/icon-connected-white.png</file>
-        <file>resources/icon-disconnected-white.png</file>
-        <file>resources/GenericNetworkIcon_22_128x128x32.png</file>
-        <file>resources/Keychain_22_128x128x32.png</file>
-        <file>resources/System Preferences_22_128x128x32.png</file>
-        <file>resources/ToolbarAdvanced_22_128x128x32.png</file>
-        <file>resources/icon-connected-black.png</file>
-        <file>resources/icon-disconnected-black.png</file>
+        <file>../res/icon-connected-white.png</file>
+        <file>../res/icon-disconnected-white.png</file>
+        <file>../res/GenericNetworkIcon_22_128x128x32.png</file>
+        <file>../res/Keychain_22_128x128x32.png</file>
+        <file>../res/System Preferences_22_128x128x32.png</file>
+        <file>../res/ToolbarAdvanced_22_128x128x32.png</file>
+        <file>../res/icon-connected-black.png</file>
+        <file>../res/icon-disconnected-black.png</file>
     </qresource>
 </RCC>

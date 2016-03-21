@@ -18,7 +18,7 @@ def configure(conf):
 
     conf.check_boost(lib="system thread")
 
-    # conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/nfd-control-center", conf.env))
+    conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/nfd-control-center", conf.env))
 
     if Utils.unversioned_sys_platform() == "darwin":
         conf.define('OSX_BUILD', 1)
@@ -40,17 +40,16 @@ def build(bld):
         app.target = "nfd-control-center"
 
         bld(features = "subst",
-             source = 'src/nfd-control-center.desktop.in',
-             target = 'src/nfd-control-center.desktop',
+             source = 'nfd-control-center.desktop.in',
+             target = 'nfd-control-center.desktop',
              BINARY = "nfd-control-center",
              install_path = "${DATAROOTDIR}/nfd-control-center"
             )
 
         bld.install_files("${DATAROOTDIR}/nfd-control-center",
-                      bld.path.ant_glob(['Resources/*']))
+                          bld.path.ant_glob(['res/*']))
     else:
         app.target = "NFD Control Center"
         app.mac_app = True
         app.mac_plist = 'src/Info.plist'
-        # app.mac_resources = [i.path_from(bld.path)
-        #                      for i in bld.path.parent.ant_glob('src/Resources/*')]
+        app.mac_resources = [i.path_from(bld.path) for i in bld.path.ant_glob('res/**/*', excl='**/*.ai')]

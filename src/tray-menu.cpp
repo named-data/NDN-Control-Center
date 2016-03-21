@@ -25,11 +25,11 @@
 
 
 #ifdef OSX_BUILD
-#define CONNECT_ICON ":/resources/icon-connected-black.png"
-#define DISCONNECT_ICON ":/resources/icon-disconnected-black.png"
+#define CONNECT_ICON ":/res/icon-connected-black.png"
+#define DISCONNECT_ICON ":/res/icon-disconnected-black.png"
 #else
-#define CONNECT_ICON ":/resources/icon-connected-white.png"
-#define DISCONNECT_ICON ":/resources/icon-disconnected-white.png"
+#define CONNECT_ICON ":/res/icon-connected-white.png"
+#define DISCONNECT_ICON ":/res/icon-disconnected-white.png"
 #endif
 
 #ifdef WAF

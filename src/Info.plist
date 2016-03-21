@@ -7,7 +7,7 @@
     <key>CFBundleExecutable</key>
     <string>NFD Control Center</string>
     <key>CFBundleIconFile</key>
-    <string>nfd-main.icns</string>
+    <string>ndn_app.icns</string>
     <key>CFBundleIdentifier</key>
     <string>net.named-data.control-center</string>
     <key>CFBundleInfoDictionaryVersion</key>

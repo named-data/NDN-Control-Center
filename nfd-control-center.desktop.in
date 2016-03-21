@@ -1,12 +1,12 @@
 [Desktop Entry]
 Version=1.0
-Name=NDNx Control Center
-Keywords=Internet;NDN;NDNx
+Name=NFD Control Center
+Keywords=Internet;NDN
 Exec=@BINDIR@/@BINARY@
 Terminal=false
 X-MultipleArgs=false
 Type=Application
-Icon=@DATAROOTDIR@/ndnx-control-center/ndnx-main.png
+Icon=@DATAROOTDIR@/nfd-control-center/ndn_app.png
 Categories=GNOME;GTK;Network;
 StartupNotify=true
 Actions=NewWindow;NewPrivateWindow;
