@@ -24,6 +24,7 @@
 #include <iostream>
 
 #include <Qt>
+#include <QMenu>
 
 
 #ifdef WAF
@@ -39,19 +40,25 @@ KeyViewerDialog::KeyViewerDialog(QWidget *parent)
   : QDialog(parent)
   , ui(new Ui::KeyViewerDialog)
   , m_model(new KeyTreeModel)
+  , m_keyChain(new KeyChain)
+  , m_timer(parent)
 {
   ui->setupUi(this);
 
-  ui->treeView->setModel(m_model.get());
-  ui->treeView->show();
-
-  m_tableModel = make_shared<CertTreeModel>(N_ROWS, 2);
-  m_tableModel->setHeaderData(0, Qt::Horizontal,"Field");
-  m_tableModel->setHeaderData(1, Qt::Horizontal,"Value");
-  ui->certView->setModel(m_tableModel.get());
-  ui->certView->show();
+  // present();
 
   connect(ui->treeView, SIGNAL(clicked(const QModelIndex&)), this, SLOT(displayCert(const QModelIndex&)));
+
+  m_timer.setInterval(600000);
+  connect(&m_timer, SIGNAL(timeout()), this, SLOT(display()));
+  m_timer.start();
+
+  this->setContextMenuPolicy(Qt::CustomContextMenu);
+
+  connect(ui->treeView, SIGNAL(pressed(const QModelIndex&)),
+          this, SLOT(getSelection(const QModelIndex&)));
+  connect(this, SIGNAL(customContextMenuRequested(const QPoint&)),
+          this, SLOT(showContextMenu(const QPoint&)));
 }
 
 KeyViewerDialog::~KeyViewerDialog()
@@ -64,7 +71,7 @@ KeyViewerDialog::updateModel()
 }
 
 void
-KeyViewerDialog::present()
+KeyViewerDialog::display()
 {
   m_keyChain = make_shared<KeyChain>();
   auto newModel = make_shared<KeyTreeModel>();
@@ -87,8 +94,70 @@ KeyViewerDialog::present()
   ui->treeView->show();
   m_model = newModel;
 
+  auto newTableModel = make_shared<CertTreeModel>(N_ROWS, 2);
+  newTableModel->setHeaderData(0, Qt::Horizontal,"Field");
+  newTableModel->setHeaderData(1, Qt::Horizontal,"Value");
+  ui->certView->setModel(newTableModel.get());
+  ui->certView->show();
+  m_tableModel = newTableModel;
+}
+
+void
+KeyViewerDialog::present()
+{
+  display();
+
   show();
   raise();
+}
+
+void
+KeyViewerDialog::getSelection(const QModelIndex& index)
+{
+  m_selectedIndex = index;
+}
+
+void
+KeyViewerDialog::showContextMenu(const QPoint& point)
+{
+  QMenu contextMenu(tr("Key Management"), this);
+  QAction action1("Set Default", this);
+  connect(&action1, SIGNAL(triggered()), this, SLOT(setDefault()));
+  contextMenu.addAction(&action1);
+  contextMenu.exec(ui->treeView->mapToGlobal(point));
+}
+
+void
+KeyViewerDialog::setDefault()
+{
+  std::cerr << "default" << std::endl;
+  KeyTreeItem* item = static_cast<KeyTreeItem*>(m_selectedIndex.internalPointer());
+  if (item == nullptr)
+    return;
+
+  Name name(item->name().toString().toStdString());
+  std::cerr << name << std::endl;
+
+  switch (item->type()) {
+  case KeyTreeItem::Type::ID:
+    {
+      m_keyChain->setDefaultIdentity(name);
+      break;
+    }
+  case KeyTreeItem::Type::KEY:
+    {
+      m_keyChain->setDefaultKeyNameForIdentity(name);
+      break;
+    }
+  case KeyTreeItem::Type::CERT:
+    {
+      m_keyChain->setDefaultCertificateNameForKey(name);
+      break;
+    }
+  default:
+    return;
+  }
+  present();
 }
 
 void

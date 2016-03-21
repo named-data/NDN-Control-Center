@@ -25,6 +25,7 @@
 #include <ndn-cxx/security/key-chain.hpp>
 
 #include <QDialog>
+#include <QTimer>
 
 
 namespace Ui {
@@ -60,11 +61,24 @@ signals:
 
 public slots:
   void
-  present();
+  display();
 
 private slots:
   void
   displayCert(const QModelIndex& index);
+
+  void
+  present();
+
+  void
+  getSelection(const QModelIndex& index);
+
+  void
+  showContextMenu(const QPoint& point);
+
+  void
+  setDefault();
+
   // void insertChild();
   // bool insertColumn();
   // void insertRow();
@@ -78,6 +92,10 @@ private:
   shared_ptr<KeyChain> m_keyChain;
 
   shared_ptr<CertTreeModel> m_tableModel;
+
+  QTimer m_timer;
+
+  QModelIndex m_selectedIndex;
 };
 
 } // namespace ncc
