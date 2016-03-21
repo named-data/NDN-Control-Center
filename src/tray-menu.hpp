@@ -55,6 +55,15 @@ public:
   Q_INVOKABLE void
   startStopNfd();
 
+  Q_INVOKABLE void
+  addDeleteRoute();
+
+  Q_INVOKABLE void
+  addRoute();
+
+  Q_INVOKABLE void
+  deleteRoute();
+
 private slots:
 
   void
@@ -68,6 +77,7 @@ private slots:
 
   void
   stopNfd();
+
 
   void
   updateNfdActivityIcon(bool isActive);

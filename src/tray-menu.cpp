@@ -141,6 +141,39 @@ TrayMenu::stopNfd()
 // #endif
 }
 
+Q_INVOKABLE void
+TrayMenu::addDeleteRoute()
+{
+  addRoute();
+}
+
+Q_INVOKABLE void
+TrayMenu::addRoute()
+{
+  std::cout << "Adding route" << std::endl;
+  QString cmd = "nfdc register /test tcp4://localhost";
+  QProcess *addNewRoute = new QProcess();
+  connect(addNewRoute,SIGNAL(finished(int)), addNewRoute, SLOT(deleteLater()));
+  addNewRoute->start("bash", QStringList() << "-c" << cmd);
+  std::cout << "Done" << std::endl;
+
+
+//   QProcess * proc = new QProcess();
+}
+
+void
+TrayMenu::deleteRoute()
+{
+  std::cout << "Deleting route" << std::endl;
+  QString cmd = "nfdc unregister /test tcp4://localhost";
+  QProcess *addNewRoute = new QProcess();
+  connect(addNewRoute,SIGNAL(finished(int)), addNewRoute, SLOT(deleteLater()));
+  addNewRoute->start("bash", QStringList() << "-c" << cmd);
+  std::cout << "Done" << std::endl;
+
+}
+
+
 void
 TrayMenu::updateNfdActivityIcon(bool isActive)
 {

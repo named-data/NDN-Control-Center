@@ -145,7 +145,7 @@ ApplicationWindow {
                 TableViewColumn{
                     role: "value"
                     title: "Value"
-                    width: 200
+                    width: 300
                 }
             }
         }
@@ -161,6 +161,36 @@ ApplicationWindow {
                 Button {
                     text: "Obtain NDN Certificate"
                     onClicked: Qt.openUrlExternally('http://ndncert.named-data.net')
+                }
+            }
+        }
+        Tab {
+            title: "Add/Delete Route"
+            Column {
+                spacing: 2
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+            }
+
+            Row {
+                spacing: 20
+                anchors.topMargin: 30
+                anchors.leftMargin: 10
+                anchors.rightMargin: 10
+                anchors.bottomMargin: 10
+                anchors.fill: parent
+                TextField {
+                          focus: true
+                }
+                Button {
+                    text: "Add Route"
+                    onClicked: trayModel.addRoute(TextField.text);
+                }
+                Button {
+                    text: "Delete Route"
+                    onClicked: trayModel.deleteRoute(TextField.text);
                 }
             }
         }

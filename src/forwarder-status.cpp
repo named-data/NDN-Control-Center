@@ -100,19 +100,20 @@ ForwarderStatusModel::updateStatus(shared_ptr<const Data> data)
   beginResetModel();
   m_items.clear();
   nfd::ForwarderStatus status(data->getContent());
-  addItem(ForwarderStatusItem("version",       QString::fromStdString(status.getNfdVersion())));
-  addItem(ForwarderStatusItem("startTime",     QString::fromStdString(time::toIsoString(status.getStartTimestamp()))));
-  addItem(ForwarderStatusItem("currentTime",   QString::fromStdString(time::toIsoString(status.getCurrentTimestamp()))));
-  addItem(ForwarderStatusItem("nNameTreeEntries", QString::number(status.getNNameTreeEntries())));
-  addItem(ForwarderStatusItem("nFibEntries",   QString::number(status.getNFibEntries())));
-  addItem(ForwarderStatusItem("nPitEntries",   QString::number(status.getNPitEntries())));
-  addItem(ForwarderStatusItem("nMeasurementsEntries", QString::number(status.getNMeasurementsEntries())));
-  addItem(ForwarderStatusItem("nCsEntries",    QString::number(status.getNCsEntries())));
-  addItem(ForwarderStatusItem("nInInterests",  QString::number(status.getNInInterests())));
-  addItem(ForwarderStatusItem("nOutInterests", QString::number(status.getNOutInterests())));
-  addItem(ForwarderStatusItem("nInDatas",      QString::number(status.getNInDatas())));
-  addItem(ForwarderStatusItem("nNInNacks",      QString::number(status.getNInDatas())));
-  addItem(ForwarderStatusItem("nNOutNacks",     QString::number(status.getNOutDatas())));
+  addItem(ForwarderStatusItem("Version",       QString::fromStdString(status.getNfdVersion())));
+  addItem(ForwarderStatusItem("Start Time",     QString::fromStdString(time::toIsoString(status.getStartTimestamp()))));
+  addItem(ForwarderStatusItem("Current Time",   QString::fromStdString(time::toIsoString(status.getCurrentTimestamp()))));
+  addItem(ForwarderStatusItem("Name Tree Entries", QString::number(status.getNNameTreeEntries())));
+  addItem(ForwarderStatusItem("Fib Entries",   QString::number(status.getNFibEntries())));
+  addItem(ForwarderStatusItem("PitEntries",   QString::number(status.getNPitEntries())));
+  addItem(ForwarderStatusItem("Measurements Entries", QString::number(status.getNMeasurementsEntries())));
+  addItem(ForwarderStatusItem("Content Store Entries",    QString::number(status.getNCsEntries())));
+  addItem(ForwarderStatusItem("Incoming Interests",  QString::number(status.getNInInterests())));
+  addItem(ForwarderStatusItem("Outgoing Interests", QString::number(status.getNOutInterests())));
+  addItem(ForwarderStatusItem("Incoming Data",      QString::number(status.getNInDatas())));
+  addItem(ForwarderStatusItem("Outgoing Data",      QString::number(status.getNOutDatas())));
+  addItem(ForwarderStatusItem("Incoming Nacks",      QString::number(status.getNInDatas())));
+  addItem(ForwarderStatusItem("Outgoing Nacks",     QString::number(status.getNOutDatas())));
   endResetModel();
 }
 
