@@ -103,7 +103,7 @@ public:
   onTimeout();
 
 private:
-  Face& m_face;
+  // Face& m_face;
   QList<FibStatusItem> m_items;
   // shared_ptr<OBufferStream> m_buffer;
 };
