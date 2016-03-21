@@ -238,7 +238,17 @@ class AppBundle(object):
       elif os.path.isfile(rsrc):
         shutil.copy(rsrc, os.path.join(rsrcpath, b))
 
-    return  
+    return
+  
+  def copy_framework(self, framework):
+    '''
+      Copy frameworks
+    '''
+    print ' * Copying framework'
+    rsrcpath = os.path.join(self.bundle, 'Contents', 'Frameworks', os.path.basename(framework))
+
+    shutil.copytree(framework, rsrcpath, symlinks = True)
+
   # def copy_qt_plugins(self):
   #   '''
   #     Copy over any needed Qt plugins.
@@ -449,14 +459,13 @@ if __name__ == '__main__':
   a.copy_etc(['nfd.conf'])
   a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
   a.macdeployqt()
+  a.copy_framework("build/Sparkle.framework")
   a.done()
 
   # Sign our binaries, etc.
   if options.codesign:
     print ' * Signing binaries with identity `%s\'' % options.codesign
-    binaries = (
-      'build/%s/ChronoChat.app' % (MIN_SUPPORTED_VERSION),
-    )
+    binaries = (a.bundle)
 
     codesign(binaries)
     print ''

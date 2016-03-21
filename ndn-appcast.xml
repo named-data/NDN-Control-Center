@@ -1,0 +1,13 @@
+<item>
+  <title>Version 0.1.0 (based on NFD version0.4.0-22-g150b80d)</title>
+  <description><![CDATA[
+    <h2>Initial release</h2>
+  ]]>
+  </description>
+  <pubDate>Mon, 21 March 2016 15:38:00 +0000</pubDate>
+  <enclosure url="https://github.com/2nd-ndn-hackathon/nfd-binary-release/releases/download/0.1.0/NDN-0.1.0-NFD-0.4.0-22-g150b80d-10.10.dmg"
+             sparkle:version="2.0"
+             sparkle:dsaSignature="MC0CFQCYf+EuhBdZDXojGsHT/4m7X96BTAIUBh/g7OqfCC1kZkMYBoKdEDkACto"
+             length="25624367"
+             type="application/octet-stream" />
+</item>

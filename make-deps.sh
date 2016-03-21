@@ -8,6 +8,15 @@ GIT=${GIT:-https://github.com/named-data}
 mkdir build 2>/dev/null || true
 path="$(pwd)"
 
+pushd build
+wget https://github.com/sparkle-project/Sparkle/releases/download/1.14.0/Sparkle-1.14.0.tar.bz2
+mkdir Sparkle-1.14 || true
+pushd Sparkle-1.14
+tar xf ../Sparkle-1.14.0.tar.bz2
+popd
+mv Sparkle-1.14/Sparkle.framework .
+popd
+
 #######################################
 
 rm -Rf build/ndn-cxx

@@ -32,5 +32,9 @@
     <string>True</string>
     <key>LSUIElement</key>
     <string>1</string>
+    <key>SUFeedURL</key>
+    <string>http://named-data.net/binaries/ndn-appcast.xml</string>
+    <key>SUPublicDSAKeyFile</key>
+    <string>ndn_sparkle_pub.pem</string>
 </dict>
 </plist>
