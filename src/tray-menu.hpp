@@ -30,6 +30,8 @@
 
 #include <QtQml/QQmlContext>
 
+#include "key-viewer-dialog.hpp"
+
 namespace ndn {
 
 class TrayMenu : public QWidget
@@ -90,6 +92,8 @@ private:
   QAction* m_entryPref;
   QAction* m_entrySec;
   QAction* m_entryQuit;
+
+  ncc::KeyViewerDialog* m_keyViewerDialog;
 };
 
 } // namespace ndn

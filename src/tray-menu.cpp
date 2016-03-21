@@ -46,10 +46,13 @@ TrayMenu::TrayMenu(QQmlContext* context)
   , m_entryPref(new QAction("Preferences...", m_menu))
   , m_entrySec(new QAction("Security", m_menu))
   , m_entryQuit(new QAction("Quit", m_menu))
+  , m_keyViewerDialog(new ncc::KeyViewerDialog)
 
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
+  connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
+
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
           Qt::QueuedConnection);

@@ -36,7 +36,7 @@ namespace ndn {
 
 FibStatusModel::FibStatusModel(Face& face, QObject *parent/* = 0*/)
   : QAbstractListModel(parent)
-  , m_face(face)
+  // , m_face(face)
 {
 }
 
