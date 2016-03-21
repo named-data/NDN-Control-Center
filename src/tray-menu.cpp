@@ -72,7 +72,9 @@ TrayMenu::TrayMenu(QQmlContext* context)
   // m_menu->addAction(stop);
   m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entrySec);
+#ifdef OSX_BUILD
   m_menu->addAction(m_entryEnableCli);
+#endif
   m_menu->addAction(m_entryQuit);
   m_tray = new QSystemTrayIcon(this);
   m_tray->setContextMenu(m_menu);
