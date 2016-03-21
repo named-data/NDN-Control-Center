@@ -47,7 +47,7 @@ CertTreeModel::data(const QModelIndex& index, int role) const
     {
       QBrush brush(Qt::white, Qt::SolidPattern);
       if (index.row() % 2 == 0) {
-        brush.setColor(Qt::lightGray);
+        brush.setColor(QColor::fromRgb(225, 225, 225));
       }
       return brush;
     }
