@@ -20,6 +20,8 @@
 #ifndef NCC_TRAY_MENU_HPP
 #define NCC_TRAY_MENU_HPP
 
+#include "config.hpp"
+
 #include <QtCore/QObject>
 #include <QtCore/QProcess>
 #include <QtCore/QCoreApplication>
@@ -80,9 +82,11 @@ private slots:
   void
   stopNfd();
 
-
   void
   updateNfdActivityIcon(bool isActive);
+
+  void
+  enableCli();
 
 private:
   QQmlContext* m_context;
@@ -91,6 +95,10 @@ private:
   QMenu* m_menu;
   QAction* m_entryPref;
   QAction* m_entrySec;
+#ifdef OSX_BUILD
+  QAction* m_entryEnableCli;
+#endif
+
   QAction* m_entryQuit;
 
   ncc::KeyViewerDialog* m_keyViewerDialog;

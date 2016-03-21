@@ -264,8 +264,7 @@ class AppBundle(object):
     print ' * Copying NDN dependencies'
 
     src = path
-    dst = os.path.join(self.bundle, 'Contents', 'Resources', 'ndn')
-
+    dst = os.path.join(self.bundle, 'Contents', 'Resources', 'platform')
     shutil.copytree(src, dst, symlinks=False)
 
     top = dst
@@ -280,7 +279,7 @@ class AppBundle(object):
 
     # Cleanup debug folders stuff
     excludeDirs = ['include', 'pkgconfig']
-    excludeFiles = ['libndn-cxx.dylib', 'ndn-start', 'ndn-stop']
+    excludeFiles = ['libndn-cxx.dylib', 'nfd-start', 'nfd-stop']
 
     for dir, files in files.items():
       basename = os.path.basename(dir)
@@ -417,27 +416,27 @@ if __name__ == '__main__':
   # Do the finishing touches to our Application bundle before release
   shutil.rmtree('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ignore_errors=True)
   a = AppBundle('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ver, 'build/NFD Control Center.app')
-  # a.copy_qt_plugins()
-  # a.handle_libs()
+  a.copy_qt_plugins()
+  a.handle_libs()
   a.copy_ndn_deps("build/deps")
-  # a.copy_resources(['qt.conf'])
-  # a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
-  # a.done()
+  a.copy_resources(['qt.conf'])
+  a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
+  a.done()
 
-  # # Sign our binaries, etc.
-  # if options.codesign:
-  #   print ' * Signing binaries with identity `%s\'' % options.codesign
-  #   binaries = (
-  #     'build/%s/ChronoChat.app' % (MIN_SUPPORTED_VERSION),
-  #   )
+  # Sign our binaries, etc.
+  if options.codesign:
+    print ' * Signing binaries with identity `%s\'' % options.codesign
+    binaries = (
+      'build/%s/ChronoChat.app' % (MIN_SUPPORTED_VERSION),
+    )
 
-  #   codesign(binaries)
-  #   print ''
+    codesign(binaries)
+    print ''
 
-  # # Create diskimage
-  # title = "NDN-%s-%s" % (ver, MIN_SUPPORTED_VERSION)
-  # fn = "build/%s.dmg" % title
-  # d = DiskImage(fn, title)
-  # d.symlink('/Applications', '/Applications')
-  # d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
-  # d.create()
+  # Create diskimage
+  title = "NDN-%s-%s" % (ver, MIN_SUPPORTED_VERSION)
+  fn = "build/%s.dmg" % title
+  d = DiskImage(fn, title)
+  d.symlink('/Applications', '/Applications')
+  d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
+  d.create()

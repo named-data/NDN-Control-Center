@@ -27,10 +27,13 @@
 #ifdef OSX_BUILD
 #define CONNECT_ICON ":/res/icon-connected-black.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-black.png"
+
+#include <Security/Authorization.h>
+#include <Security/AuthorizationTags.h>
 #else
 #define CONNECT_ICON ":/res/icon-connected-white.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-white.png"
-#endif
+#endif // OSX_BUILD
 
 #ifdef WAF
 #include "tray-menu.moc"
@@ -44,7 +47,10 @@ TrayMenu::TrayMenu(QQmlContext* context)
   , m_isNfdRunning(false)
   , m_menu(new QMenu(this))
   , m_entryPref(new QAction("Preferences...", m_menu))
-  , m_entrySec(new QAction("Security", m_menu))
+  , m_entrySec(new QAction("Security...", m_menu))
+#ifdef OSX_BUILD
+  , m_entryEnableCli(new QAction("Enable Command Terminal Usage...", m_menu))
+#endif
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
 
@@ -53,6 +59,9 @@ TrayMenu::TrayMenu(QQmlContext* context)
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
+#ifdef OSX_BUILD
+  connect(m_entryEnableCli, SIGNAL(triggered()), this, SLOT(enableCli()));
+#endif
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
           Qt::QueuedConnection);
@@ -63,6 +72,7 @@ TrayMenu::TrayMenu(QQmlContext* context)
   // m_menu->addAction(stop);
   m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entrySec);
+  m_menu->addAction(m_entryEnableCli);
   m_menu->addAction(m_entryQuit);
   m_tray = new QSystemTrayIcon(this);
   m_tray->setContextMenu(m_menu);
@@ -190,6 +200,63 @@ TrayMenu::updateNfdActivityIcon(bool isActive)
     m_tray->setIcon(QIcon(DISCONNECT_ICON));
     m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
   }
+}
+
+void
+TrayMenu::enableCli()
+{
+#ifdef OSX_BUILD
+  AuthorizationRef authorizationRef;
+  OSStatus status = AuthorizationCreate(NULL, kAuthorizationEmptyEnvironment,
+                                        kAuthorizationFlagDefaults, &authorizationRef);
+  if (status != errAuthorizationSuccess)
+    return;
+
+  AuthorizationItem item = { kAuthorizationRightExecute, 0, 0, 0 };
+  AuthorizationRights rights = { 1, &item };
+  const AuthorizationFlags flags = kAuthorizationFlagDefaults | kAuthorizationFlagInteractionAllowed
+    | kAuthorizationFlagPreAuthorize | kAuthorizationFlagExtendRights;
+
+  status = AuthorizationCopyRights(authorizationRef, &rights, kAuthorizationEmptyEnvironment,
+                                   flags, 0);
+  if (status != errAuthorizationSuccess)
+    return;
+
+  char const* mkdir_arg[] = { "-p", "/usr/local/bin", nullptr };
+  char const* mkdir = "/bin/mkdir";
+  AuthorizationExecuteWithPrivileges(authorizationRef,
+                                     mkdir,
+                                     kAuthorizationFlagDefaults, (char**)mkdir_arg, nullptr);
+
+  std::vector<std::string> arguments = { "-f",
+                                       QCoreApplication::applicationDirPath().toStdString() + "/../Resources/ndn",
+                                       "/usr/local/bin/ndn" };
+  std::vector<const char*> args;
+  for (const auto& i : arguments) {
+    args.push_back(i.c_str());
+  }
+  args.push_back(nullptr);
+
+  char const* helperTool  = "/bin/cp";
+  AuthorizationExecuteWithPrivileges(authorizationRef,
+                                     helperTool,
+                                     kAuthorizationFlagDefaults,
+                                     (char**)args.data(), NULL);
+
+  // QVector<char *> args;
+  // QVector<QByteArray> utf8Args;
+  // for (const QString &argument : arguments) {
+  //   utf8Args.push_back(argument.toUtf8());
+  //   args.push_back(utf8Args.last().data());
+  // }
+  // args.push_back(0);
+
+  // const QByteArray utf8Program = program.toUtf8();
+  // status = AuthorizationExecuteWithPrivileges(authorizationRef, utf8Program.data(),
+  //                                             kAuthorizationFlagDefaults, args.data(), 0);
+
+  AuthorizationFree(authorizationRef, kAuthorizationFlagDestroyRights);
+#endif
 }
 
 } // namespace ndn

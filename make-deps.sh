@@ -10,7 +10,7 @@ path="$(pwd)"
 
 #######################################
 
-# rm -Rf build/ndn-cxx
+rm -Rf build/ndn-cxx
 git clone ${GIT}/ndn-cxx build/ndn-cxx
 pushd build/ndn-cxx
 git checkout ${NDN_CXX_COMMIT}
@@ -21,7 +21,7 @@ popd
 
 ####################################
 
-# rm -Rf build/NFD
+rm -Rf build/NFD
 git clone ${GIT}/NFD build/NFD
 pushd build/NFD
 git checkout ${NFD_COMMIT}
