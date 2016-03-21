@@ -175,7 +175,7 @@ class AppBundle(object):
           self.handle_binary_libs(abs)
 
         os.chmod(macho, 0755)
-        print 'install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho)
+        # print 'install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho)
         os.system('install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho))
 
       # Regular dylibs
@@ -198,7 +198,7 @@ class AppBundle(object):
           self.handled_libs[basename] = True
           self.handle_binary_libs(abs, loader_path=os.path.dirname(lib) if loader_path is None else loader_path)
 
-        print 'install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho)
+        # print 'install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho)
         os.chmod(macho, 0755)
         os.system('install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho))
 
@@ -329,7 +329,8 @@ class DiskImage(FolderObject):
     '''
     print ' * Creating disk image. Please wait...'
     if os.path.exists(self.filename):
-      shutil.rmtree(self.filename)
+      os.remove(self.filename)
+      shutil.rmtree(self.filename, ignore_errors=True)
     p = Popen(['hdiutil', 'create',
               '-srcfolder', self.tmp,
               '-format', 'UDBZ',
