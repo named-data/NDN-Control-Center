@@ -39,7 +39,7 @@ public:
     : m_isActive(true)
     , m_scheduler(m_face.getIoService())
     , m_fibModel(m_face)
-    , m_tray(m_engine.rootContext())
+    , m_tray(m_engine.rootContext(), m_face)
   {
     QQmlContext* context = m_engine.rootContext();
 

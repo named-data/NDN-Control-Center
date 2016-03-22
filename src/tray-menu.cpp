@@ -42,7 +42,7 @@
 
 namespace ndn {
 
-TrayMenu::TrayMenu(QQmlContext* context)
+TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   : m_context(context)
   , m_isNfdRunning(false)
   , m_menu(new QMenu(this))
@@ -53,6 +53,7 @@ TrayMenu::TrayMenu(QQmlContext* context)
 #endif
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
+  , m_face(face)
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));

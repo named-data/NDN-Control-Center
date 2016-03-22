@@ -36,6 +36,8 @@
 
 namespace ndn {
 
+class Face;
+
 class TrayMenu : public QWidget
 {
   Q_OBJECT
@@ -49,7 +51,7 @@ signals:
 
 public:
   explicit
-  TrayMenu(QQmlContext* context);
+  TrayMenu(QQmlContext* context, Face& face);
 
   ~TrayMenu();
 
@@ -102,6 +104,7 @@ private:
   QAction* m_entryQuit;
 
   ncc::KeyViewerDialog* m_keyViewerDialog;
+  Face& m_face;
 };
 
 } // namespace ndn
