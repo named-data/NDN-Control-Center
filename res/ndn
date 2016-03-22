@@ -4,7 +4,7 @@ if [[ $# -eq 0 ]] ; then
     echo ERROR: No command specified
     echo
     echo Available commands:
-    for command in $(ls /Applications/NDN.app/Contents/Resources/platform/bin/ 2>/dev/null); do
+    for command in $(ls /Applications/NDN.app/Contents/Platform/ 2>/dev/null); do
         echo "  $command"
     done
     exit 1

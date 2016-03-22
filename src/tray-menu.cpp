@@ -137,7 +137,7 @@ TrayMenu::startNfd()
   proc->startDetached((QCoreApplication::applicationDirPath().toStdString() + "/../Platform/nfd").c_str(),
                       QStringList()
                         << "--config"
-                        << (QCoreApplication::applicationDirPath().toStdString() + "/../etc/nfd.conf").c_str());
+                        << (QCoreApplication::applicationDirPath().toStdString() + "/../etc/ndn/nfd.conf").c_str());
 // #endif
 //   QProcess * proc = new QProcess();
 //   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
@@ -234,7 +234,7 @@ TrayMenu::enableCli()
                                      mkdir,
                                      kAuthorizationFlagDefaults, (char**)mkdir_arg, nullptr);
 
-  std::vector<std::string> arguments = { "-f",
+  std::vector<std::string> arguments = { "-f", "-s",
                                        QCoreApplication::applicationDirPath().toStdString() + "/../Resources/ndn",
                                        "/usr/local/bin/ndn" };
   std::vector<const char*> args;

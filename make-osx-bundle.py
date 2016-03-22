@@ -226,9 +226,9 @@ class AppBundle(object):
       Copy needed config files into our bundle.
     '''
     print ' * Copying needed config files'
-    rsrcpath = os.path.join(self.bundle, 'Contents', 'etc')
+    rsrcpath = os.path.join(self.bundle, 'Contents', 'etc', 'ndn')
     if not os.path.exists(rsrcpath):
-      os.mkdir(rsrcpath)
+      os.makedirs(rsrcpath)
 
     # Copy resources already in the bundle
     for rsrc in rsrcs:
