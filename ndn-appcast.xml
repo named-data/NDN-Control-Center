@@ -15,8 +15,25 @@
       <pubDate>Mon, 21 March 2016 15:38:00 +0000</pubDate>
       <enclosure url="https://github.com/2nd-ndn-hackathon/nfd-binary-release/releases/download/0.1.0/NDN-0.1.0-NFD-0.4.0-22-g150b80d-10.10.dmg"
                  sparkle:version="0.1.0"
-                 sparkle:dsaSignature="MC0CFQCSEv9IA78djidIEpQ4/X76rIEMIQIUXDRb1Stu8530bEJS4yZGUpymm1g"
+                 sparkle:dsaSignature="MC0CFQCSEv9IA78djidIEpQ4/X76rIEMIQIUXDRb1Stu8530bEJS4yZGUpymm1g="
                  length="25623942"
+                 type="application/octet-stream" />
+    </item>
+    <item>
+      <title>Version 0.1.1 (based on NFD version 0.4.0-22-g150b80d)</title>
+      <description><![CDATA[
+      <h2>Minor fixes</h2>
+      <ul>
+      <li>Should work on all OSX 10.10+ systems</li>
+      <li>Fix bug with `ndn` wrapper</li>
+      </ul>
+      ]]>
+      </description>
+      <pubDate>Mon, 22 March 2016 14:42:00 +0000</pubDate>
+      <enclosure url="https://github.com/2nd-ndn-hackathon/nfd-binary-release/releases/download/0.1.1/NDN-0.1.1-NFD-0.4.0-22-g150b80d-10.10.dmg"
+                 sparkle:version="0.1.1"
+                 sparkle:dsaSignature="MC0CFAPv0czBOZJTfZMW7NHG4WsoU1tFAhUAnNVAlhd1pfc1IYtKEQmQ+oBXePQ="
+                 length="18643229"
                  type="application/octet-stream" />
     </item>
   </channel>
