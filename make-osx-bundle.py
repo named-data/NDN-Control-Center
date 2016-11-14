@@ -10,6 +10,8 @@ import sys, os, string, re, shutil, plistlib, tempfile, exceptions, datetime, ta
 from subprocess import Popen, PIPE
 from optparse import OptionParser
 
+os.environ['PATH'] += ":/usr/local/opt/qt5/bin:/opt/qt5/5.8/clang_64/bin"
+
 import platform
 
 if platform.system () != 'Darwin':

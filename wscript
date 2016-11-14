@@ -3,6 +3,7 @@ VERSION='0.1.1'
 APPNAME='nfd-control-center'
 
 from waflib import Logs, Utils, Task, TaskGen
+import os
 
 def options(opt):
     opt.load('compiler_c compiler_cxx qt5 gnu_dirs')
@@ -11,7 +12,16 @@ def options(opt):
     # grp = opt.add_option_group('NFD Control Center options')
 
 def configure(conf):
-    conf.load('compiler_c compiler_cxx qt5 default-compiler-flags boost')
+    conf.load('compiler_c compiler_cxx default-compiler-flags boost')
+
+    if 'PKG_CONFIG_PATH' not in os.environ:
+        os.environ['PKG_CONFIG_PATH'] = Utils.subst_vars('${LIBDIR}/pkgconfig', conf.env)
+
+    # add homebrew path, as qt5 is no longer linked
+    os.environ['PKG_CONFIG_PATH'] += ":/usr/local/opt/qt5/lib/pkgconfig:/opt/qt5/5.8/clang_64/lib/pkgconfig"
+    os.environ['PATH'] += ":/usr/local/opt/qt5/bin:/opt/qt5/5.8/clang_64/bin"
+
+    conf.load('qt5')
 
     conf.check_cfg(package='libndn-cxx', args=['--cflags', '--libs'],
                    uselib_store='NDN_CXX', mandatory=True)
