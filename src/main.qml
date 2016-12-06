@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: false
     id: window
     title: "NFD Control Center"
-    minimumWidth: 600
+    minimumWidth: 750
     minimumHeight: 400
 
     TabView {
@@ -44,19 +44,11 @@ ApplicationWindow {
                             text: "Automatically start NFD Control Center on login"
                         }
                         CheckBox {
-                            id: discoverHub
-                            text: "Discover nearest NDN hub"
-                            onCheckedChanged: {
-                                if (this.checked) {
-                                    trayModel.autoConfig()
-                                }
-                            }
+                            id: autoConfig
+                            text: "Automatically start NDN auto configuration"
+                            checked: trayModel.isAutoConfigEnabled()
+                            onCheckedChanged: trayModel.startStopAutoConfig(this.checked)
                         }
-                        // CheckBox {
-                        //     id: checkUpdate
-                        //     enabled: false
-                        //     text: "Check for software updates"
-                        // }
                     }
                 }
                 GroupBox {
@@ -98,7 +90,7 @@ ApplicationWindow {
                     anchors.rightMargin: 20
                     anchors.bottomMargin: 20
 
-                    onClicked: trayModel.startStopNfd()
+                    onClicked: trayModel.startStopNfd(autoConfig.checked)
                 }
             }
         }
@@ -147,6 +139,19 @@ ApplicationWindow {
                     title: "Value"
                     width: 300
                 }
+            }
+        }
+        Tab {
+            title: "Auto-config status"
+            TextArea {
+                id: autoConfigText
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                readOnly: true
+                text: acText
             }
         }
         Tab {

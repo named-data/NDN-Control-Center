@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -25,10 +25,15 @@
 #include <QtCore/QObject>
 #include <QtCore/QProcess>
 #include <QtCore/QCoreApplication>
+#include <QtCore/QSettings>
 
+#include <QtWidgets/QWidget>
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QVBoxLayout>
+#include <QtWidgets/QPlainTextEdit>
+#include <QtWidgets/QPushButton>
 
 #include <QtQml/QQmlContext>
 
@@ -55,11 +60,14 @@ public:
 
   ~TrayMenu();
 
-  Q_INVOKABLE void
-  autoConfig();
+  Q_INVOKABLE bool
+  isAutoConfigEnabled();
 
   Q_INVOKABLE void
-  startStopNfd();
+  startStopAutoConfig(bool autoConfig);
+
+  Q_INVOKABLE void
+  startStopNfd(bool autoConfig);
 
   Q_INVOKABLE void
   addDeleteRoute();
@@ -79,6 +87,12 @@ private slots:
   iconActivated(QSystemTrayIcon::ActivationReason reason);
 
   void
+  startAutoConfig();
+
+  void
+  stopAutoConfig();
+
+  void
   startNfd();
 
   void
@@ -90,6 +104,15 @@ private slots:
   void
   enableCli();
 
+  void
+  processOutput();
+
+  void
+  showPref();
+
+  static void
+  appendMsg(QString &target, QString source);
+
 private:
   QQmlContext* m_context;
   bool m_isNfdRunning;
@@ -97,6 +120,9 @@ private:
   QMenu* m_menu;
   QAction* m_entryPref;
   QAction* m_entrySec;
+  QProcess* m_acProc;
+  QString m_autoConfigMsg;
+  QSettings m_settings;
 #ifdef OSX_BUILD
   QAction* m_entryEnableCli;
 #endif

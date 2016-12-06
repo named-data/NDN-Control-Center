@@ -10,12 +10,13 @@ mkdir build 2>/dev/null || true
 path="$(pwd)"
 
 pushd build
-wget https://github.com/sparkle-project/Sparkle/releases/download/1.14.0/Sparkle-1.14.0.tar.bz2
-mkdir Sparkle-1.14 || true
-pushd Sparkle-1.14
-tar xf ../Sparkle-1.14.0.tar.bz2
+# wget https://github.com/sparkle-project/Sparkle/releases/download/1.14.0/Sparkle-1.14.0.tar.bz2
+wget https://github.com/sparkle-project/Sparkle/releases/download/1.16.0/Sparkle-1.16.0.tar.bz2
+mkdir Sparkle-1.16 || true
+pushd Sparkle-1.16
+tar xf ../Sparkle-1.16.0.tar.bz2
 popd
-mv Sparkle-1.14/Sparkle.framework .
+mv Sparkle-1.16/Sparkle.framework .
 popd
 
 #######################################

@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2016, Regents of the University of California.
+ * Copyright (c) 2013-2017, Regents of the University of California.
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -37,7 +37,6 @@
 
 #ifdef WAF
 #include "tray-menu.moc"
-// #include "tray-menu.cpp.moc"
 #endif
 
 namespace ndn {
@@ -54,8 +53,11 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
   , m_face(face)
+  , m_acProc(new QProcess())
+  , m_settings(new QSettings())
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
+  connect(this, SIGNAL(showApp()), this, SLOT(showPref()));
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
@@ -67,9 +69,8 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
           Qt::QueuedConnection);
 
   m_context->setContextProperty("startStopButtonText", QVariant::fromValue(QString("Start NFD")));
+  m_context->setContextProperty("acText", QVariant::fromValue(QString("")));
 
-  // m_menu->addAction(start);
-  // m_menu->addAction(stop);
   m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entrySec);
 #ifdef OSX_BUILD
@@ -82,19 +83,108 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
           this, SLOT(iconActivated(QSystemTrayIcon::ActivationReason)));
   m_tray->setIcon(QIcon(DISCONNECT_ICON));
   m_tray->show();
+  if (isAutoConfigEnabled()) {
+    stopAutoConfig(); // Make sure no more than one auto-config process exist
+    QTimer* mTimer = new QTimer(this);
+    mTimer->setSingleShot(true);
+    connect(mTimer, SIGNAL(timeout()), SLOT(startAutoConfig()));
+    mTimer->start(2000);
+  }
 }
 
 TrayMenu::~TrayMenu()
 {
 }
 
-Q_INVOKABLE void
-TrayMenu::autoConfig()
+void
+TrayMenu::appendMsg(QString &target, QString source)
 {
-  std::cout << "auto config" << std::endl;
+  int maxLine = 100; // Max line that will show in auto-config status tab view
+  if (target.count(QString("\n")) > maxLine) { // Only when target QString has more line than maxLine, it needs remove line
+    int end = target.indexOf(QString("\n"));
+    target.remove(0, end + 1); // Remove the first line of target
+  }
+  target.append(source);
+}
+
+void
+TrayMenu::showPref()
+{
+  m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg)); // Update auto-config status tab view
+}
+
+void
+TrayMenu::processOutput()
+{
+  std::string msg = m_acProc->readAllStandardOutput().toStdString();
+  if (msg != "") {
+    appendMsg(m_autoConfigMsg, QString::fromStdString(msg));
+  }
+  msg = m_acProc->readAllStandardError().toStdString();
+  if (msg != "") {
+    appendMsg(m_autoConfigMsg, QString::fromStdString(msg));
+  }
+  m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg));
+}
+
+Q_INVOKABLE bool
+TrayMenu::isAutoConfigEnabled()
+{
+  bool sAutoConfig = m_settings.value("main/auto-config", QVariant(false)).toBool();
+  return sAutoConfig;
+}
+
+void
+TrayMenu::startAutoConfig()
+{
+  if (m_isNfdRunning) {
+    appendMsg(m_autoConfigMsg, QString("NDN auto configuration will start...\n"));
+    connect(m_acProc, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
+    connect(m_acProc, SIGNAL(readyReadStandardError()), this, SLOT(processOutput()));
+    m_acProc->start((QCoreApplication::applicationDirPath().toStdString() + "/../Platform/ndn-autoconfig").c_str(),
+                      QStringList()
+                        << "--daemon");
+  }
+}
+
+void
+TrayMenu::stopAutoConfig()
+{
+#ifdef OSX_BUILD
   QProcess* proc = new QProcess();
   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-  // proc->start(NFD_AUTOCONFIG_COMMAND);
+  proc->startDetached("killall", QStringList() << "ndn-autoconfig");
+#endif
+}
+
+Q_INVOKABLE void
+TrayMenu::startStopAutoConfig(bool autoConfig)
+{
+  if (m_isNfdRunning) {
+    if (autoConfig) {
+      stopAutoConfig(); // Make sure no more than one auto-config process exist
+      QTimer* mTimer = new QTimer(this);
+      mTimer->setSingleShot(true);
+      connect(mTimer, SIGNAL(timeout()), SLOT(startAutoConfig()));
+      mTimer->start(2000);
+      m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg));
+      m_settings.setValue("main/auto-config", true);
+    }
+    else {
+      stopAutoConfig();
+      appendMsg(m_autoConfigMsg, QString("NDN auto configuration will be stopped!\n"));
+      m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg));
+      m_settings.setValue("main/auto-config", false);
+    }
+  }
+  else { // No need to start or stop auto-config when NFD is not running, but it needs to update settings
+    if (autoConfig) {
+      m_settings.setValue("main/auto-config", true);
+    }
+    else {
+      m_settings.setValue("main/auto-config", false);
+    }
+  }
 }
 
 void
@@ -118,13 +208,24 @@ TrayMenu::iconActivated(QSystemTrayIcon::ActivationReason reason)
 }
 
 Q_INVOKABLE void
-TrayMenu::startStopNfd()
+TrayMenu::startStopNfd(bool autoConfig)
 {
   if (!m_isNfdRunning) {
     startNfd();
+    if (autoConfig) {
+      stopAutoConfig(); // Make sure no more than one auto-config process exist
+      QTimer* mTimer = new QTimer(this);
+      mTimer->setSingleShot(true);
+      connect(mTimer, SIGNAL(timeout()), SLOT(startAutoConfig()));
+      mTimer->start(2000);
+      m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg));
+    }
   }
   else {
     stopNfd();
+    stopAutoConfig();
+    appendMsg(m_autoConfigMsg, QString("NDN auto configuration will be stopped!\n"));
+    m_context->setContextProperty("acText", QVariant::fromValue(m_autoConfigMsg));
   }
 }
 
@@ -138,15 +239,17 @@ TrayMenu::startNfd()
                       QStringList()
                         << "--config"
                         << (QCoreApplication::applicationDirPath().toStdString() + "/../etc/ndn/nfd.conf").c_str());
-// #endif
-//   QProcess * proc = new QProcess();
-//   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-// #ifdef __linux__
-//   proc->start("gksudo", QStringList() << NFD_START_COMMAND);
-// #else
-//   proc->start("osascript", QStringList()
-//               << "-e"
-//               << "do shell script \"" NFD_START_COMMAND "\" with administrator privileges");
+
+
+  // #endif
+  //   QProcess * proc = new QProcess();
+  //   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
+  // #ifdef __linux__
+  //   proc->start("gksudo", QStringList() << NFD_START_COMMAND);
+  // #else
+  //   proc->start("osascript", QStringList()
+  //               << "-e"
+  //               << "do shell script \"" NFD_START_COMMAND "\" with administrator privileges");
 #endif
 }
 
@@ -175,9 +278,6 @@ TrayMenu::addRoute()
   connect(addNewRoute,SIGNAL(finished(int)), addNewRoute, SLOT(deleteLater()));
   addNewRoute->start("bash", QStringList() << "-c" << cmd);
   std::cout << "Done" << std::endl;
-
-
-//   QProcess * proc = new QProcess();
 }
 
 void
@@ -191,7 +291,6 @@ TrayMenu::deleteRoute()
   std::cout << "Done" << std::endl;
 
 }
-
 
 void
 TrayMenu::updateNfdActivityIcon(bool isActive)
