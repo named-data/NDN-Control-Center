@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2016, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -28,6 +28,9 @@
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
+#include <ndn-cxx/mgmt/nfd/controller.hpp>
+#include <ndn-cxx/mgmt/nfd/status-dataset.hpp>
+
 #include <boost/thread.hpp>
 
 namespace ndn {
@@ -37,6 +40,8 @@ class Ncc
 public:
   Ncc()
     : m_isActive(true)
+    , m_face(nullptr, m_keyChain)
+    , m_controller(m_face, m_keyChain)
     , m_scheduler(m_face.getIoService())
     , m_fibModel(m_face)
     , m_tray(m_engine.rootContext(), m_face)
@@ -65,9 +70,8 @@ public:
       while (m_isActive) {
         try {
           while (m_isActive) {
-            m_face.expressInterest(Interest("/localhost/nfd/status"),
-                                   bind(&Ncc::onStatusRetrieved, this, _2),
-                                   bind(&Ncc::onStatusTimeout, this));
+            m_controller.fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&Ncc::onStatusRetrieved, this, _1),
+                                                                        bind(&Ncc::onStatusTimeout, this));
             m_face.processEvents(time::milliseconds::zero(), true);
           }
         }
@@ -88,10 +92,10 @@ public:
   }
 
   void
-  onStatusRetrieved(const Data& data)
+  onStatusRetrieved(const nfd::ForwarderStatus& status)
   {
     emit m_tray.nfdActivityUpdate(true);
-    emit m_forwarderStatusModel.onDataReceived(data.shared_from_this());
+    emit m_forwarderStatusModel.onDataReceived(status);
 
     m_scheduler.scheduleEvent(time::seconds(6), bind(&Ncc::requestNfdStatus, this));
   }
@@ -119,18 +123,17 @@ private:
   void
   requestNfdStatus()
   {
-    Interest interest("/localhost/nfd/status");
-    interest.setMustBeFresh(true);
-    m_face.expressInterest(interest,
-                           bind(&Ncc::onStatusRetrieved, this, _2),
-                           bind(&Ncc::onStatusTimeout, this));
+    m_controller.fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&Ncc::onStatusRetrieved, this, _1),
+                                                       bind(&Ncc::onStatusTimeout, this));
   }
 
 private:
   volatile bool m_isActive;
   boost::thread m_nfdThread;
 
+  KeyChain m_keyChain;
   Face m_face;
+  nfd::Controller m_controller;
   Scheduler m_scheduler;
 
   QQmlApplicationEngine m_engine;
@@ -143,11 +146,13 @@ private:
 } // namespace ndn
 
 Q_DECLARE_METATYPE(ndn::shared_ptr<const ndn::Data>)
+Q_DECLARE_METATYPE(ndn::nfd::ForwarderStatus)
 
 int
 main(int argc, char *argv[])
 {
-  qRegisterMetaType<ndn::shared_ptr<const ndn::Data> >();
+  qRegisterMetaType<ndn::shared_ptr<const ndn::Data>>();
+  qRegisterMetaType<ndn::nfd::ForwarderStatus>();
 
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);

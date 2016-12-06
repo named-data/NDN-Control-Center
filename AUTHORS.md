@@ -1,2 +1,6 @@
-Ilya Moiseenko      <http://ilyamoiseenko.com/>
-Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
+- Ilya Moiseenko      <http://ilyamoiseenko.com/>
+- Alexander Afanasyev <http://lasr.cs.ucla.edu/afanasyev/index.html>
+- Tai-Lin Chu         <tailinchu@gmail.com>
+- Susmit Shannigrahi  <https://www.linkedin.com/in/susmit-shannigrahi-90433b8>
+- Yingdi Yu           <http://irl.cs.ucla.edu/~yingdi/>
+- Qi Zhao             <http://irl.cs.ucla.edu/~qzhao/>

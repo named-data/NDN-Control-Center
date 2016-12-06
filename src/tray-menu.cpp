@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2016, Regents of the University of California.
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -13,7 +13,7 @@
  * WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A
  * PARTICULAR PURPOSE.  See the GNU General Public License for more details.
  *
-         * You should have received a copy of the GNU General Public License along with NFD
+ * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
@@ -243,7 +243,7 @@ TrayMenu::enableCli()
   }
   args.push_back(nullptr);
 
-  char const* helperTool  = "/bin/cp";
+  char const* helperTool  = "/bin/ln";
   AuthorizationExecuteWithPrivileges(authorizationRef,
                                      helperTool,
                                      kAuthorizationFlagDefaults,

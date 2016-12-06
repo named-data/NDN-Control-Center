@@ -24,6 +24,7 @@
 #include <QtCore/QStringList>
 
 #include <ndn-cxx/face.hpp>
+#include <ndn-cxx/mgmt/nfd/forwarder-status.hpp>
 
 namespace ndn {
 
@@ -60,7 +61,7 @@ class ForwarderStatusModel : public QAbstractListModel
 
 signals:
   void
-  onDataReceived(ndn::shared_ptr<const ndn::Data>);
+  onDataReceived(ndn::nfd::ForwarderStatus status);
 
 public:
 
@@ -88,15 +89,12 @@ public:
   clear();
 
   void
-  afterFetchedVersionInformation(const Data& data);
-
-  void
   onTimeout(const Interest& interest);
 
 private slots:
 
   void
-  updateStatus(ndn::shared_ptr<const ndn::Data> data);
+  updateStatus(ndn::nfd::ForwarderStatus status);
 
 private:
   QList<ForwarderStatusItem> m_items;

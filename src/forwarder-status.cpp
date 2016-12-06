@@ -1,6 +1,7 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2016, Regents of the University of California,
+ * Copyright (c) 2013-2016, Regents of the University of California.
+ *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
  *
@@ -14,7 +15,6 @@
  *
  * You should have received a copy of the GNU General Public License along with NFD
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
- * TODO:Add others
  */
 
 #include "forwarder-status.hpp"
@@ -35,8 +35,8 @@ namespace ndn {
 ForwarderStatusModel::ForwarderStatusModel(QObject* parent/* = 0*/)
   : QAbstractListModel(parent)
 {
-  connect(this, SIGNAL(onDataReceived(ndn::shared_ptr<const ndn::Data>)), this,
-          SLOT(updateStatus(ndn::shared_ptr<const ndn::Data>)),
+  connect(this, SIGNAL(onDataReceived(ndn::nfd::ForwarderStatus)), this,
+          SLOT(updateStatus(ndn::nfd::ForwarderStatus)),
           Qt::QueuedConnection);
 }
 
@@ -89,17 +89,10 @@ ForwarderStatusModel::clear()
 }
 
 void
-ForwarderStatusModel::afterFetchedVersionInformation(const Data& data)
-{
-  emit onDataReceived(data.shared_from_this());
-}
-
-void
-ForwarderStatusModel::updateStatus(shared_ptr<const Data> data)
+ForwarderStatusModel::updateStatus(ndn::nfd::ForwarderStatus status)
 {
   beginResetModel();
   m_items.clear();
-  nfd::ForwarderStatus status(data->getContent());
   addItem(ForwarderStatusItem("Version",       QString::fromStdString(status.getNfdVersion())));
   addItem(ForwarderStatusItem("Start Time",     QString::fromStdString(time::toIsoString(status.getStartTimestamp()))));
   addItem(ForwarderStatusItem("Current Time",   QString::fromStdString(time::toIsoString(status.getCurrentTimestamp()))));

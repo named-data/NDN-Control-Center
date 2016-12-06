@@ -26,18 +26,18 @@ git checkout ${NDN_CXX_COMMIT}
 
 patch -p1 <<EOF
 diff --git a/src/transport/unix-transport.cpp b/src/transport/unix-transport.cpp
-index 6b86a34..e72170e 100644
+index f2e44aa..268f967 100644
 --- a/src/transport/unix-transport.cpp
 +++ b/src/transport/unix-transport.cpp
-@@ -72,7 +72,7 @@ UnixTransport::getDefaultSocketName(const ConfigFile& config)
-     }
- 
+@@ -40,7 +40,7 @@ std::string
+ UnixTransport::getSocketNameFromUri(const std::string& uriString)
+ {
    // Assume the default nfd.sock location.
--  return "/var/run/nfd.sock";
-+  return "/tmp/nfd.sock";
- }
+-  std::string path = "/var/run/nfd.sock";
++  std::string path = "/tmp/nfd.sock";
  
- shared_ptr<UnixTransport>
+   if (uriString.empty()) {
+     return path;
 EOF
 
 ./waf configure --prefix="${path}/build/deps" \

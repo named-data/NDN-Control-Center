@@ -144,7 +144,7 @@ class AppBundle(object):
       macho = os.path.abspath(macho)
 
     print "Processing [%s]" % macho
-      
+
     libs = self.get_binary_libs(macho)
 
     for lib in libs:
@@ -198,7 +198,7 @@ class AppBundle(object):
           os.chmod(abs, 0755)
           os.system('install_name_tool -id "@executable_path/../Frameworks/%s" "%s"' % (rel, abs))
           self.handled_libs[basename] = True
-          self.handle_binary_libs(abs, loader_path=os.path.dirname(lib) if loader_path is None else loader_path)
+          self.handle_binary_libs(abs, loader_path=os.path.dirname(lib))
 
         # print 'install_name_tool -change "%s" "@executable_path/../Frameworks/%s" "%s"' % (lib, rel, macho)
         os.chmod(macho, 0755)
@@ -241,7 +241,7 @@ class AppBundle(object):
         shutil.copy(rsrc, os.path.join(rsrcpath, b))
 
     return
-  
+
   def copy_framework(self, framework):
     '''
       Copy frameworks
@@ -251,45 +251,9 @@ class AppBundle(object):
 
     shutil.copytree(framework, rsrcpath, symlinks = True)
 
-  # def copy_qt_plugins(self):
-  #   '''
-  #     Copy over any needed Qt plugins.
-  #   '''
-
-  #   print ' * Copying Qt and preparing plugins'
-
-  #   src = os.popen('qmake -query QT_INSTALL_PLUGINS').read().strip()
-  #   dst = os.path.join(self.bundle, 'Contents', 'QtPlugins')
-  #   shutil.copytree(src, dst, symlinks=False)
-
-  #   top = dst
-  #   files = {}
-
-  #   def cb(arg, dirname, fnames):
-  #     if dirname == top:
-  #       return
-  #     files[os.path.basename(dirname)] = fnames
-
-  #   os.path.walk(top, cb, None)
-
-  #   exclude = ( 'phonon_backend', 'designer', 'script' )
-
-  #   for dir, files in files.items():
-  #     absdir = dst + '/' + dir
-  #     if dir in exclude:
-  #       shutil.rmtree(absdir)
-  #       continue
-  #     for file in files:
-  #       abs = absdir + '/' + file
-  #       if file.endswith('_debug.dylib'):
-  #         os.remove(abs)
-  #       else:
-  #         os.system('install_name_tool -id "%s" "%s"' % (file, abs))
-  #         self.handle_binary_libs(abs)
-
   def macdeployqt(self):
     Popen(['macdeployqt', self.bundle, '-qmldir=src', '-executable=%s' % self.binary]).communicate()
-  
+
   def copy_ndn_deps(self, path):
     '''
       Copy over NDN dependencies (NFD and related apps)
@@ -304,43 +268,6 @@ class AppBundle(object):
       for file in files:
         abs = subdir + "/" + file
         self.handle_binary_libs(abs)
-    
-    # top = dst
-    # files = {}
-
-    # def cb(arg, dirname, fnames):
-    #   if dirname == top:
-    #     return
-    #   files[dirname] = fnames
-
-    # os.path.walk(top, cb, None)
-
-    # # Cleanup debug folders stuff
-    # excludeDirs = ['include', 'pkgconfig', 'lib'] # lib already processed
-    # excludeFiles = ['libndn-cxx.dylib', 'nfd-start', 'nfd-stop']
-
-    # for dir, files in files.items():
-    #   basename = os.path.basename(dir)
-    #   if basename in excludeDirs:
-    #     shutil.rmtree(dir)
-    #     continue
-    #   for file in files:
-    #     if file in excludeFiles:
-    #       abs = dir + '/' + file
-    #       os.remove(abs)
-      
-    # top = dst
-    # files = {}
-
-    # os.path.walk(top, cb, None)
-    
-    # for dir, files in files.items():
-    #   for file in files:
-    #     abs = dir + '/' + file
-    #     type = Popen(['file', '-b', abs], stdout=PIPE).communicate()[0].strip()
-    #     if type.startswith('Mach-O'):
-    #       self.handle_binary_libs(abs)
-    
 
   def set_min_macosx_version(self, version):
     '''
