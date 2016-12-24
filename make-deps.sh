@@ -2,6 +2,7 @@
 
 NDN_CXX_COMMIT=${NDN_CXX_COMMIT:-master}
 NFD_COMMIT=${NFD_COMMIT:-master}
+NDN_TOOLS_COMMIT=${NDN_TOOLS_COMMIT:-master}
 
 GIT=${GIT:-https://github.com/named-data}
 
@@ -59,6 +60,21 @@ PKG_CONFIG_PATH="${path}/build/deps/lib/pkgconfig:${PKG_CONFIG_PATH}" \
 ./waf build
 ./waf install
 popd
+
+####################################
+
+rm -Rf build/ndn-tools
+git clone ${GIT}/ndn-tools build/ndn-tools
+pushd build/ndn-tools
+git checkout ${NDN_TOOLS_COMMIT}
+PKG_CONFIG_PATH="${path}/build/deps/lib/pkgconfig:${PKG_CONFIG_PATH}" \
+               ./waf configure --prefix="${path}/build/deps" \
+                               --sysconfdir="/Applications/NDN.app/Contents/etc"
+./waf build
+./waf install
+popd
+
+####################################
 
 PKG_CONFIG_PATH="${path}/build/deps/lib/pkgconfig:${PKG_CONFIG_PATH}" \
                ./waf configure
