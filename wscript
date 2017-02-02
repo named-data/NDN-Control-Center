@@ -7,10 +7,10 @@ import os
 
 def options(opt):
     opt.load('compiler_c compiler_cxx qt5 gnu_dirs')
-    opt.load('boost default-compiler-flags', tooldir='.waf-tools')
+    opt.load('boost osx-frameworks default-compiler-flags', tooldir='.waf-tools')
 
 def configure(conf):
-    conf.load('compiler_c compiler_cxx default-compiler-flags boost')
+    conf.load('compiler_c compiler_cxx default-compiler-flags boost osx-frameworks')
 
     if 'PKG_CONFIG_PATH' not in os.environ:
         conf.environ['PKG_CONFIG_PATH'] = Utils.subst_vars('${LIBDIR}/pkgconfig', conf.env)
@@ -55,7 +55,15 @@ def build(bld):
         bld.install_files("${DATAROOTDIR}/nfd-control-center",
                           bld.path.ant_glob(['res/*']))
     else:
+        app.source += bld.path.ant_glob(['src/osx-*.mm', 'src/osx-*.cpp'])
+        app.use += " OSX_FOUNDATION OSX_APPKIT OSX_SPARKLE OSX_COREWLAN"
         app.target = "NFD Control Center"
         app.mac_app = True
         app.mac_plist = 'src/Info.plist'
         app.mac_files = [i.path_from(bld.path) for i in bld.path.ant_glob('res/**/*', excl='**/*.ai')]
+
+from waflib import TaskGen
+@TaskGen.extension('.mm')
+def m_hook(self, node):
+    """Alias .mm files to be compiled the same as .cpp files, gcc/clang will do the right thing."""
+    return self.create_compiled_task('cxx', node)

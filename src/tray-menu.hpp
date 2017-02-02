@@ -39,9 +39,15 @@
 
 #include "key-viewer-dialog.hpp"
 
+#ifdef OSX_BUILD
+#include "osx-auto-update-sparkle.hpp"
+#endif // OSX_BUILD
+
 namespace ndn {
 
 class Face;
+
+namespace ncc {
 
 class TrayMenu : public QWidget
 {
@@ -113,6 +119,11 @@ private slots:
   static void
   appendMsg(QString &target, QString source);
 
+#ifdef OSX_BUILD
+  void
+  checkForUpdates();
+#endif // OSX_BUILD
+
 private:
   QQmlContext* m_context;
   bool m_isNfdRunning;
@@ -125,7 +136,9 @@ private:
   QSettings m_settings;
 #ifdef OSX_BUILD
   QAction* m_entryEnableCli;
-#endif
+  QAction* m_checkForUpdates;
+  OsxAutoUpdateSparkle m_sparkle;
+#endif // OSX_BUILD
 
   QAction* m_entryQuit;
 
@@ -133,6 +146,7 @@ private:
   Face& m_face;
 };
 
+} // namespace ncc
 } // namespace ndn
 
 #endif // NCC_TRAY_MENU_HPP

@@ -140,7 +140,7 @@ private:
 
   ForwarderStatusModel m_forwarderStatusModel;
   FibStatusModel m_fibModel;
-  TrayMenu m_tray;
+  ncc::TrayMenu m_tray;
 };
 
 } // namespace ndn

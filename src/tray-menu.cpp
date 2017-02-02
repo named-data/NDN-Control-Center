@@ -35,6 +35,7 @@
 #endif // OSX_BUILD
 
 namespace ndn {
+namespace ncc {
 
 TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   : m_context(context)
@@ -42,23 +43,21 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   , m_menu(new QMenu(this))
   , m_entryPref(new QAction("Preferences...", m_menu))
   , m_entrySec(new QAction("Security...", m_menu))
+  , m_acProc(new QProcess())
+  , m_settings(new QSettings())
 #ifdef OSX_BUILD
   , m_entryEnableCli(new QAction("Enable Command Terminal Usage...", m_menu))
+  , m_checkForUpdates(new QAction("Check for updates", m_menu))
+  , m_sparkle("https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml")
 #endif
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
   , m_face(face)
-  , m_acProc(new QProcess())
-  , m_settings(new QSettings())
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
   connect(this, SIGNAL(showApp()), this, SLOT(showPref()));
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
-
-#ifdef OSX_BUILD
-  connect(m_entryEnableCli, SIGNAL(triggered()), this, SLOT(enableCli()));
-#endif
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
           Qt::QueuedConnection);
@@ -69,7 +68,11 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entrySec);
 #ifdef OSX_BUILD
+  connect(m_entryEnableCli, SIGNAL(triggered()), this, SLOT(enableCli()));
   m_menu->addAction(m_entryEnableCli);
+
+  connect(m_checkForUpdates, SIGNAL(triggered()), this, SLOT(checkForUpdates()));
+  m_menu->addAction(m_checkForUpdates);
 #endif
   m_menu->addAction(m_entryQuit);
   m_tray = new QSystemTrayIcon(this);
@@ -284,7 +287,6 @@ TrayMenu::deleteRoute()
   connect(addNewRoute,SIGNAL(finished(int)), addNewRoute, SLOT(deleteLater()));
   addNewRoute->start("bash", QStringList() << "-c" << cmd);
   std::cout << "Done" << std::endl;
-
 }
 
 void
@@ -347,4 +349,13 @@ TrayMenu::enableCli()
 #endif
 }
 
+#ifdef OSX_BUILD
+void
+TrayMenu::checkForUpdates()
+{
+  m_sparkle.checkForUpdates();
+}
+#endif // OSX_BUILD
+
+} // namespace ncc
 } // namespace ndn

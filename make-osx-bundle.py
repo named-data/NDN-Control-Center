@@ -388,15 +388,13 @@ if __name__ == '__main__':
   a.copy_etc(['nfd.conf'])
   a.set_min_macosx_version('%s.0' % MIN_SUPPORTED_VERSION)
   a.macdeployqt()
-  a.copy_framework("build/Sparkle.framework")
+  a.copy_framework("osx/Frameworks/Sparkle.framework")
   a.done()
 
   # Sign our binaries, etc.
   if options.codesign:
     print ' * Signing binaries with identity `%s\'' % options.codesign
-    binaries = (a.bundle)
-
-    codesign(binaries)
+    codesign(a.bundle)
     print ''
 
   # Create diskimage
@@ -406,3 +404,8 @@ if __name__ == '__main__':
   d.symlink('/Applications', '/Applications')
   d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
   d.create()
+
+  if options.codesign:
+    print ' * Signing .dmg with identity `%s\'' % options.codesign
+    codesign(fn)
+    print ''
