@@ -40,14 +40,27 @@ ApplicationWindow {
                         anchors.rightMargin: 10
                         CheckBox {
                             id: startOnLogin
-                            enabled: false
-                            text: "Automatically start NFD Control Center on login"
+                            text: "Launch NFD Control Center on login"
+                            checked: trayModel.isNccAutoStartEnabled()
+                            onCheckedChanged: trayModel.enableDisableNccAutoStart(this.checked)
+                        }
+                        CheckBox {
+                            id: autoStart
+                            text: "Automatically start NFD"
+                            checked: trayModel.isNfdAutoStartEnabled()
+                            onCheckedChanged: trayModel.enableDisableNfdAutoStart(this.checked)
                         }
                         CheckBox {
                             id: autoConfig
                             text: "Automatically start NDN auto configuration"
-                            checked: trayModel.isAutoConfigEnabled()
-                            onCheckedChanged: trayModel.startStopAutoConfig(this.checked)
+                            checked: trayModel.isNdnAutoConfigEnabled()
+                            onCheckedChanged: trayModel.enableDisableNdnAutoConfig(this.checked)
+                        }
+                        CheckBox {
+                            id: shutdownOnQuit
+                            text: "Shutdown NFD daemon on quit"
+                            checked: trayModel.isNfdStopOnExitEnabled()
+                            onCheckedChanged: trayModel.enableDisableNfdStopOnExit(this.checked)
                         }
                     }
                 }
@@ -77,20 +90,6 @@ ApplicationWindow {
                             onClicked: Qt.openUrlExternally('http://netlab.cs.memphis.edu/script/htm/status.htm')
                         }
                     }
-                }
-                Button {
-                    id: startStopButton
-                    text: startStopButtonText
-
-                    anchors.top: status.bottom
-                    anchors.left: parent.left
-                    anchors.right: parent.right
-                    anchors.topMargin: 20
-                    anchors.leftMargin: 20
-                    anchors.rightMargin: 20
-                    anchors.bottomMargin: 20
-
-                    onClicked: trayModel.startStopNfd(autoConfig.checked)
                 }
             }
         }
@@ -144,14 +143,14 @@ ApplicationWindow {
         Tab {
             title: "Auto-config status"
             TextArea {
-                id: autoConfigText
+                id: ndnAutoConfigTextId
                 anchors.fill: parent
                 anchors.topMargin: 20
                 anchors.bottomMargin: 20
                 anchors.leftMargin: 20
                 anchors.rightMargin: 20
                 readOnly: true
-                text: acText
+                text: ndnAutoConfigText
             }
         }
         Tab {

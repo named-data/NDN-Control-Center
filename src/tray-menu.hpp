@@ -22,18 +22,17 @@
 
 #include "config.hpp"
 
+#include <QtCore/QDir>
 #include <QtCore/QObject>
 #include <QtCore/QProcess>
 #include <QtCore/QCoreApplication>
 #include <QtCore/QSettings>
+#include <QtCore/QXmlStreamWriter>
 
 #include <QtWidgets/QWidget>
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
-#include <QtWidgets/QVBoxLayout>
-#include <QtWidgets/QPlainTextEdit>
-#include <QtWidgets/QPushButton>
 
 #include <QtQml/QQmlContext>
 
@@ -67,13 +66,28 @@ public:
   ~TrayMenu();
 
   Q_INVOKABLE bool
-  isAutoConfigEnabled();
+  isNccAutoStartEnabled() const;
 
   Q_INVOKABLE void
-  startStopAutoConfig(bool autoConfig);
+  enableDisableNccAutoStart(bool isEnabled);
+
+  Q_INVOKABLE bool
+  isNfdAutoStartEnabled() const;
 
   Q_INVOKABLE void
-  startStopNfd(bool autoConfig);
+  enableDisableNfdAutoStart(bool isEnabled);
+
+  Q_INVOKABLE bool
+  isNdnAutoConfigEnabled() const;
+
+  Q_INVOKABLE void
+  enableDisableNdnAutoConfig(bool isEnabled);
+
+  Q_INVOKABLE bool
+  isNfdStopOnExitEnabled() const;
+
+  Q_INVOKABLE void
+  enableDisableNfdStopOnExit(bool isEnabled);
 
   Q_INVOKABLE void
   addDeleteRoute();
@@ -85,18 +99,14 @@ public:
   deleteRoute();
 
 private slots:
+  void
+  startNdnAutoConfig();
+
+  void
+  stopNdnAutoConfig(bool appendStatus = true);
 
   void
   quitApp();
-
-  void
-  iconActivated(QSystemTrayIcon::ActivationReason reason);
-
-  void
-  startAutoConfig();
-
-  void
-  stopAutoConfig();
 
   void
   startNfd();
@@ -114,15 +124,15 @@ private slots:
   processOutput();
 
   void
-  showPref();
-
-  static void
-  appendMsg(QString &target, QString source);
+  appendNdnAutoConfigStatus(const QString& message);
 
 #ifdef OSX_BUILD
   void
   checkForUpdates();
 #endif // OSX_BUILD
+
+  void
+  scheduleDelayedTask(std::chrono::milliseconds delays, const std::function<void()>& task);
 
 private:
   QQmlContext* m_context;
@@ -132,8 +142,8 @@ private:
   QAction* m_entryPref;
   QAction* m_entrySec;
   QProcess* m_acProc;
-  QString m_autoConfigMsg;
-  QSettings m_settings;
+  QSettings* m_settings;
+  QString m_ndnAutoConfigMsg;
 #ifdef OSX_BUILD
   QAction* m_entryEnableCli;
   QAction* m_checkForUpdates;
