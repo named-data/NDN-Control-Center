@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -18,11 +18,7 @@
  */
 
 #include "fib-status.hpp"
-
-#ifdef WAF
 #include "fib-status.moc"
-// #include "fib-status.cpp.moc"
-#endif
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/name.hpp>

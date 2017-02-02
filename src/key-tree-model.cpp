@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -18,17 +18,13 @@
  */
 
 #include "key-tree-model.hpp"
+#include "key-tree-model.moc"
 #include "key-tree-item.hpp"
 
 #include <QStringList>
 #include <QFont>
 #include <QBrush>
 #include <iostream>
-
-
-#ifdef WAF
-#include "key-tree-model.moc"
-#endif
 
 namespace ndn {
 namespace ncc {
@@ -234,5 +230,5 @@ KeyTreeModel::rowCount(const QModelIndex &parent) const
   // }
 // }
 
-} // namespace ndn
 } // namespace ncc
+} // namespace ndn

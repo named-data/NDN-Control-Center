@@ -7,19 +7,17 @@ import os
 
 def options(opt):
     opt.load('compiler_c compiler_cxx qt5 gnu_dirs')
-    opt.load('msvs boost sparkle xcode default-compiler-flags', tooldir='.waf-tools')
-
-    # grp = opt.add_option_group('NFD Control Center options')
+    opt.load('boost default-compiler-flags', tooldir='.waf-tools')
 
 def configure(conf):
     conf.load('compiler_c compiler_cxx default-compiler-flags boost')
 
     if 'PKG_CONFIG_PATH' not in os.environ:
-        os.environ['PKG_CONFIG_PATH'] = Utils.subst_vars('${LIBDIR}/pkgconfig', conf.env)
+        conf.environ['PKG_CONFIG_PATH'] = Utils.subst_vars('${LIBDIR}/pkgconfig', conf.env)
 
     # add homebrew path, as qt5 is no longer linked
-    os.environ['PKG_CONFIG_PATH'] += ":/usr/local/opt/qt5/lib/pkgconfig:/opt/qt5/5.8/clang_64/lib/pkgconfig"
-    os.environ['PATH'] += ":/usr/local/opt/qt5/bin:/opt/qt5/5.8/clang_64/bin"
+    conf.environ['PKG_CONFIG_PATH'] += ":/usr/local/opt/qt5/lib/pkgconfig:/opt/qt5/5.8/clang_64/lib/pkgconfig"
+    conf.environ['PATH'] += ":/usr/local/opt/qt5/bin:/opt/qt5/5.8/clang_64/bin"
 
     conf.load('qt5')
 
@@ -39,11 +37,9 @@ def build(bld):
     app = bld(
         features=['qt5', 'cxxprogram', 'cxx'],
         includes = ". src",
-
         use = "NDN_CXX BOOST QT5CORE QT5DBUS QT5QML QT5WIDGETS",
-
-        defines = "WAF",
-        source = bld.path.ant_glob(['src/*.cpp', 'src/**/*.qrc', 'src/**/*.ui', 'src/**/*.qrc']),
+        moc = "src/tray-menu.hpp src/key-tree-model.hpp src/key-viewer-dialog.hpp src/cert-tree-model.hpp src/fib-status.hpp src/forwarder-status.hpp",
+        source = bld.path.ant_glob(['src/*.cpp', 'src/**/*.qrc', 'src/**/*.ui', 'src/**/*.qrc'], excl=['src/osx-*']),
         )
 
     if Utils.unversioned_sys_platform() != "darwin":
@@ -62,4 +58,4 @@ def build(bld):
         app.target = "NFD Control Center"
         app.mac_app = True
         app.mac_plist = 'src/Info.plist'
-        app.mac_resources = [i.path_from(bld.path) for i in bld.path.ant_glob('res/**/*', excl='**/*.ai')]
+        app.mac_files = [i.path_from(bld.path) for i in bld.path.ant_glob('res/**/*', excl='**/*.ai')]

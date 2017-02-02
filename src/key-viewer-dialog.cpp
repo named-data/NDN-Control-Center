@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -18,6 +18,7 @@
  */
 
 #include "key-viewer-dialog.hpp"
+#include "key-viewer-dialog.moc"
 #include "ui_key-viewer-dialog.h"
 #include "key-tree-item.hpp"
 
@@ -25,11 +26,6 @@
 
 #include <Qt>
 #include <QMenu>
-
-
-#ifdef WAF
-#include "key-viewer-dialog.moc"
-#endif
 
 namespace ndn {
 namespace ncc {

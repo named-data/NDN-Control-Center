@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2017, Regents of the University of California.
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -17,12 +17,11 @@
  * Control Center, e.g., in COPYING.md file.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#include "config.hpp"
 #include "tray-menu.hpp"
+#include "tray-menu.moc"
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/interest.hpp>
-
 
 #ifdef OSX_BUILD
 #define CONNECT_ICON ":/res/icon-connected-black.png"
@@ -34,10 +33,6 @@
 #define CONNECT_ICON ":/res/icon-connected-white.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-white.png"
 #endif // OSX_BUILD
-
-#ifdef WAF
-#include "tray-menu.moc"
-#endif
 
 namespace ndn {
 

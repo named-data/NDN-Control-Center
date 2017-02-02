@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -18,10 +18,7 @@
  */
 
 #include "cert-tree-model.hpp"
-
-#ifdef WAF
 #include "cert-tree-model.moc"
-#endif
 
 namespace ndn {
 namespace ncc {

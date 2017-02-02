@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2016, Regents of the University of California.
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -18,6 +18,7 @@
  */
 
 #include "forwarder-status.hpp"
+#include "forwarder-status.moc"
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/name.hpp>
@@ -25,10 +26,6 @@
 #include <ndn-cxx/management/nfd-fib-entry.hpp>
 #include <ndn-cxx/management/nfd-face-status.hpp>
 #include <ndn-cxx/management/nfd-forwarder-status.hpp>
-
-#ifdef WAF
-#include "forwarder-status.moc"
-#endif
 
 namespace ndn {
 
