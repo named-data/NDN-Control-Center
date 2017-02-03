@@ -19,11 +19,11 @@
     <key>CFBundleSignature</key>
     <string>????</string>
     <key>CFBundleShortVersionString</key>
-    <string>0.1.1</string>
+    <string>@VERSION@</string>
     <key>LSMinimumSystemVersion</key>
     <string>10.6</string>
     <key>CFBundleVersion</key>
-    <string>0.1.1</string>
+    <string>@VERSION@</string>
     <key>NSMainNibFile</key>
     <string>MainMenu</string>
     <key>NSPrincipalClass</key>
@@ -33,7 +33,7 @@
     <key>LSUIElement</key>
     <string>1</string>
     <key>SUFeedURL</key>
-    <string>https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml</string>
+    <string>@APPCAST@</string>
     <key>SUPublicDSAKeyFile</key>
     <string>ndn_sparkle_pub.pem</string>
 </dict>

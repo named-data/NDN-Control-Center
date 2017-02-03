@@ -91,6 +91,19 @@ ApplicationWindow {
                         }
                     }
                 }
+                GridLayout {
+                     anchors.left: parent.left
+                     anchors.bottom: parent.bottom
+                     Label {
+                         text: "NFD Control Center version:"
+                         font.pixelSize: 10
+                     }
+                     Label {
+                         text: nccVersion
+                         font.pixelSize: 10
+                         font.bold: true
+                     }
+                }
             }
         }
         // Tab {

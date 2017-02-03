@@ -1,6 +1,7 @@
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-VERSION='0.1.1'
+VERSION='0.2'
 APPNAME='nfd-control-center'
+APPCAST='https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml'
 
 from waflib import Logs, Utils, Task, TaskGen
 import os
@@ -31,6 +32,9 @@ def configure(conf):
     if Utils.unversioned_sys_platform() == "darwin":
         conf.define('OSX_BUILD', 1)
 
+    conf.define('NCC_VERSION', VERSION)
+    conf.define('NCC_APPCAST', APPCAST)
+
     conf.write_config_header('config.hpp')
 
 def build(bld):
@@ -55,8 +59,16 @@ def build(bld):
         bld.install_files("${DATAROOTDIR}/nfd-control-center",
                           bld.path.ant_glob(['res/*']))
     else:
+        bld(features="subst",
+            source='src/Info.plist.in',
+            target='src/Info.plist',
+            install_path=None,
+            VERSION=VERSION,
+            APPCAST=APPCAST)
+        bld.env['INCLUDES_NDN_TOOLS'] = 'build/ndn-tools'
+
         app.source += bld.path.ant_glob(['src/osx-*.mm', 'src/osx-*.cpp'])
-        app.use += " OSX_FOUNDATION OSX_APPKIT OSX_SPARKLE OSX_COREWLAN"
+        app.use += " OSX_FOUNDATION OSX_APPKIT OSX_SPARKLE OSX_COREWLAN NDN_TOOLS"
         app.target = "NFD Control Center"
         app.mac_app = True
         app.mac_plist = 'src/Info.plist'

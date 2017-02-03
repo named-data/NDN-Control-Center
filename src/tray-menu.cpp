@@ -33,10 +33,17 @@
 
 #include <Security/Authorization.h>
 #include <Security/AuthorizationTags.h>
+
+#include "build/NFD/build/core/version.hpp"
+#include "build/ndn-tools/build/core/version.cpp"
+
 #else
 #define CONNECT_ICON ":/res/icon-connected-white.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-white.png"
+
 #endif // OSX_BUILD
+
+#include <ndn-cxx/version.hpp>
 
 namespace ndn {
 namespace ncc {
@@ -73,6 +80,13 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
           Qt::QueuedConnection);
+
+  QString nccVersion = QString(NCC_VERSION) + " (ndn-cxx: " + NDN_CXX_VERSION_BUILD_STRING +
+    ", NFD: " + NFD_VERSION_BUILD_STRING +
+    ", ndn-tools: " + ::ndn::tools::VERSION +
+    ")";
+
+  m_context->setContextProperty("nccVersion", nccVersion);
 
   m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entrySec);
