@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 
-NDN_CXX_COMMIT=${NDN_CXX_COMMIT:-master}
-NFD_COMMIT=${NFD_COMMIT:-master}
-NDN_TOOLS_COMMIT=${NDN_TOOLS_COMMIT:-master}
+NDN_CXX_COMMIT=${NDN_CXX_COMMIT:-ndn-cxx-0.5.1}
+NFD_COMMIT=${NFD_COMMIT:-NFD-0.5.1}
+NDN_TOOLS_COMMIT=${NDN_TOOLS_COMMIT:-ndn-tools-0.4}
 
 GIT=${GIT:-https://github.com/named-data}
 
