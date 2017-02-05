@@ -1,7 +1,7 @@
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-VERSION='0.2'
+VERSION='0.2.0'
 APPNAME='nfd-control-center'
-APPCAST='https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml'
+APPCAST='https://named-data.net/binaries/NFD-Control-Center/ndn-control-center.xml'
 
 from waflib import Logs, Utils, Task, TaskGen
 import os

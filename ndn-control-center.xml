@@ -2,20 +2,20 @@
   <channel>
     <title>NDN App Changleog</title>
     <link>
-      https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml
+      https://named-data.net/binaries/NFD-Control-Center/ndn-control-center.xml
     </link>
     <description>Most recent changes with links to updates.</description>
     <language>en</language>
     <item>
-      <title>Version 0.1.1 (based on NFD version 0.5.1)</title>
-      <description><![CDATA[
-      ]]>
-      </description>
-      <pubDate>Wed, 1 Feb 2017 20:05:00 +0000</pubDate>
-      <enclosure url="https://irl.cs.ucla.edu/~cawka/NDN-0.1.1.dmg"
-                 sparkle:version="0.1.1"
-                 sparkle:dsaSignature="MC0CFB9uEpOR2T0SNQK5tMdztcUAmq+8AhUAroo1gpugccjxwepKEp+VdgILeNc="
-                 length="30468966"
+      <title>Version 0.2.0 (ndn-cxx version 0.5.1, NFD version 0.5.1, ndn-tools version 0.4)</title>
+      <sparkle:releaseNotesLink>
+        https://named-data.net/binaries/NFD-Control-Center/release-notes-0.2.0.html
+      </sparkle:releaseNotesLink>
+      <pubDate>Wed, 4 Feb 2017 22:51:00 +0000</pubDate>
+      <enclosure url="https://named-data.net/binaries/NFD-Control-Center/NDN-0.2.0.dmg"
+                 sparkle:version="0.2.0"
+                 sparkle:dsaSignature="MCwCFE99cPadMXCDKvUV8uzj7lLlSFIzAhQwcJtGb0VaVAEEsvzumr64SBWJvw=="
+                 length="27627391"
                  type="application/octet-stream" />
     </item>
   </channel>

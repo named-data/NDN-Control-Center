@@ -1,3 +1,25 @@
+NFD Control Center is licensed under conditions of GNU General Public License version 3 or later.
+
+NFD Control Center  relies on third-party software and libraries, licensed under the following licenses:
+
+- ndn-cxx library is licensed under conditions of
+  [GNU Lesser General Public License version 3](https://github.com/named-data/ndn-cxx/blob/master/COPYING.md).
+
+- Boost libraries licensed under conditions of
+  [Boost Software License 1.0](http://www.boost.org/users/license.html)
+
+- QT Libraries licensed under conditions of
+  [GNU Lesser General Public License version 3](https://github.com/named-data/ndn-cxx/blob/master/COPYING.md).
+
+- waf build system is licensed under conditions of
+  [BSD license](https://github.com/named-data/ndn-cxx/blob/master/waf)
+
+The GPL license is provided below in this file.  For more information about these licenses, see
+http://www.gnu.org/licenses/
+
+
+----------------------------------------------------------------------------------
+
 GNU GENERAL PUBLIC LICENSE
 ==========================
 Version 3, 29 June 2007

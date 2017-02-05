@@ -68,7 +68,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
 #ifdef OSX_BUILD
   , m_entryEnableCli(new QAction("Enable Command Terminal Usage...", m_menu))
   , m_checkForUpdates(new QAction("Check for updates", m_menu))
-  , m_sparkle("https://irl.cs.ucla.edu/~cawka/ndn-control-center.xml")
+  , m_sparkle(NCC_APPCAST)
 #endif
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
