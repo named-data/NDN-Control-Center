@@ -54,7 +54,6 @@ def configure(conf):
                             if not os.path.exists("osx/Frameworks"):
                                 os.mkdir ("osx/Frameworks")
                             os.rename("build/Sparkle/Sparkle.framework", "osx/Frameworks/Sparkle.framework")
-                            shutil.rmtree("build/Sparkle", ignore_errors=True)
 
                             check_sparkle(cxxflags="-F%s/osx/Frameworks/" % conf.path.abspath(),
                                           linkflags="-F%s/osx/Frameworks/" % conf.path.abspath())

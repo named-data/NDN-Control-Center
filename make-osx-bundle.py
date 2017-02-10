@@ -409,3 +409,5 @@ if __name__ == '__main__':
     print ' * Signing .dmg with identity `%s\'' % options.codesign
     codesign(fn)
     print ''
+
+Popen('tail -n +3 RELEASE_NOTES.md | pandoc -f markdown -t html > build/release-notes-%s.html' % ver, shell=True).wait()

@@ -1,5 +1,5 @@
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-VERSION='0.2.0'
+VERSION='0.2.1'
 APPNAME='nfd-control-center'
 APPCAST='https://named-data.net/binaries/NFD-Control-Center/ndn-control-center.xml'
 

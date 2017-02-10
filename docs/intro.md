@@ -3,7 +3,7 @@ NFD Control Center
 
 ![](https://named-data.net/binaries/NFD-Control-Center/images/demo.gif){align="right" style="max-width:60%"}
 
-NFD Control Center is a software module for desktop systems to manage local instance of Named Data Forwarding Daemon (NFD). The current released macOS version of the NFD Control Center (0.2.0) is built with newest ndn-cxx (0.5.1) and bundles in a newest version of NFD (0.5.1) and NDN Essential tools (0.4). NFD Control Center provides macOS users a simple way to get NDN connectivity and keep up with the latest updates of NFD. The NFD Control Center supplies various features, such as:
+NFD Control Center is a software module for desktop systems to manage local instance of Named Data Forwarding Daemon (NFD). The current released macOS version of the NFD Control Center (0.2.1) is built with newest ndn-cxx (0.5.1) and bundles in a newest version of NFD (0.5.1) and NDN Essential tools (0.4). NFD Control Center provides macOS users a simple way to get NDN connectivity and keep up with the latest updates of NFD. The NFD Control Center supplies various features, such as:
 
 - Start Control Center as soon as computers starts
 - Start NFD daemon as soon as Control Center starts
@@ -20,7 +20,7 @@ Soon to be released version will also include NDN security management, a simple 
 
 - macOS 10.12
 
-    * [Version 0.2.0](https://named-data.net/binaries/NFD-Control-Center/NDN-0.2.0.dmg)
+    * [Version 0.2.1](https://named-data.net/binaries/NFD-Control-Center/NDN-0.2.1.dmg)
 
 - Source
 

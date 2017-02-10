@@ -18,5 +18,17 @@
                  length="27627391"
                  type="application/octet-stream" />
     </item>
+    <item>
+      <title>Version 0.2.1 (ndn-cxx version 0.5.1, NFD version 0.5.1, ndn-tools version 0.4)</title>
+      <sparkle:releaseNotesLink>
+        https://named-data.net/binaries/NFD-Control-Center/release-notes-0.2.1.html
+      </sparkle:releaseNotesLink>
+      <pubDate>Thu, 9 Feb 2017 15:55:00 +0000</pubDate>
+      <enclosure url="https://named-data.net/binaries/NFD-Control-Center/NDN-0.2.1.dmg"
+                 sparkle:version="0.2.1"
+                 sparkle:dsaSignature="MCwCFAD66xeADU9oA3mzU7/XiGvyuVipAhRcBNwHTXDoyEjo+jR0UJJuAztz8g=="
+                 length="27883199"
+                 type="application/octet-stream" />
+    </item>
   </channel>
 </rss>

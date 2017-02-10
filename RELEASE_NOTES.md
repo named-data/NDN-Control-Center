@@ -1,6 +1,12 @@
 Release Notes
 =============
 
+## Version 0.2.1
+
+Changes since version 0.2.0:
+
+- Fix interpreter path for the bundled shell-based tools
+
 ## Version 0.2.0
 
 Changes since version 0.1.0:
