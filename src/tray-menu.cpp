@@ -31,6 +31,7 @@
 #define CONNECT_ICON ":/res/icon-connected-black.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-black.png"
 #define CONNECT_STATUS_ICON ":/res/icon-connected-status-black.png"
+#define CONNECT_ADHOC_ICON ":/res/icon-connected-adhoc-black.png"
 
 #include <Security/Authorization.h>
 #include <Security/AuthorizationTags.h>
@@ -62,6 +63,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   : m_context(context)
   , m_isNfdRunning(false)
   , m_isConnectedToHub(false)
+  , m_isConnectedToAdhoc(false)
   , m_menu(new QMenu(this))
   , m_entryPref(new QAction("Preferences...", m_menu))
   , m_entryStatus(new QAction("Status...", m_menu))
@@ -70,6 +72,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   , m_settings(new QSettings())
 #ifdef OSX_BUILD
   , m_entryEnableCli(new QAction("Install command-line tools...", m_menu))
+  , m_entryAdhoc(new QAction("Enable ad hoc Wi-Fi...", m_menu))
   , m_checkForUpdates(new QAction("Check for updates", m_menu))
   , m_sparkle(NCC_APPCAST)
 #endif
@@ -77,6 +80,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
   , m_face(face)
   , m_keyChain(keyChain)
+  , m_adhoc(m_face, m_keyChain)
   , m_statusViewer(new StatusViewer(m_face, m_keyChain))
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
@@ -84,10 +88,9 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
-  connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
-          Qt::QueuedConnection);
-  connect(this, SIGNAL(connectivityUpdate(bool)), this, SLOT(updateConnectivity(bool)),
-          Qt::QueuedConnection);
+  connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)), Qt::QueuedConnection);
+  connect(this, SIGNAL(connectivityUpdate(bool)), this, SLOT(updateConnectivity(bool)), Qt::QueuedConnection);
+  connect(this, SIGNAL(adhocUpdate(bool)), this, SLOT(updateAdhoc(bool)), Qt::QueuedConnection);
 
   QString nccVersion = QString(NCC_VERSION) + " (ndn-cxx: " + NDN_CXX_VERSION_BUILD_STRING +
     ", NFD: " + NFD_VERSION_BUILD_STRING +
@@ -103,6 +106,11 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   m_menu->addAction(m_entryPref);
 
 #ifdef OSX_BUILD
+  m_entryAdhoc->setChecked(false);
+  m_entryAdhoc->setCheckable(true);
+  connect(m_entryAdhoc, SIGNAL(triggered()), this, SLOT(onAdhocChange()));
+  m_menu->addAction(m_entryAdhoc);
+
   connect(m_entryEnableCli, SIGNAL(triggered()), this, SLOT(enableCli()));
   m_menu->addAction(m_entryEnableCli);
 
@@ -314,6 +322,45 @@ TrayMenu::enableDisableNfdStopOnExit(bool isEnabled)
   m_settings->setValue("ENABLE_SHUTDOWN", isEnabled);
 }
 
+///////////////////////////////////////////////////////////////////////////////
+// Ad hoc WiFi communication
+
+void
+TrayMenu::onAdhocChange()
+{
+#ifdef ADHOC_SUPPORTED
+  if (m_entryAdhoc->isChecked()) {
+    QMessageBox* msgBox = new QMessageBox();
+    msgBox->setText("WARNING: Wi-Fi will be disconnected!");
+    msgBox->setIcon(QMessageBox::Warning);
+    msgBox->setInformativeText(
+      "Are you sure that you are OK with that?");
+    msgBox->setStandardButtons(QMessageBox::Yes | QMessageBox::No);
+    msgBox->setDefaultButton(QMessageBox::No);
+    int ret = msgBox->exec();
+
+    if (ret == QMessageBox::No) {
+      m_entryAdhoc->setChecked(false);
+    }
+    else {
+      stopNdnAutoConfig();
+      m_entryAdhoc->setText("Adhoc Wi-Fi is enabled");
+      m_adhoc.createAdhoc();
+      std::cerr << "ad hoc is on!" << std::endl;
+    }
+  }
+  else {
+    m_entryAdhoc->setText("Enable Adhoc Wi-Fi...");
+    m_adhoc.destroyAdhoc();
+    std::cerr << "ad hos is off!" << std::endl;
+    // a trick in DestroyAdhoc ensures that WiFi will be reconnected to a default WiFi
+    if (isNdnAutoConfigEnabled()) {
+      startNdnAutoConfig();
+    }
+  }
+#endif
+}
+
 ////////////////////////////////////////////////////////////////////////////////
 // Misc
 
@@ -361,13 +408,16 @@ TrayMenu::updateNfdActivityIcon(bool isActive)
   m_isNfdRunning = isActive;
 
   if (isActive) {
-    if(m_isConnectedToHub) {
+    if (m_isConnectedToHub) {
       m_tray->setIcon(QIcon(CONNECT_STATUS_ICON));
+    }
+    else if (m_isConnectedToAdhoc) {
+      m_tray->setIcon(QIcon(CONNECT_ADHOC_ICON));
     }
     else {
       m_tray->setIcon(QIcon(CONNECT_ICON));
     }
-    if (isNdnAutoConfigEnabled()) {
+    if (!m_entryAdhoc->isChecked() && isNdnAutoConfigEnabled()) {
       startNdnAutoConfig();
     }
   }
@@ -380,6 +430,12 @@ void
 TrayMenu::updateConnectivity(bool isConnectedToHub)
 {
   m_isConnectedToHub = isConnectedToHub;
+}
+
+void
+TrayMenu::updateAdhoc(bool isConnectedToAdhoc)
+{
+  m_isConnectedToAdhoc = isConnectedToAdhoc;
 }
 
 void

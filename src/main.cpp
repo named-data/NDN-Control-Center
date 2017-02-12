@@ -40,7 +40,6 @@ class Ncc
 public:
   Ncc()
     : m_isActive(true)
-    , m_localhopFibEntry(Name("/localhop/nfd"))
     , m_face(nullptr, m_keyChain)
     , m_controller(m_face, m_keyChain)
     , m_scheduler(m_face.getIoService())
@@ -103,12 +102,17 @@ public:
   onFibStatusRetrieved(const std::vector<nfd::FibEntry>& status)
   {
     bool isConnectedToHub = false;
+    bool isConnectedToAdhoc = false;
     for (auto const& fibEntry : status) {
       if (fibEntry.getPrefix() == m_localhopFibEntry) {
         isConnectedToHub = true;
       }
+      else if (fibEntry.getPrefix() == m_adhocFibEntry) {
+        isConnectedToAdhoc = true;
+      }
     }
     emit m_tray.connectivityUpdate(isConnectedToHub);
+    emit m_tray.adhocUpdate(isConnectedToAdhoc);
   }
 
   void
@@ -141,7 +145,8 @@ private:
 private:
   volatile bool m_isActive;
   boost::thread m_nfdThread;
-  const Name m_localhopFibEntry;
+  const Name m_localhopFibEntry = "/localhop/nfd";
+  const Name m_adhocFibEntry = "/adhoc";
 
   KeyChain m_keyChain;
   Face m_face;

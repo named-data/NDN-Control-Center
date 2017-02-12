@@ -1,6 +1,15 @@
 Release Notes
 =============
 
+## Version 0.2.4
+
+- Introduce function to quickly enable local NDN communication using Ad Hoc WiFi
+
+- Fix a small bug in `ndn` command-line tool
+
+- The bundled NDN stack binaries moved to `NDN.app/Contents/Helpers` folder to
+  respect macOS code signing conventions.
+
 ## Version 0.2.3
 
 - Correct names of tray menu items

@@ -370,6 +370,7 @@ if __name__ == '__main__':
   parser.add_option('-r', '--release', dest='release', help='Build a release. This determines the version number of the release.')
   parser.add_option('-s', '--snapshot', dest='snapshot', help='Build a snapshot release. This determines the \'snapshot version\'.')
   parser.add_option('-g', '--git', dest='git', help='Build a snapshot release. Use the git revision number as the \'snapshot version\'.', action='store_true', default=False)
+  parser.add_option('--no-dmg', dest='no_dmg', action='store_true', default=False, help='''Disable creation of DMG''')
   parser.add_option('--codesign', dest='codesign', help='Identity to use for code signing. (If not set, no code signing will occur)')
 
   options, args = parser.parse_args()
@@ -405,17 +406,18 @@ if __name__ == '__main__':
     codesign(a.bundle)
     print ''
 
-  # Create diskimage
-  title = "NDN-%s" % ver
-  fn = "build/%s.dmg" % title
-  d = DiskImage(fn, title)
-  d.symlink('/Applications', '/Applications')
-  d.copy('build/NDN.app', '/NDN.app')
-  d.create()
+  if not options.no_dmg:
+    # Create diskimage
+    title = "NDN-%s" % ver
+    fn = "build/%s.dmg" % title
+    d = DiskImage(fn, title)
+    d.symlink('/Applications', '/Applications')
+    d.copy('build/NDN.app', '/NDN.app')
+    d.create()
 
-  if options.codesign:
-    print ' * Signing .dmg with identity `%s\'' % options.codesign
-    codesign(fn)
-    print ''
+    if options.codesign:
+      print ' * Signing .dmg with identity `%s\'' % options.codesign
+      codesign(fn)
+      print ''
 
 Popen('tail -n +3 RELEASE_NOTES.md | pandoc -f markdown -t html > build/release-notes-%s.html' % ver, shell=True).wait()

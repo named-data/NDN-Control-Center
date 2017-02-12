@@ -33,6 +33,7 @@
 #include <QtWidgets/QSystemTrayIcon>
 #include <QtWidgets/QAction>
 #include <QtWidgets/QMenu>
+#include <QtWidgets/QMessageBox>
 
 #include <QtQml/QQmlContext>
 
@@ -41,7 +42,10 @@
 
 #ifdef OSX_BUILD
 #include "osx-auto-update-sparkle.hpp"
+#include "osx-adhoc.hpp"
 #endif // OSX_BUILD
+
+#include <thread>
 
 namespace ndn {
 
@@ -62,6 +66,9 @@ signals:
 
   void
   connectivityUpdate(bool isConnectedToHub);
+
+  void
+  adhocUpdate(bool isConnectedToAdhoc);
 
 public:
   explicit
@@ -125,6 +132,9 @@ private slots:
   updateConnectivity(bool isConnectedToHub);
 
   void
+  updateAdhoc(bool isConnectedToAdhoc);
+
+  void
   enableCli();
 
   void
@@ -134,6 +144,9 @@ private slots:
   appendNdnAutoConfigStatus(const QString& message);
 
 #ifdef OSX_BUILD
+  void
+  onAdhocChange();
+
   void
   checkForUpdates();
 #endif // OSX_BUILD
@@ -145,6 +158,7 @@ private:
   QQmlContext* m_context;
   bool m_isNfdRunning;
   bool m_isConnectedToHub;
+  bool m_isConnectedToAdhoc;
   QSystemTrayIcon* m_tray;
   QMenu* m_menu;
   QAction* m_entryPref;
@@ -155,6 +169,7 @@ private:
   QString m_ndnAutoConfigMsg;
 #ifdef OSX_BUILD
   QAction* m_entryEnableCli;
+  QAction* m_entryAdhoc;
   QAction* m_checkForUpdates;
   OsxAutoUpdateSparkle m_sparkle;
 #endif // OSX_BUILD
@@ -164,6 +179,7 @@ private:
   ncc::KeyViewerDialog* m_keyViewerDialog;
   Face& m_face;
   KeyChain& m_keyChain;
+  Adhoc m_adhoc;
   StatusViewer* m_statusViewer;
 };
 
