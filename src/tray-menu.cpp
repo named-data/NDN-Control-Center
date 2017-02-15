@@ -30,6 +30,7 @@
 #ifdef OSX_BUILD
 #define CONNECT_ICON ":/res/icon-connected-black.png"
 #define DISCONNECT_ICON ":/res/icon-disconnected-black.png"
+#define CONNECT_STATUS_ICON ":/res/icon-connected-status-black.png"
 
 #include <Security/Authorization.h>
 #include <Security/AuthorizationTags.h>
@@ -60,6 +61,7 @@ const QString AUTO_START_SUFFIX = "Library/LaunchAgents/net.named-data.control-c
 TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   : m_context(context)
   , m_isNfdRunning(false)
+  , m_isConnectedToHub(false)
   , m_menu(new QMenu(this))
   , m_entryPref(new QAction("Preferences...", m_menu))
   , m_entrySec(new QAction("Security...", m_menu))
@@ -79,6 +81,8 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
   connect(this, SIGNAL(nfdActivityUpdate(bool)), this, SLOT(updateNfdActivityIcon(bool)),
+          Qt::QueuedConnection);
+  connect(this, SIGNAL(connectivityUpdate(bool)), this, SLOT(updateConnectivity(bool)),
           Qt::QueuedConnection);
 
   QString nccVersion = QString(NCC_VERSION) + " (ndn-cxx: " + NDN_CXX_VERSION_BUILD_STRING +
@@ -348,7 +352,12 @@ TrayMenu::updateNfdActivityIcon(bool isActive)
   m_isNfdRunning = isActive;
 
   if (isActive) {
-    m_tray->setIcon(QIcon(CONNECT_ICON));
+    if(m_isConnectedToHub) {
+      m_tray->setIcon(QIcon(CONNECT_STATUS_ICON));
+    }
+    else {
+      m_tray->setIcon(QIcon(CONNECT_ICON));
+    }
     if (isNdnAutoConfigEnabled()) {
       startNdnAutoConfig();
     }
@@ -356,6 +365,12 @@ TrayMenu::updateNfdActivityIcon(bool isActive)
   else {
     m_tray->setIcon(QIcon(DISCONNECT_ICON));
   }
+}
+
+void
+TrayMenu::updateConnectivity(bool isConnectedToHub)
+{
+  m_isConnectedToHub = isConnectedToHub;
 }
 
 void

@@ -59,6 +59,9 @@ signals:
   void
   nfdActivityUpdate(bool isActive);
 
+  void
+  connectivityUpdate(bool isConnectedToHub);
+
 public:
   explicit
   TrayMenu(QQmlContext* context, Face& face);
@@ -118,6 +121,9 @@ private slots:
   updateNfdActivityIcon(bool isActive);
 
   void
+  updateConnectivity(bool isConnectedToHub);
+
+  void
   enableCli();
 
   void
@@ -137,6 +143,7 @@ private slots:
 private:
   QQmlContext* m_context;
   bool m_isNfdRunning;
+  bool m_isConnectedToHub;
   QSystemTrayIcon* m_tray;
   QMenu* m_menu;
   QAction* m_entryPref;

@@ -9,5 +9,6 @@
         <file>../res/ToolbarAdvanced_22_128x128x32.png</file>
         <file>../res/icon-connected-black.png</file>
         <file>../res/icon-disconnected-black.png</file>
+        <file>../res/icon-connected-status-black.png</file>
     </qresource>
 </RCC>
