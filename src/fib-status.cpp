@@ -20,30 +20,24 @@
 #include "fib-status.hpp"
 #include "fib-status.moc"
 
-#include <ndn-cxx/face.hpp>
-#include <ndn-cxx/name.hpp>
-#include <ndn-cxx/interest.hpp>
-#include <ndn-cxx/encoding/buffer-stream.hpp>
-#include <ndn-cxx/management/nfd-fib-entry.hpp>
-#include <ndn-cxx/management/nfd-face-status.hpp>
-#include <ndn-cxx/management/nfd-forwarder-status.hpp>
-
 namespace ndn {
 
-FibStatusModel::FibStatusModel(Face& face, QObject *parent/* = 0*/)
+FibStatusModel::FibStatusModel(QObject* parent/* = 0*/)
   : QAbstractListModel(parent)
-  // , m_face(face)
 {
+  connect(this, SIGNAL(onDataReceived(std::vector<ndn::nfd::FibEntry>)), this,
+          SLOT(updateStatus(std::vector<ndn::nfd::FibEntry>)),
+          Qt::QueuedConnection);
 }
 
 int
-FibStatusModel::rowCount(const QModelIndex &parent/* = QModelIndex()*/) const
+FibStatusModel::rowCount(const QModelIndex& parent/* = QModelIndex()*/) const
 {
   return m_items.count();
 }
 
 void
-FibStatusModel::addItem(const FibStatusItem &item)
+FibStatusModel::addItem(const FibStatusItem& item)
 {
   beginInsertRows(QModelIndex(), rowCount(), rowCount());
   m_items << item;
@@ -51,18 +45,20 @@ FibStatusModel::addItem(const FibStatusItem &item)
 }
 
 QVariant
-FibStatusModel::data(const QModelIndex & index, int role) const
+FibStatusModel::data(const QModelIndex& index, int role) const
 {
   if (index.row() < 0 || index.row() >= m_items.count()) {
     return QVariant();
   }
 
-  const FibStatusItem &item = m_items.at(index.row());
+  const FibStatusItem& item = m_items.at(index.row());
   if (role == PrefixRole) {
     return item.prefix();
-  } else if (role == FaceIdRole) {
+  }
+  else if (role == FaceIdRole) {
     return static_cast<uint>(item.faceId());
-  } else if (role == CostRole) {
+  }
+  else if (role == CostRole) {
     return static_cast<uint>(item.cost());
   }
 
@@ -87,80 +83,31 @@ FibStatusModel::clear()
   endResetModel();
 }
 
-Q_INVOKABLE void
-FibStatusModel::fetchFibInformation()
-{
-  // m_buffer = make_shared<OBufferStream>();
-
-  // Interest interest("/localhost/nfd/fib/list");
-  // interest.setChildSelector(1);
-  // interest.setMustBeFresh(true);
-  // m_face.expressInterest(interest,
-  //                        bind(&FibStatusModel::fetchSegments, this, _2,
-  //                             &FibStatusModel::afterFetchedFibEnumerationInformation),
-  //                        bind(&FibStatusModel::onTimeout, this));
-  // try {
-  //   m_face.processEvents();
-  // } catch (Tlv::Error e) {
-  //   std::cerr << e.what() << std::endl;
-  //   clear();
-  // }
-}
-
 void
-FibStatusModel::afterFetchedFibEnumerationInformation()
+FibStatusModel::updateStatus(std::vector<ndn::nfd::FibEntry> status)
 {
-//   beginResetModel();
-//   m_items.clear();
-//   ConstBufferPtr buf = m_buffer->buf();
-
-//   Block block;
-//   size_t offset = 0;
-//   while (offset < buf->size()) {
-//     bool ok = Block::fromBuffer(buf, offset, block);
-//     if (!ok) {
-//       std::cerr << "ERROR: cannot decode FibEntry TLV" << std::endl;
-//       break;
-//     }
-//     offset += block.size();
-
-//     nfd::FibEntry fibEntry(block);
-
-//     for (std::list<nfd::NextHopRecord>::const_iterator
-//            nextHop = fibEntry.getNextHopRecords().begin();
-//          nextHop != fibEntry.getNextHopRecords().end();
-//          ++nextHop) {
-//       addItem(FibStatusItem(QString::fromStdString(fibEntry.getPrefix().toUri()),
-//                             nextHop->getFaceId(), nextHop->getCost()));
-//     }
-//   }
-//   endResetModel();
-}
-
-
-void
-FibStatusModel::fetchSegments(const Data& data, void (FibStatusModel::*onDone)())
-{
-  // m_buffer->write(reinterpret_cast<const char*>(data.getContent().value()),
-  //                 data.getContent().value_size());
-
-  // uint64_t currentSegment = data.getName().get(-1).toSegment();
-
-  // const name::Component& finalBlockId = data.getMetaInfo().getFinalBlockId();
-  // if (finalBlockId.empty() ||
-  //     finalBlockId.toSegment() > currentSegment) {
-  //   m_face.expressInterest(data.getName().getPrefix(-1).appendSegment(currentSegment+1),
-  //                          bind(&FibStatusModel::fetchSegments, this, _2, onDone),
-  //                          bind(&FibStatusModel::onTimeout, this));
-  // } else {
-  //   return (this->*onDone)();
-  // }
+  beginResetModel();
+  m_items.clear();
+  for (auto const& fibEntry : status) {
+    bool isSamePrefix = false;
+    for (auto const& nextHop : fibEntry.getNextHopRecords()) {
+      if (!isSamePrefix) {
+        addItem(FibStatusItem(QString::fromStdString(fibEntry.getPrefix().toUri()),
+                              nextHop.getFaceId(), nextHop.getCost()));
+        isSamePrefix = true;
+      }
+      else {
+        addItem(FibStatusItem(QString(""), nextHop.getFaceId(), nextHop.getCost()));
+      }
+    }
+  }
+  endResetModel();
 }
 
 void
 FibStatusModel::onTimeout()
 {
-  std::cerr << "Request timed out" << std::endl;
+  std::cerr << "Request timed out (should not really happen)" << std::endl;
 }
 
 } // namespace ndn

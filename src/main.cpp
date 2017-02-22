@@ -46,7 +46,6 @@ public:
     , m_face(nullptr, m_keyChain)
     , m_controller(m_face, m_keyChain)
     , m_scheduler(m_face.getIoService())
-    , m_fibModel(m_face)
     , m_tray(m_engine.rootContext(), m_face)
   {
     QQmlContext* context = m_engine.rootContext();
@@ -77,7 +76,7 @@ public:
             m_face.processEvents(time::milliseconds::zero(), true);
           }
         }
-        catch (const std::exception&e) {
+        catch (const std::exception& e) {
           emit m_tray.nfdActivityUpdate(false);
           m_face.shutdown();
 #ifdef BOOST_THREAD_USES_CHRONO
@@ -115,6 +114,7 @@ public:
       }
     }
     emit m_tray.connectivityUpdate(isConnectedToHub);
+    emit m_fibModel.onDataReceived(status);
   }
 
   void
@@ -165,12 +165,14 @@ private:
 
 Q_DECLARE_METATYPE(ndn::shared_ptr<const ndn::Data>)
 Q_DECLARE_METATYPE(ndn::nfd::ForwarderStatus)
+Q_DECLARE_METATYPE(std::vector<ndn::nfd::FibEntry>)
 
 int
 main(int argc, char *argv[])
 {
   qRegisterMetaType<ndn::shared_ptr<const ndn::Data>>();
   qRegisterMetaType<ndn::nfd::ForwarderStatus>();
+  qRegisterMetaType<std::vector<ndn::nfd::FibEntry>>();
 
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);

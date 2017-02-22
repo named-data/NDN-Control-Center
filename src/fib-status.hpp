@@ -1,6 +1,6 @@
 /* -*- Mode:C++; c-file-style:"gnu"; indent-tabs-mode:nil; -*- */
 /**
- * Copyright (c) 2013-2014, Regents of the University of California,
+ * Copyright (c) 2013-2017, Regents of the University of California,
  *
  * This file is part of NFD Control Center.  See AUTHORS.md for complete list of NFD
  * authors and contributors.
@@ -23,14 +23,14 @@
 #include <QtCore/QAbstractListModel>
 #include <QtCore/QStringList>
 
+#include <ndn-cxx/mgmt/nfd/fib-entry.hpp>
+
 namespace ndn {
-class Face;
-class Data;
 
 class FibStatusItem
 {
 public:
-  FibStatusItem(const QString &prefix, uint64_t faceId, uint64_t cost)
+  FibStatusItem(const QString& prefix, uint64_t faceId, uint64_t cost)
     : m_prefix(prefix)
     , m_faceId(faceId)
     , m_cost(cost)
@@ -65,6 +65,10 @@ class FibStatusModel : public QAbstractListModel
 {
   Q_OBJECT
 
+signals:
+  void
+  onDataReceived(std::vector<ndn::nfd::FibEntry> status);
+
 public:
   enum FibStatusRoles {
     PrefixRole = Qt::UserRole + 1,
@@ -73,16 +77,16 @@ public:
   };
 
   explicit
-  FibStatusModel(Face& face, QObject *parent = 0);
+  FibStatusModel(QObject* parent = 0);
 
   int
-  rowCount(const QModelIndex &parent = QModelIndex()) const;
+  rowCount(const QModelIndex& parent = QModelIndex()) const;
 
   void
-  addItem(const FibStatusItem &item);
+  addItem(const FibStatusItem& item);
 
   QVariant
-  data(const QModelIndex & index, int role) const;
+  data(const QModelIndex& index, int role) const;
 
   QHash<int, QByteArray>
   roleNames() const;
@@ -90,22 +94,16 @@ public:
   void
   clear();
 
-  Q_INVOKABLE void
-  fetchFibInformation();
-
-  void
-  afterFetchedFibEnumerationInformation();
-
-  void
-  fetchSegments(const Data& data, void (FibStatusModel::*onDone)());
-
   void
   onTimeout();
 
+private slots:
+
+  void
+  updateStatus(std::vector<ndn::nfd::FibEntry> status);
+
 private:
-  // Face& m_face;
   QList<FibStatusItem> m_items;
-  // shared_ptr<OBufferStream> m_buffer;
 };
 
 } // namespace ndn

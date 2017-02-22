@@ -106,32 +106,6 @@ ApplicationWindow {
                 }
             }
         }
-        // Tab {
-        //     title: "FIB status"
-        //     TableView {
-        //         anchors.fill: parent
-        //         anchors.topMargin: 20
-        //         anchors.bottomMargin: 20
-        //         anchors.leftMargin: 20
-        //         anchors.rightMargin: 20
-        //         TableViewColumn{
-        //             role: "prefix"
-        //             title: "NDN prefix"
-        //             width: 300
-        //         }
-        //         TableViewColumn{
-        //             role: "faceId"
-        //             title: "Face ID"
-        //             width: 50
-        //         }
-        //         TableViewColumn{
-        //             role: "cost"
-        //             title: "Cost"
-        //             width: 50
-        //         }
-        //         model: fibModel
-        //     }
-        // }
         Tab {
             title: "Forwarder status"
             TableView {
@@ -150,6 +124,32 @@ ApplicationWindow {
                     role: "value"
                     title: "Value"
                     width: 300
+                }
+            }
+        }
+        Tab {
+            title: "FIB"
+            TableView {
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                model: fibModel
+                TableViewColumn{
+                    role: "prefix"
+                    title: "NDN prefix"
+                    width: 300
+                }
+                TableViewColumn{
+                    role: "faceId"
+                    title: "Face ID"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "cost"
+                    title: "Cost"
+                    width: 100
                 }
             }
         }
