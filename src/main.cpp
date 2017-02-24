@@ -24,12 +24,14 @@
 
 #include "forwarder-status.hpp"
 #include "fib-status.hpp"
+#include "rib-status.hpp"
 #include "tray-menu.hpp"
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/name.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
 #include <ndn-cxx/mgmt/nfd/fib-entry.hpp>
+#include <ndn-cxx/mgmt/nfd/rib-entry.hpp>
 #include <ndn-cxx/mgmt/nfd/controller.hpp>
 #include <ndn-cxx/mgmt/nfd/status-dataset.hpp>
 
@@ -52,6 +54,7 @@ public:
 
     context->setContextProperty("forwarderModel", &m_forwarderStatusModel);
     context->setContextProperty("fibModel", &m_fibModel);
+    context->setContextProperty("ribModel", &m_ribModel);
     context->setContextProperty("trayModel", &m_tray);
 
     m_engine.load((QUrl("qrc:/main.qml")));
@@ -101,6 +104,9 @@ public:
     m_controller.fetch<ndn::nfd::FibDataset>(bind(&Ncc::onFibStatusRetrieved, this, _1),
                                              bind(&Ncc::onStatusTimeout, this));
 
+    m_controller.fetch<ndn::nfd::RibDataset>(bind(&Ncc::onRibStatusRetrieved, this, _1),
+                                             bind(&Ncc::onStatusTimeout, this));
+
     m_scheduler.scheduleEvent(time::seconds(6), bind(&Ncc::requestNfdStatus, this));
   }
 
@@ -115,6 +121,12 @@ public:
     }
     emit m_tray.connectivityUpdate(isConnectedToHub);
     emit m_fibModel.onDataReceived(status);
+  }
+
+  void
+  onRibStatusRetrieved(const std::vector<nfd::RibEntry>& status)
+  {
+    emit m_ribModel.onDataReceived(status);
   }
 
   void
@@ -158,6 +170,7 @@ private:
 
   ForwarderStatusModel m_forwarderStatusModel;
   FibStatusModel m_fibModel;
+  RibStatusModel m_ribModel;
   ncc::TrayMenu m_tray;
 };
 
@@ -166,6 +179,7 @@ private:
 Q_DECLARE_METATYPE(ndn::shared_ptr<const ndn::Data>)
 Q_DECLARE_METATYPE(ndn::nfd::ForwarderStatus)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::FibEntry>)
+Q_DECLARE_METATYPE(std::vector<ndn::nfd::RibEntry>)
 
 int
 main(int argc, char *argv[])
@@ -173,6 +187,7 @@ main(int argc, char *argv[])
   qRegisterMetaType<ndn::shared_ptr<const ndn::Data>>();
   qRegisterMetaType<ndn::nfd::ForwarderStatus>();
   qRegisterMetaType<std::vector<ndn::nfd::FibEntry>>();
+  qRegisterMetaType<std::vector<ndn::nfd::RibEntry>>();
 
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);

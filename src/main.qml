@@ -154,6 +154,52 @@ ApplicationWindow {
             }
         }
         Tab {
+            title: "RIB"
+            TableView {
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                model: ribModel
+                TableViewColumn{
+                    role: "prefix"
+                    title: "NDN prefix"
+                    width: 200
+                }
+                TableViewColumn{
+                    role: "faceId"
+                    title: "Face ID"
+                    width: 65
+                }
+                TableViewColumn{
+                    role: "origin"
+                    title: "Origin"
+                    width: 50
+                }
+                TableViewColumn{
+                    role: "cost"
+                    title: "Cost"
+                    width: 50
+                }
+                TableViewColumn{
+                    role: "childinherit"
+                    title: "ChildInherit"
+                    width: 90
+                }
+                TableViewColumn{
+                    role: "ribcapture"
+                    title: "RibCapture"
+                    width: 90
+                }
+                TableViewColumn{
+                    role: "expiresin"
+                    title: "Expires in"
+                    width: 90
+                }
+            }
+        }
+        Tab {
             title: "Auto-config status"
             TextArea {
                 id: ndnAutoConfigTextId
