@@ -1,87 +1,102 @@
-NFD Control Center
+NDN Control Center
 ==================
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/demo.gif){align="right" style="max-width:60%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/demo.gif){align="right" style="max-width:60%"}
 
-NFD Control Center is a software module for desktop systems to manage local instance of Named Data Forwarding Daemon (NFD). The current released macOS version of the NFD Control Center (0.2.1) is built with newest ndn-cxx (0.5.1) and bundles in a newest version of NFD (0.5.1) and NDN Essential tools (0.4). NFD Control Center provides macOS users a simple way to get NDN connectivity and keep up with the latest updates of NFD. The NFD Control Center supplies various features, such as:
+NDN Control Center is a software module for desktop systems to manage local instance of Named Data Forwarding Daemon (NFD). The current released macOS version of the NDN Control Center is built with newest ndn-cxx (0.5.1) and bundles in a newest version of NFD (0.5.1) and NDN tools (0.4). NDN Control Center provides macOS users a simple way to get NDN connectivity and keep up with the latest updates of NFD. The NDN Control Center supplies various features, such as:
 
 - Start Control Center as soon as computers starts
 - Start NFD daemon as soon as Control Center starts
+- Monitor detailed NFD status information
+- Modify NFD parameters
 - Start/Stop NDN auto-configuration to connect to NDN testbed
   automatically
 - Shut down NFD daemon when exit the Control Center
-- Automatically upgrade NFD Control Center application
+- Automatically upgrade NDN Control Center application
 - View the NDN keys on local system
 - Enable NDN Command line usage in terminal
+- Enable Ad Hoc WiFi communication
 
-Soon to be released version will also include NDN security management, a simple interface to enable ad hoc WiFi communication, discovering available data within the network.
+Soon to be released version will also include NDN security management, discovering available data within the network.
 
 ## Download
 
 - macOS 10.12
 
-    * [Version 0.2.1](https://named-data.net/binaries/NFD-Control-Center/NDN-0.2.1.dmg)
+    * [Latest version](https://named-data.net/binaries/NDN-Control-Center/NDN.dmg)
 
 - Source
 
-    * [Github](https://github.com/named-data/NFD-Control-Center)
-    * [NDN Gerrit](https://gerrit.named-data.net/NFD-Control-Center)
+    * [Github](https://github.com/named-data/NDN-Control-Center)
 
 - Issue requests and bug reporting
 
-    * [NDN Redmine](https://redmine.named-data.net/projects/nfd-control-center/issues)
+    * [NDN Redmine](https://redmine.named-data.net/projects/ndn-control-center/issues)
 
-- [Release notes](https://github.com/named-data/NFD-Control-Center/blob/master/RELEASE_NOTES.md#release-notes)
+- [Release notes](https://github.com/named-data/NDN-Control-Center/blob/master/RELEASE_NOTES.md#release-notes)
 
 ## Getting Started
 
-Download `.dmg` of the latest version of the NFD control center and install it by simply double clicking dmg package and dragging `NFD.app` to Application folder.
+Download `.dmg` of the latest version of the NDN control center and install it by simply double clicking dmg package and dragging `NDN.app` to Application folder.
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/dmg_install.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/dmg_install.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 
-### Launch NFD Control Center
+### Launch NDN Control Center
 
-In the Launchpad, click on NDN application icon to launch NFD Control Center. Application icon will show on the menu bar and the main menu can be opened from there.
+In the Launchpad, click on NDN application icon to launch NDN Control Center. Application icon will show on the menu bar and the main menu can be opened from there.
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/main-menu.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/main-menu.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 
 ## Settings and Usage
 
 ### Preferences
 
-Preferences window contains 5 tab views. The first tab **General** is the general settings for NFD Control Center. The NFD Control Center application will save the user's settings permanently in local system no matter the application is upgraded or reinstalled. The default setting is *false*.
+Preferences window contains 3 tab views. The first tab **General** is the general settings for NDN Control Center. The NDN Control Center application will save the user's settings permanently in local system no matter the application is upgraded or reinstalled. The default setting is *false*.
 
-- Launch NFD Control Center as soon as system login
-- Start NFD daemon as soon as NFD Control Center starts
+- Launch NDN Control Center as soon as system login
+- Start NFD daemon as soon as NDN Control Center starts
 - Start auto-configuration daemon as soon as NFD starts
-- Shutdown NFD daemon when NFD Control Center quits
+- Shutdown NFD daemon when NDN Control Center quits
 - Open NDN testbed webpage
 - Open NDN routing status webpage
 - Version information display
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/general.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
-
-**Forwarder status** tab displays the detailed forwarder status information. Nothing will show up if NFD daemon is not on.
-
-![](https://named-data.net/binaries/NFD-Control-Center/images/forwarder.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/general.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 
 **Auto-config status** tab displays the detailed auto-configuration information generated by NDN auto-config tool. It logs the auto-configuration information until application exits. When start auto-configuration on the system for the first time, macOS will ask you for permission to access keychain. Choose Always Allow to avoid the window pops up again.
 
 <div style="text-align: center" markdown="1">
-![](https://named-data.net/binaries/NFD-Control-Center/images/autoconfig.png){style="max-width:40%"}
-![](https://named-data.net/binaries/NFD-Control-Center/images/autoconfig-key.png){style="max-width:40%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/autoconfig.png){style="max-width:40%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/autoconfig-key.png){style="max-width:40%"}
 </div>
 
-**Security** tab is under construction currently.
+**Management** tab contains various operations for modifying the NFD parameters, including create/destroy face, add/remove FIB next-hop, register/unregister RIB entry and set/unset strategy for a name.
+
+![](https://named-data.net/binaries/NDN-Control-Center/images/management.png){style="display: block; margin:0 auto 0 auto; max-width:40%"}
+
+### Status
+
+Status window has 6 tab views to show the detailed information about local running NFD, including general forwarder status, channels, faces, FIB, RIB, strategies.
+
+![](https://named-data.net/binaries/NDN-Control-Center/images/forwarder.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+
+### Enable Ad Hoc WiFi
+
+Simply click on this menu entry and the ad hoc WiFi mode will be turned on. It will connect to `NDNDirect` automatically. Once disable the ad hoc WiFi, it will re-connect to de default WiFi again.
+
+<div style="text-align: center" markdown="1">
+![](https://named-data.net/binaries/NDN-Control-Center/images/adhoc-1.png){style="max-width:40%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/adhoc-2.png){style="max-width:40%"}
+</div>
 
 ### Enable Command Terminal Usage
 
 Choosing this menu entry will let the users be able to use the command-line tools in terminal on local macOS system. Simply click on it and fill in the user name and password in the popup dialog. Then users will be able to use all NDN related command-line tools in terminal afterwards.
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/enableterminal.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/enableterminal.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 After enabling command-line tools in terminal, users can type in the command line to launch NDN tools, checking NFD status and so on. One example shown below is that users can use "*ndn nfd-status*" command to check the general NFD status.
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/commandlinetools.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/commandlinetools.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 Currently, `ndn` supports the following command-line tools:
 
 - **NFD and supporting tools**
@@ -135,17 +150,15 @@ Currently, `ndn` supports the following command-line tools:
 
 ### Check for updates
 
-This menu entry is designed for automatically upgrading. Everytime when NFD Control Center starts, it will automatically check the upgrade information from the server. If there is an available upgrading, upgrading dialog will pop up and users can choose the their preferred action. During the upgrade, NFD and NDN auto-configuration will be stopped. Users also can check the upgrading information manually by clicking this menu entry.
+This menu entry is designed for automatically upgrading. Everytime when NDN Control Center starts, it will automatically check the upgrade information from the server. If there is an available upgrading, upgrading dialog will pop up and users can choose the their preferred action. During the upgrade, NFD and NDN auto-configuration will be stopped. Users also can check the upgrading information manually by clicking this menu entry.
 
-![](https://named-data.net/binaries/NFD-Control-Center/images/autoupdate.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
+![](https://named-data.net/binaries/NDN-Control-Center/images/autoupdate.png){style="display: block; margin:0 auto 0 auto; max-width:90%"}
 
 ### Quit
 
-Users can check the "*Shutdown NFD daemon on quit*" box to terminate NFD daemon along with quitting NFD Control Center. Otherwise, NFD daemon will keep running even if user quits the NFD Control Center.
+Users can check the "*Shutdown NFD daemon on quit*" box to terminate NFD daemon along with quitting NDN Control Center. Otherwise, NFD daemon will keep running even if user quits the NDN Control Center.
 
 ## Future Development Plan
 
 - NDN security management, integrating with ndncert
-- Enable ad hoc WiFi communication
-- Full NFD management
 - Support for different OS other than macOS

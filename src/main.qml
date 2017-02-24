@@ -6,7 +6,7 @@ import QtQuick.Layouts 1.0
 ApplicationWindow {
     visible: false
     id: window
-    title: "NFD Control Center"
+    title: "NDN Control Center"
     minimumWidth: 700
     minimumHeight: 400
 
@@ -40,7 +40,7 @@ ApplicationWindow {
                         anchors.rightMargin: 10
                         CheckBox {
                             id: startOnLogin
-                            text: "Launch NFD Control Center on login"
+                            text: "Launch NDN Control Center on login"
                             checked: trayModel.isNccAutoStartEnabled()
                             onCheckedChanged: trayModel.enableDisableNccAutoStart(this.checked)
                         }
@@ -95,7 +95,7 @@ ApplicationWindow {
                      anchors.left: parent.left
                      anchors.bottom: parent.bottom
                      Label {
-                         text: "NFD Control Center version:"
+                         text: "NDN Control Center version:"
                          font.pixelSize: 10
                      }
                      Label {

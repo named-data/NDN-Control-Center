@@ -1,7 +1,7 @@
-NFD Control Center
+NDN Control Center
 ==================
 
-NFD Control Center is a helper application to manager local instance of NFD.  In addition to that, on macOS NFD Control Center also bundles an internal version of NFD.
+NDN Control Center is a helper application to manager local instance of NFD.  In addition to that, on macOS NDN Control Center also bundles an internal version of NFD.
 
 ## Notes
 

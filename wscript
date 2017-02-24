@@ -1,7 +1,7 @@
 # -*- Mode: python; py-indent-offset: 4; indent-tabs-mode: nil; coding: utf-8; -*-
-VERSION='0.2.1'
-APPNAME='nfd-control-center'
-APPCAST='https://named-data.net/binaries/NFD-Control-Center/ndn-control-center.xml'
+VERSION='0.2.2'
+APPNAME='ndn-control-center'
+APPCAST='https://named-data.net/binaries/NDN-Control-Center/ndn-control-center.xml'
 
 from waflib import Logs, Utils, Task, TaskGen
 import os
@@ -27,7 +27,7 @@ def configure(conf):
 
     conf.check_boost(lib="system thread")
 
-    conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/nfd-control-center", conf.env))
+    conf.define('RESOURCES_DIR', Utils.subst_vars("${DATAROOTDIR}/ndn-control-center", conf.env))
 
     if Utils.unversioned_sys_platform() == "darwin":
         conf.define('OSX_BUILD', 1)
@@ -47,16 +47,16 @@ def build(bld):
         )
 
     if Utils.unversioned_sys_platform() != "darwin":
-        app.target = "nfd-control-center"
+        app.target = "ndn-control-center"
 
         bld(features = "subst",
-             source = 'nfd-control-center.desktop.in',
-             target = 'nfd-control-center.desktop',
-             BINARY = "nfd-control-center",
-             install_path = "${DATAROOTDIR}/nfd-control-center"
+             source = 'ndn-control-center.desktop.in',
+             target = 'ndn-control-center.desktop',
+             BINARY = "ndn-control-center",
+             install_path = "${DATAROOTDIR}/ndn-control-center"
             )
 
-        bld.install_files("${DATAROOTDIR}/nfd-control-center",
+        bld.install_files("${DATAROOTDIR}/ndn-control-center",
                           bld.path.ant_glob(['res/*']))
     else:
         bld(features="subst",
@@ -69,7 +69,7 @@ def build(bld):
 
         app.source += bld.path.ant_glob(['src/osx-*.mm', 'src/osx-*.cpp'])
         app.use += " OSX_FOUNDATION OSX_APPKIT OSX_SPARKLE OSX_COREWLAN NDN_TOOLS"
-        app.target = "NFD Control Center"
+        app.target = "NDN Control Center"
         app.mac_app = True
         app.mac_plist = 'src/Info.plist'
         app.mac_files = [i.path_from(bld.path) for i in bld.path.ant_glob('res/**/*', excl='**/*.ai')]

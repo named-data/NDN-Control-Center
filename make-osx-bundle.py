@@ -18,7 +18,7 @@ if platform.system () != 'Darwin':
   print "This script is indended to be run only on OSX platform"
   exit (1)
 
-MIN_SUPPORTED_VERSION="10.10"
+MIN_SUPPORTED_VERSION="10.12"
 
 current_version = tuple(int(i) for i in platform.mac_ver()[0].split('.')[0:2])
 min_supported_version = tuple(int(i) for i in MIN_SUPPORTED_VERSION.split('.')[0:2])
@@ -379,10 +379,8 @@ if __name__ == '__main__':
     sys.exit(1)
 
   # Do the finishing touches to our Application bundle before release
-  shutil.rmtree('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ignore_errors=True)
-  a = AppBundle('build/%s/NDN.app' % (MIN_SUPPORTED_VERSION), ver, 'build/NFD Control Center.app')
-  # a.copy_qt_plugins()
-  # a.handle_libs()
+  shutil.rmtree('build/NDN.app', ignore_errors=True)
+  a = AppBundle('build/NDN.app', ver, 'build/NDN Control Center.app')
   a.copy_ndn_deps("build/deps")
   # a.copy_resources(['qt.conf'])
   a.copy_etc(['nfd.conf'])
@@ -398,11 +396,11 @@ if __name__ == '__main__':
     print ''
 
   # Create diskimage
-  title = "NDN-%s-%s" % (ver, MIN_SUPPORTED_VERSION)
+  title = "NDN-%s" % ver
   fn = "build/%s.dmg" % title
   d = DiskImage(fn, title)
   d.symlink('/Applications', '/Applications')
-  d.copy('build/%s/NDN.app' % MIN_SUPPORTED_VERSION, '/NDN.app')
+  d.copy('build/NDN.app', '/NDN.app')
   d.create()
 
   if options.codesign:

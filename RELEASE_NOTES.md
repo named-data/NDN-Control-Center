@@ -1,6 +1,21 @@
 Release Notes
 =============
 
+## Version 0.2.2
+
+Changes since version 0.2.1:
+
+- Rename to `NDN Control Center`
+
+- Bundled components
+
+    * [NFD version 0.5.1-38-gd396b61]
+    * [ndn-cxx version 0.5.1-34-g1709aa70]
+
+- Update tray icon
+
+- NFD status display
+
 ## Version 0.2.1
 
 Changes since version 0.2.0:
