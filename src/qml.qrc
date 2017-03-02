@@ -1,6 +1,7 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>status.qml</file>
         <file>../res/icon-connected-white.png</file>
         <file>../res/icon-disconnected-white.png</file>
         <file>../res/GenericNetworkIcon_22_128x128x32.png</file>

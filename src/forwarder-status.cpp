@@ -20,13 +20,6 @@
 #include "forwarder-status.hpp"
 #include "forwarder-status.moc"
 
-#include <ndn-cxx/face.hpp>
-#include <ndn-cxx/name.hpp>
-#include <ndn-cxx/interest.hpp>
-#include <ndn-cxx/management/nfd-fib-entry.hpp>
-#include <ndn-cxx/management/nfd-face-status.hpp>
-#include <ndn-cxx/management/nfd-forwarder-status.hpp>
-
 namespace ndn {
 
 ForwarderStatusModel::ForwarderStatusModel(QObject* parent/* = 0*/)

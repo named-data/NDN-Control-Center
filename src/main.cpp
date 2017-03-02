@@ -22,9 +22,6 @@
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QPushButton>
 
-#include "forwarder-status.hpp"
-#include "fib-status.hpp"
-#include "rib-status.hpp"
 #include "tray-menu.hpp"
 
 #include <ndn-cxx/face.hpp>
@@ -48,13 +45,10 @@ public:
     , m_face(nullptr, m_keyChain)
     , m_controller(m_face, m_keyChain)
     , m_scheduler(m_face.getIoService())
-    , m_tray(m_engine.rootContext(), m_face)
+    , m_tray(m_engine.rootContext(), m_face, m_keyChain)
   {
     QQmlContext* context = m_engine.rootContext();
 
-    context->setContextProperty("forwarderModel", &m_forwarderStatusModel);
-    context->setContextProperty("fibModel", &m_fibModel);
-    context->setContextProperty("ribModel", &m_ribModel);
     context->setContextProperty("trayModel", &m_tray);
 
     m_engine.load((QUrl("qrc:/main.qml")));
@@ -99,12 +93,8 @@ public:
   onStatusRetrieved(const nfd::ForwarderStatus& status)
   {
     emit m_tray.nfdActivityUpdate(true);
-    emit m_forwarderStatusModel.onDataReceived(status);
 
     m_controller.fetch<ndn::nfd::FibDataset>(bind(&Ncc::onFibStatusRetrieved, this, _1),
-                                             bind(&Ncc::onStatusTimeout, this));
-
-    m_controller.fetch<ndn::nfd::RibDataset>(bind(&Ncc::onRibStatusRetrieved, this, _1),
                                              bind(&Ncc::onStatusTimeout, this));
 
     m_scheduler.scheduleEvent(time::seconds(6), bind(&Ncc::requestNfdStatus, this));
@@ -120,13 +110,6 @@ public:
       }
     }
     emit m_tray.connectivityUpdate(isConnectedToHub);
-    emit m_fibModel.onDataReceived(status);
-  }
-
-  void
-  onRibStatusRetrieved(const std::vector<nfd::RibEntry>& status)
-  {
-    emit m_ribModel.onDataReceived(status);
   }
 
   void
@@ -168,9 +151,6 @@ private:
 
   QQmlApplicationEngine m_engine;
 
-  ForwarderStatusModel m_forwarderStatusModel;
-  FibStatusModel m_fibModel;
-  RibStatusModel m_ribModel;
   ncc::TrayMenu m_tray;
 };
 

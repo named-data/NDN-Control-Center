@@ -37,6 +37,7 @@
 #include <QtQml/QQmlContext>
 
 #include "key-viewer-dialog.hpp"
+#include "status-viewer.hpp"
 
 #ifdef OSX_BUILD
 #include "osx-auto-update-sparkle.hpp"
@@ -64,7 +65,7 @@ signals:
 
 public:
   explicit
-  TrayMenu(QQmlContext* context, Face& face);
+  TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain);
 
   ~TrayMenu();
 
@@ -147,6 +148,7 @@ private:
   QSystemTrayIcon* m_tray;
   QMenu* m_menu;
   QAction* m_entryPref;
+  QAction* m_entryStatus;
   QAction* m_entrySec;
   QProcess* m_acProc;
   QSettings* m_settings;
@@ -161,6 +163,8 @@ private:
 
   ncc::KeyViewerDialog* m_keyViewerDialog;
   Face& m_face;
+  KeyChain& m_keyChain;
+  StatusViewer* m_statusViewer;
 };
 
 } // namespace ncc

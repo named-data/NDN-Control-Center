@@ -58,12 +58,13 @@ const int MAX_LINES_IN_AUTOCONF_STATUS = 100;
 const QString AUTO_START_SUFFIX = "Library/LaunchAgents/net.named-data.control-center.plist";
 #endif // OSX_BUILD
 
-TrayMenu::TrayMenu(QQmlContext* context, Face& face)
+TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   : m_context(context)
   , m_isNfdRunning(false)
   , m_isConnectedToHub(false)
   , m_menu(new QMenu(this))
   , m_entryPref(new QAction("Preferences...", m_menu))
+  , m_entryStatus(new QAction("Status...", m_menu))
   , m_entrySec(new QAction("Security...", m_menu))
   , m_acProc(nullptr)
   , m_settings(new QSettings())
@@ -75,8 +76,11 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   , m_entryQuit(new QAction("Quit", m_menu))
   , m_keyViewerDialog(new ncc::KeyViewerDialog)
   , m_face(face)
+  , m_keyChain(keyChain)
+  , m_statusViewer(new StatusViewer(m_face, m_keyChain))
 {
   connect(m_entryPref, SIGNAL(triggered()), this, SIGNAL(showApp()));
+  connect(m_entryStatus, SIGNAL(triggered()), m_statusViewer, SLOT(present()));
   connect(m_entrySec, SIGNAL(triggered()), m_keyViewerDialog, SLOT(present()));
   connect(m_entryQuit, SIGNAL(triggered()), this, SLOT(quitApp()));
 
@@ -93,6 +97,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face)
   m_context->setContextProperty("nccVersion", nccVersion);
 
   m_menu->addAction(m_entryPref);
+  m_menu->addAction(m_entryStatus);
   m_menu->addAction(m_entrySec);
 
 #ifdef OSX_BUILD
@@ -161,7 +166,8 @@ TrayMenu::enableDisableNccAutoStart(bool isEnabled)
     boost::replace_all(plist, "%%PATH%%", QCoreApplication::applicationFilePath().toStdString());
     file.write(plist.data(), plist.size());
     file.close();
-  } else {
+  }
+  else {
     QFile::remove(QDir::home().path() + "/" + AUTO_START_SUFFIX);
   }
 }

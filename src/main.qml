@@ -7,7 +7,7 @@ ApplicationWindow {
     visible: false
     id: window
     title: "NFD Control Center"
-    minimumWidth: 750
+    minimumWidth: 700
     minimumHeight: 400
 
     TabView {
@@ -107,100 +107,7 @@ ApplicationWindow {
             }
         }
         Tab {
-            title: "Forwarder status"
-            TableView {
-                anchors.fill: parent
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                model: forwarderModel
-                TableViewColumn{
-                    role: "type"
-                    title: "Type"
-                    width: 200
-                }
-                TableViewColumn{
-                    role: "value"
-                    title: "Value"
-                    width: 300
-                }
-            }
-        }
-        Tab {
-            title: "FIB"
-            TableView {
-                anchors.fill: parent
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                model: fibModel
-                TableViewColumn{
-                    role: "prefix"
-                    title: "NDN prefix"
-                    width: 300
-                }
-                TableViewColumn{
-                    role: "faceId"
-                    title: "Face ID"
-                    width: 100
-                }
-                TableViewColumn{
-                    role: "cost"
-                    title: "Cost"
-                    width: 100
-                }
-            }
-        }
-        Tab {
-            title: "RIB"
-            TableView {
-                anchors.fill: parent
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                model: ribModel
-                TableViewColumn{
-                    role: "prefix"
-                    title: "NDN prefix"
-                    width: 200
-                }
-                TableViewColumn{
-                    role: "faceId"
-                    title: "Face ID"
-                    width: 65
-                }
-                TableViewColumn{
-                    role: "origin"
-                    title: "Origin"
-                    width: 50
-                }
-                TableViewColumn{
-                    role: "cost"
-                    title: "Cost"
-                    width: 50
-                }
-                TableViewColumn{
-                    role: "childinherit"
-                    title: "ChildInherit"
-                    width: 90
-                }
-                TableViewColumn{
-                    role: "ribcapture"
-                    title: "RibCapture"
-                    width: 90
-                }
-                TableViewColumn{
-                    role: "expiresin"
-                    title: "Expires in"
-                    width: 90
-                }
-            }
-        }
-        Tab {
-            title: "Auto-config status"
+            title: "Auto-config"
             TextArea {
                 id: ndnAutoConfigTextId
                 anchors.fill: parent
@@ -210,21 +117,6 @@ ApplicationWindow {
                 anchors.rightMargin: 20
                 readOnly: true
                 text: ndnAutoConfigText
-            }
-        }
-        Tab {
-            title: "Security"
-            Column {
-                spacing: 2
-                anchors.fill: parent
-                anchors.topMargin: 20
-                anchors.bottomMargin: 20
-                anchors.leftMargin: 20
-                anchors.rightMargin: 20
-                Button {
-                    text: "Obtain NDN Certificate"
-                    onClicked: Qt.openUrlExternally('http://ndncert.named-data.net')
-                }
             }
         }
         Tab {
@@ -265,10 +157,4 @@ ApplicationWindow {
             window.raise()
         }
     }
-    // Timer {
-    //     interval: 1000; running: true; repeat: true
-    //     onTriggered: {
-    //         fibModel.fetchFibInformation()
-    //     }
-    // }
 }
