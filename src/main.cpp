@@ -160,6 +160,7 @@ Q_DECLARE_METATYPE(ndn::shared_ptr<const ndn::Data>)
 Q_DECLARE_METATYPE(ndn::nfd::ForwarderStatus)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::FibEntry>)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::RibEntry>)
+Q_DECLARE_METATYPE(std::vector<ndn::nfd::FaceStatus>)
 
 int
 main(int argc, char *argv[])
@@ -168,6 +169,7 @@ main(int argc, char *argv[])
   qRegisterMetaType<ndn::nfd::ForwarderStatus>();
   qRegisterMetaType<std::vector<ndn::nfd::FibEntry>>();
   qRegisterMetaType<std::vector<ndn::nfd::RibEntry>>();
+  qRegisterMetaType<std::vector<ndn::nfd::FaceStatus>>();
 
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);

@@ -21,12 +21,14 @@
 #define NCC_STATUS_VIEWER_HPP
 
 #include "forwarder-status.hpp"
+#include "face-status.hpp"
 #include "fib-status.hpp"
 #include "rib-status.hpp"
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/name.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
+#include <ndn-cxx/mgmt/nfd/face-status.hpp>
 #include <ndn-cxx/mgmt/nfd/fib-entry.hpp>
 #include <ndn-cxx/mgmt/nfd/rib-entry.hpp>
 #include <ndn-cxx/mgmt/nfd/controller.hpp>
@@ -47,6 +49,9 @@ public:
 
   void
   onStatusRetrieved(const nfd::ForwarderStatus& status);
+
+  void
+  onFaceStatusRetrieved(const std::vector<nfd::FaceStatus>& status);
 
   void
   onFibStatusRetrieved(const std::vector<nfd::FibEntry>& status);
@@ -78,6 +83,7 @@ private:
   QQmlApplicationEngine s_engine;
 
   ForwarderStatusModel s_forwarderStatusModel;
+  FaceStatusModel s_faceModel;
   FibStatusModel s_fibModel;
   RibStatusModel s_ribModel;
 };

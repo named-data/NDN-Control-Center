@@ -31,6 +31,7 @@ StatusViewer::StatusViewer(Face& face, KeyChain& keyChain)
   QQmlContext* s_context = s_engine.rootContext();
 
   s_context->setContextProperty("forwarderModel", &s_forwarderStatusModel);
+  s_context->setContextProperty("faceModel", &s_faceModel);
   s_context->setContextProperty("fibModel", &s_fibModel);
   s_context->setContextProperty("ribModel", &s_ribModel);
   s_context->setContextProperty("statusViewer", this);
@@ -42,6 +43,12 @@ void
 StatusViewer::onStatusRetrieved(const nfd::ForwarderStatus& status)
 {
   emit s_forwarderStatusModel.onDataReceived(status);
+}
+
+void
+StatusViewer::onFaceStatusRetrieved(const std::vector<nfd::FaceStatus>& status)
+{
+  emit s_faceModel.onDataReceived(status);
 }
 
 void
@@ -68,6 +75,8 @@ StatusViewer::requestNfdStatus()
 {
   s_controller->fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&StatusViewer::onStatusRetrieved, this, _1),
                                                               bind(&StatusViewer::onStatusTimeout, this));
+  s_controller->fetch<ndn::nfd::FaceDataset>(bind(&StatusViewer::onFaceStatusRetrieved, this, _1),
+                                             bind(&StatusViewer::onStatusTimeout, this));
   s_controller->fetch<ndn::nfd::FibDataset>(bind(&StatusViewer::onFibStatusRetrieved, this, _1),
                                            bind(&StatusViewer::onStatusTimeout, this));
   s_controller->fetch<ndn::nfd::RibDataset>(bind(&StatusViewer::onRibStatusRetrieved, this, _1),

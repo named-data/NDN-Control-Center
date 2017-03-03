@@ -39,6 +39,87 @@ ApplicationWindow {
             }
         }
         Tab {
+            title: "Face"
+            TableView {
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                model: faceModel
+                TableViewColumn{
+                    role: "faceId"
+                    title: "Face ID"
+                    width: 60
+                }
+                TableViewColumn{
+                    role: "remote"
+                    title: "Remote URI"
+                    width: 150
+                }
+                TableViewColumn{
+                    role: "local"
+                    title: "Local URI"
+                    width: 150
+                }
+                TableViewColumn{
+                    role: "scope"
+                    title: "Scope"
+                    width: 70
+                }
+                TableViewColumn{
+                    role: "persistency"
+                    title: "Persistency"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "linkType"
+                    title: "LinkType"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "inInterest"
+                    title: "In Interests"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "outInterest"
+                    title: "Out Interests"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "inData"
+                    title: "In Data"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "outData"
+                    title: "Out Data"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "inByte"
+                    title: "In Bytes"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "outByte"
+                    title: "Out Bytes"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "inNack"
+                    title: "In Nacks"
+                    width: 100
+                }
+                TableViewColumn{
+                    role: "outNack"
+                    title: "Out Nacks"
+                    width: 100
+                }
+            }
+        }
+        Tab {
             title: "FIB"
             TableView {
                 anchors.fill: parent

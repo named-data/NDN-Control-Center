@@ -42,7 +42,7 @@ def build(bld):
         features=['qt5', 'cxxprogram', 'cxx'],
         includes = ". src",
         use = "NDN_CXX BOOST QT5CORE QT5DBUS QT5QML QT5WIDGETS",
-        moc = "src/tray-menu.hpp src/key-tree-model.hpp src/key-viewer-dialog.hpp src/cert-tree-model.hpp src/status-viewer.hpp src/fib-status.hpp src/rib-status.hpp src/forwarder-status.hpp",
+        moc = "src/tray-menu.hpp src/key-tree-model.hpp src/key-viewer-dialog.hpp src/cert-tree-model.hpp src/status-viewer.hpp src/face-status.hpp src/fib-status.hpp src/rib-status.hpp src/forwarder-status.hpp",
         source = bld.path.ant_glob(['src/*.cpp', 'src/**/*.qrc', 'src/**/*.ui', 'src/**/*.qrc'], excl=['src/osx-*']),
         )
 
