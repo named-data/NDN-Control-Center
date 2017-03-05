@@ -28,7 +28,6 @@
 #include <ndn-cxx/name.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
 #include <ndn-cxx/mgmt/nfd/fib-entry.hpp>
-#include <ndn-cxx/mgmt/nfd/rib-entry.hpp>
 #include <ndn-cxx/mgmt/nfd/controller.hpp>
 #include <ndn-cxx/mgmt/nfd/status-dataset.hpp>
 
@@ -161,6 +160,8 @@ Q_DECLARE_METATYPE(ndn::nfd::ForwarderStatus)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::FibEntry>)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::RibEntry>)
 Q_DECLARE_METATYPE(std::vector<ndn::nfd::FaceStatus>)
+Q_DECLARE_METATYPE(std::vector<ndn::nfd::ChannelStatus>)
+Q_DECLARE_METATYPE(std::vector<ndn::nfd::StrategyChoice>)
 
 int
 main(int argc, char *argv[])
@@ -170,6 +171,8 @@ main(int argc, char *argv[])
   qRegisterMetaType<std::vector<ndn::nfd::FibEntry>>();
   qRegisterMetaType<std::vector<ndn::nfd::RibEntry>>();
   qRegisterMetaType<std::vector<ndn::nfd::FaceStatus>>();
+  qRegisterMetaType<std::vector<ndn::nfd::ChannelStatus>>();
+  qRegisterMetaType<std::vector<ndn::nfd::StrategyChoice>>();
 
   QApplication::setAttribute(Qt::AA_UseHighDpiPixmaps);
   QApplication app(argc, argv);

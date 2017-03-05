@@ -107,7 +107,7 @@ RibStatusModel::updateStatus(std::vector<ndn::nfd::RibEntry> status)
   for (auto const& ribEntry : status) {
     bool isSamePrefix = false;
     for (auto const& route : ribEntry.getRoutes()) {
-      QString expirationPeriod = route.hasInfiniteExpirationPeriod() ? QString("Never") :
+      QString expirationPeriod = route.hasExpirationPeriod() ? QString("Never") :
                                  QString::fromStdString(std::to_string(route.getExpirationPeriod().count()));
       if (!isSamePrefix) {
         addItem(RibStatusItem(QString::fromStdString(ribEntry.getName().toUri()), route.getFaceId(), route.getOrigin(),

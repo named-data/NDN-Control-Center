@@ -21,16 +21,20 @@
 #define NCC_STATUS_VIEWER_HPP
 
 #include "forwarder-status.hpp"
+#include "channel-status.hpp"
 #include "face-status.hpp"
 #include "fib-status.hpp"
 #include "rib-status.hpp"
+#include "strategy-status.hpp"
 
 #include <ndn-cxx/face.hpp>
 #include <ndn-cxx/name.hpp>
 #include <ndn-cxx/util/scheduler.hpp>
+#include <ndn-cxx/mgmt/nfd/channel-status.hpp>
 #include <ndn-cxx/mgmt/nfd/face-status.hpp>
 #include <ndn-cxx/mgmt/nfd/fib-entry.hpp>
 #include <ndn-cxx/mgmt/nfd/rib-entry.hpp>
+#include <ndn-cxx/mgmt/nfd/strategy-choice.hpp>
 #include <ndn-cxx/mgmt/nfd/controller.hpp>
 #include <ndn-cxx/mgmt/nfd/status-dataset.hpp>
 
@@ -51,6 +55,9 @@ public:
   onStatusRetrieved(const nfd::ForwarderStatus& status);
 
   void
+  onChannelStatusRetrieved(const std::vector<nfd::ChannelStatus>& status);
+
+  void
   onFaceStatusRetrieved(const std::vector<nfd::FaceStatus>& status);
 
   void
@@ -58,6 +65,9 @@ public:
 
   void
   onRibStatusRetrieved(const std::vector<nfd::RibEntry>& status);
+
+  void
+  onStrategyChoiceStatusRetrieved(const std::vector<nfd::StrategyChoice>& status);
 
   void
   onStatusTimeout();
@@ -83,9 +93,11 @@ private:
   QQmlApplicationEngine s_engine;
 
   ForwarderStatusModel s_forwarderStatusModel;
+  ChannelStatusModel s_channelModel;
   FaceStatusModel s_faceModel;
   FibStatusModel s_fibModel;
   RibStatusModel s_ribModel;
+  StrategyStatusModel s_strategyModel;
 };
 
 } // namespace ndn

@@ -39,6 +39,22 @@ ApplicationWindow {
             }
         }
         Tab {
+            title: "Channel"
+            TableView {
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                model: channelModel
+                TableViewColumn{
+                    role: "channel"
+                    title: "Channel"
+                    width: 500
+                }
+            }
+        }
+        Tab {
             title: "Face"
             TableView {
                 anchors.fill: parent
@@ -188,6 +204,27 @@ ApplicationWindow {
                     role: "expiresin"
                     title: "Expires in"
                     width: 90
+                }
+            }
+        }
+        Tab {
+            title: "Strategy"
+            TableView {
+                anchors.fill: parent
+                anchors.topMargin: 20
+                anchors.bottomMargin: 20
+                anchors.leftMargin: 20
+                anchors.rightMargin: 20
+                model: strategyModel
+                TableViewColumn{
+                    role: "prefix"
+                    title: "NDN prefix"
+                    width: 300
+                }
+                TableViewColumn{
+                    role: "strategy"
+                    title: "Strategy Choice"
+                    width: 300
                 }
             }
         }

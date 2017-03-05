@@ -128,7 +128,6 @@ ApplicationWindow {
                 anchors.bottomMargin: 20
                 anchors.leftMargin: 20
             }
-
             Row {
                 spacing: 20
                 anchors.topMargin: 30
