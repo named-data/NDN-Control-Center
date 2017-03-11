@@ -10,6 +10,10 @@ ApplicationWindow {
     minimumWidth: 700
     minimumHeight: 400
 
+    onClosing: {
+      statusViewer.cancelEvents();
+    }
+
     TabView {
         anchors.fill: parent
         anchors.topMargin: 20
@@ -18,7 +22,7 @@ ApplicationWindow {
         anchors.rightMargin: 20
 
         Tab {
-            title: "Forwarder"
+            title: "General"
             TableView {
                 anchors.fill: parent
                 anchors.topMargin: 20
@@ -39,7 +43,7 @@ ApplicationWindow {
             }
         }
         Tab {
-            title: "Channel"
+            title: "Channels"
             TableView {
                 anchors.fill: parent
                 anchors.topMargin: 20
@@ -55,7 +59,7 @@ ApplicationWindow {
             }
         }
         Tab {
-            title: "Face"
+            title: "Faces"
             TableView {
                 anchors.fill: parent
                 anchors.topMargin: 20
@@ -208,7 +212,7 @@ ApplicationWindow {
             }
         }
         Tab {
-            title: "Strategy"
+            title: "Strategies"
             TableView {
                 anchors.fill: parent
                 anchors.topMargin: 20

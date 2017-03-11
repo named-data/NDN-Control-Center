@@ -84,20 +84,24 @@ public slots:
   void
   present();
 
+  void
+  cancelEvents();
+
 private:
-  Face& s_face;
-  KeyChain& s_keyChain;
-  nfd::Controller* s_controller;
-  Scheduler s_scheduler;
+  QQmlApplicationEngine m_engine;
 
-  QQmlApplicationEngine s_engine;
+  Face& m_face;
+  KeyChain& m_keyChain;
+  nfd::Controller* m_controller;
+  Scheduler m_scheduler;
+  util::scheduler::ScopedEventId m_nextStatusRetrieval;
 
-  ForwarderStatusModel s_forwarderStatusModel;
-  ChannelStatusModel s_channelModel;
-  FaceStatusModel s_faceModel;
-  FibStatusModel s_fibModel;
-  RibStatusModel s_ribModel;
-  StrategyStatusModel s_strategyModel;
+  ForwarderStatusModel m_forwarderStatusModel;
+  ChannelStatusModel m_channelModel;
+  FaceStatusModel m_faceModel;
+  FibStatusModel m_fibModel;
+  RibStatusModel m_ribModel;
+  StrategyStatusModel m_strategyModel;
 };
 
 } // namespace ndn

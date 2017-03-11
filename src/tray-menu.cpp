@@ -96,9 +96,11 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
 
   m_context->setContextProperty("nccVersion", nccVersion);
 
-  m_menu->addAction(m_entryPref);
   m_menu->addAction(m_entryStatus);
   m_menu->addAction(m_entrySec);
+
+  m_menu->addSeparator();
+  m_menu->addAction(m_entryPref);
 
 #ifdef OSX_BUILD
   connect(m_entryEnableCli, SIGNAL(triggered()), this, SLOT(enableCli()));
@@ -108,6 +110,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   m_menu->addAction(m_checkForUpdates);
 #endif
 
+  m_menu->addSeparator();
   m_menu->addAction(m_entryQuit);
   m_tray = new QSystemTrayIcon(this);
   m_tray->setContextMenu(m_menu);

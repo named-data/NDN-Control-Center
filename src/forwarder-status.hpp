@@ -20,8 +20,9 @@
 #ifndef NCC_FORWARDER_STATUS_HPP
 #define NCC_FORWARDER_STATUS_HPP
 
-#include <QtCore/QAbstractListModel>
-#include <QtCore/QStringList>
+#include <QAbstractListModel>
+#include <QStringList>
+#include <QDateTime>
 
 #include <ndn-cxx/interest.hpp>
 #include <ndn-cxx/mgmt/nfd/forwarder-status.hpp>
@@ -34,6 +35,23 @@ public:
   ForwarderStatusItem(const QString& type, const QString& value)
     : m_type(type)
     , m_value(value)
+  {
+  }
+
+  ForwarderStatusItem(const QString& type, const std::string& value)
+    : m_type(type)
+    , m_value(QString::fromStdString(value))
+  {
+  }
+
+  ForwarderStatusItem(const QString& type, uint64_t value)
+    : m_type(type)
+    , m_value(QString::number(value))
+  {
+  }
+
+  ForwarderStatusItem(const QString& type, const time::system_clock::TimePoint& value)
+    : ForwarderStatusItem(type, time::toString(value))
   {
   }
 

@@ -83,20 +83,20 @@ ForwarderStatusModel::updateStatus(ndn::nfd::ForwarderStatus status)
 {
   beginResetModel();
   m_items.clear();
-  addItem(ForwarderStatusItem("Version",       QString::fromStdString(status.getNfdVersion())));
-  addItem(ForwarderStatusItem("Start Time",     QString::fromStdString(time::toIsoString(status.getStartTimestamp()))));
-  addItem(ForwarderStatusItem("Current Time",   QString::fromStdString(time::toIsoString(status.getCurrentTimestamp()))));
-  addItem(ForwarderStatusItem("Name Tree Entries", QString::number(status.getNNameTreeEntries())));
-  addItem(ForwarderStatusItem("Fib Entries",   QString::number(status.getNFibEntries())));
-  addItem(ForwarderStatusItem("PitEntries",   QString::number(status.getNPitEntries())));
-  addItem(ForwarderStatusItem("Measurements Entries", QString::number(status.getNMeasurementsEntries())));
-  addItem(ForwarderStatusItem("Content Store Entries",    QString::number(status.getNCsEntries())));
-  addItem(ForwarderStatusItem("Incoming Interests",  QString::number(status.getNInInterests())));
-  addItem(ForwarderStatusItem("Outgoing Interests", QString::number(status.getNOutInterests())));
-  addItem(ForwarderStatusItem("Incoming Data",      QString::number(status.getNInDatas())));
-  addItem(ForwarderStatusItem("Outgoing Data",      QString::number(status.getNOutDatas())));
-  addItem(ForwarderStatusItem("Incoming Nacks",      QString::number(status.getNInDatas())));
-  addItem(ForwarderStatusItem("Outgoing Nacks",     QString::number(status.getNOutDatas())));
+  addItem({"Version",               status.getNfdVersion()});
+  addItem({"Start Time",            status.getStartTimestamp()});
+  addItem({"Current Time",          status.getCurrentTimestamp()});
+  addItem({"Name Tree Entries",     status.getNNameTreeEntries()});
+  addItem({"Fib Entries",           status.getNFibEntries()});
+  addItem({"PitEntries",            status.getNPitEntries()});
+  addItem({"Measurements Entries",  status.getNMeasurementsEntries()});
+  addItem({"Content Store Entries", status.getNCsEntries()});
+  addItem({"Incoming Interests",    status.getNInInterests()});
+  addItem({"Outgoing Interests",    status.getNOutInterests()});
+  addItem({"Incoming Data",         status.getNInDatas()});
+  addItem({"Outgoing Data",         status.getNOutDatas()});
+  addItem({"Incoming Nacks",        status.getNInDatas()});
+  addItem({"Outgoing Nacks",        status.getNOutDatas()});
   endResetModel();
 }
 

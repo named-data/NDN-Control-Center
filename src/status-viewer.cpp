@@ -23,83 +23,93 @@
 namespace ndn {
 
 StatusViewer::StatusViewer(Face& face, KeyChain& keyChain)
-  : s_face(face)
-  , s_keyChain(keyChain)
-  , s_controller(new nfd::Controller(s_face, s_keyChain))
-  , s_scheduler(s_face.getIoService())
+  : m_face(face)
+  , m_keyChain(keyChain)
+  , m_controller(new nfd::Controller(m_face, m_keyChain))
+  , m_scheduler(m_face.getIoService())
+  , m_nextStatusRetrieval(m_scheduler)
 {
-  QQmlContext* s_context = s_engine.rootContext();
+  QQmlContext* m_context = m_engine.rootContext();
 
-  s_context->setContextProperty("forwarderModel", &s_forwarderStatusModel);
-  s_context->setContextProperty("channelModel", &s_channelModel);
-  s_context->setContextProperty("faceModel", &s_faceModel);
-  s_context->setContextProperty("fibModel", &s_fibModel);
-  s_context->setContextProperty("ribModel", &s_ribModel);
-  s_context->setContextProperty("strategyModel", &s_strategyModel);
-  s_context->setContextProperty("statusViewer", this);
+  m_context->setContextProperty("forwarderModel", &m_forwarderStatusModel);
+  m_context->setContextProperty("channelModel", &m_channelModel);
+  m_context->setContextProperty("faceModel", &m_faceModel);
+  m_context->setContextProperty("fibModel", &m_fibModel);
+  m_context->setContextProperty("ribModel", &m_ribModel);
+  m_context->setContextProperty("strategyModel", &m_strategyModel);
+  m_context->setContextProperty("statusViewer", this);
 
-  s_engine.load((QUrl("qrc:/status.qml")));
+  m_engine.load((QUrl("qrc:/status.qml")));
 }
 
 void
 StatusViewer::onStatusRetrieved(const nfd::ForwarderStatus& status)
 {
-  emit s_forwarderStatusModel.onDataReceived(status);
+  emit m_forwarderStatusModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onChannelStatusRetrieved(const std::vector<nfd::ChannelStatus>& status)
 {
-  emit s_channelModel.onDataReceived(status);
+  emit m_channelModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onFaceStatusRetrieved(const std::vector<nfd::FaceStatus>& status)
 {
-  emit s_faceModel.onDataReceived(status);
+  emit m_faceModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onFibStatusRetrieved(const std::vector<nfd::FibEntry>& status)
 {
-  emit s_fibModel.onDataReceived(status);
+  emit m_fibModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onRibStatusRetrieved(const std::vector<nfd::RibEntry>& status)
 {
-  emit s_ribModel.onDataReceived(status);
+  emit m_ribModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onStrategyChoiceStatusRetrieved(const std::vector<nfd::StrategyChoice>& status)
 {
-  emit s_strategyModel.onDataReceived(status);
+  emit m_strategyModel.onDataReceived(status);
 }
 
 void
 StatusViewer::onStatusTimeout()
 {
   std::cerr << "Should not really happen, most likely a serious problem" << std::endl;
-  s_scheduler.scheduleEvent(time::seconds(15), bind(&StatusViewer::requestNfdStatus, this));
+  m_scheduler.scheduleEvent(time::seconds(15), bind(&StatusViewer::requestNfdStatus, this));
+}
+
+void
+StatusViewer::cancelEvents()
+{
+  m_nextStatusRetrieval.cancel();
+  std::cerr << "Future events canceled" << std::endl;
 }
 
 void
 StatusViewer::requestNfdStatus()
 {
-  s_controller->fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&StatusViewer::onStatusRetrieved, this, _1),
+  std::cerr << "requestNfdStatus" << std::endl;
+
+  m_controller->fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&StatusViewer::onStatusRetrieved, this, _1),
                                                                bind(&StatusViewer::onStatusTimeout, this));
-  s_controller->fetch<ndn::nfd::ChannelDataset>(bind(&StatusViewer::onChannelStatusRetrieved, this, _1),
+  m_controller->fetch<ndn::nfd::ChannelDataset>(bind(&StatusViewer::onChannelStatusRetrieved, this, _1),
                                                 bind(&StatusViewer::onStatusTimeout, this));
-  s_controller->fetch<ndn::nfd::FaceDataset>(bind(&StatusViewer::onFaceStatusRetrieved, this, _1),
+  m_controller->fetch<ndn::nfd::FaceDataset>(bind(&StatusViewer::onFaceStatusRetrieved, this, _1),
                                              bind(&StatusViewer::onStatusTimeout, this));
-  s_controller->fetch<ndn::nfd::FibDataset>(bind(&StatusViewer::onFibStatusRetrieved, this, _1),
+  m_controller->fetch<ndn::nfd::FibDataset>(bind(&StatusViewer::onFibStatusRetrieved, this, _1),
                                             bind(&StatusViewer::onStatusTimeout, this));
-  s_controller->fetch<ndn::nfd::RibDataset>(bind(&StatusViewer::onRibStatusRetrieved, this, _1),
+  m_controller->fetch<ndn::nfd::RibDataset>(bind(&StatusViewer::onRibStatusRetrieved, this, _1),
                                             bind(&StatusViewer::onStatusTimeout, this));
-  s_controller->fetch<ndn::nfd::StrategyChoiceDataset>(bind(&StatusViewer::onStrategyChoiceStatusRetrieved, this, _1),
+  m_controller->fetch<ndn::nfd::StrategyChoiceDataset>(bind(&StatusViewer::onStrategyChoiceStatusRetrieved, this, _1),
                                                        bind(&StatusViewer::onStatusTimeout, this));
-  s_scheduler.scheduleEvent(time::seconds(15), bind(&StatusViewer::requestNfdStatus, this));
+  m_nextStatusRetrieval = m_scheduler.scheduleEvent(time::seconds(15), bind(&StatusViewer::requestNfdStatus, this));
 }
 
 void
