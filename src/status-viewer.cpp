@@ -89,14 +89,11 @@ void
 StatusViewer::cancelEvents()
 {
   m_nextStatusRetrieval.cancel();
-  std::cerr << "Future events canceled" << std::endl;
 }
 
 void
 StatusViewer::requestNfdStatus()
 {
-  std::cerr << "requestNfdStatus" << std::endl;
-
   m_controller->fetch<ndn::nfd::ForwarderGeneralStatusDataset>(bind(&StatusViewer::onStatusRetrieved, this, _1),
                                                                bind(&StatusViewer::onStatusTimeout, this));
   m_controller->fetch<ndn::nfd::ChannelDataset>(bind(&StatusViewer::onChannelStatusRetrieved, this, _1),
