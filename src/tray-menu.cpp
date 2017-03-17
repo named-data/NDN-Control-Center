@@ -69,7 +69,7 @@ TrayMenu::TrayMenu(QQmlContext* context, Face& face, KeyChain& keyChain)
   , m_acProc(nullptr)
   , m_settings(new QSettings())
 #ifdef OSX_BUILD
-  , m_entryEnableCli(new QAction("Enable Command Terminal Usage...", m_menu))
+  , m_entryEnableCli(new QAction("Install command-line tools...", m_menu))
   , m_checkForUpdates(new QAction("Check for updates", m_menu))
   , m_sparkle(NCC_APPCAST)
 #endif

@@ -1,9 +1,11 @@
 Release Notes
 =============
 
-## Version 0.2.2
+## Version 0.2.3
 
-Changes since version 0.2.1:
+- Correct names of tray menu items
+
+## Version 0.2.2
 
 - Rename to `NDN Control Center`
 
@@ -18,13 +20,9 @@ Changes since version 0.2.1:
 
 ## Version 0.2.1
 
-Changes since version 0.2.0:
-
 - Fix interpreter path for the bundled shell-based tools
 
 ## Version 0.2.0
-
-Changes since version 0.1.0:
 
 - Bundled components
 

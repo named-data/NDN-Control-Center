@@ -28,5 +28,11 @@
 <ns0:minimumSystemVersion>10.12.0</ns0:minimumSystemVersion>
 <enclosure length="27660612" type="application/octet-stream" url="https://named-data.net/binaries/NDN-Control-Center/NDN-0.2.2.dmg" ns0:dsaSignature="MCwCFF3kJFwME5pngleyBK07TSw6GTDsAhRI2V9KhWpSp0uXussHjGhNHUZihg==" ns0:shortVersionString="0.2.2" ns0:version="0.2.2" />
 <ns0:releaseNotesLink>https://named-data.net/binaries/NDN-Control-Center/release-notes-0.2.2.html</ns0:releaseNotesLink></item>
+<item>
+<title>Version 0.2.3 (ndn-cxx version 0.5.1-34-g1709aa7, NFD version 0.5.1-38-gd396b61, ndn-tools version 0.4)</title>
+<pubDate>Fri, 17 Mar 2017 15:20:23 -0700</pubDate>
+<ns0:minimumSystemVersion>10.12.0</ns0:minimumSystemVersion>
+<enclosure length="27659751" type="application/octet-stream" url="https://named-data.net/binaries/NDN-Control-Center/NDN-0.2.3.dmg" ns0:dsaSignature="MC4CFQCLben2hhIZr01C9qo84yBs9fQaWwIVAJ0Amf0kXPDHqxD/Ce5AC1awzpgZ" ns0:shortVersionString="0.2.3" ns0:version="0.2.3" />
+<ns0:releaseNotesLink>https://named-data.net/binaries/NDN-Control-Center/release-notes-0.2.3.html</ns0:releaseNotesLink></item>
 </channel>
 </rss>
