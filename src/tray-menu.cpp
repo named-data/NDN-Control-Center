@@ -199,7 +199,7 @@ TrayMenu::startNfd()
 #ifdef OSX_BUILD
   QProcess* proc = new QProcess();
   connect(proc, SIGNAL(finished(int)), proc, SLOT(deleteLater()));
-  proc->startDetached((QCoreApplication::applicationDirPath() + "/../Platform/nfd"),
+  proc->startDetached((QCoreApplication::applicationDirPath() + "/../Helpers/nfd"),
                       QStringList()
                         << "--config"
                         << (QCoreApplication::applicationDirPath() + "/../etc/ndn/nfd.conf"));
@@ -255,7 +255,7 @@ TrayMenu::startNdnAutoConfig()
 
   scheduleDelayedTask(std::chrono::seconds(2), [this] {
       appendNdnAutoConfigStatus("NDN auto configuration starting...\n");
-      m_acProc->start(QCoreApplication::applicationDirPath() + "/../Platform/ndn-autoconfig",
+      m_acProc->start(QCoreApplication::applicationDirPath() + "/../Helpers/ndn-autoconfig",
                       QStringList() << "--daemon");
       connect(m_acProc, SIGNAL(readyReadStandardOutput()), this, SLOT(processOutput()));
       connect(m_acProc, SIGNAL(readyReadStandardError()), this, SLOT(processOutput()));
@@ -394,7 +394,7 @@ TrayMenu::enableCli()
               << "do shell script \""
                    "/bin/mkdir -vp /usr/local/bin; "
                    "/bin/ln -s -f '" +  QCoreApplication::applicationDirPath() +
-                     "/../Resources/ndn" + "' /usr/local/bin/ndn;"
+                     "/../Resources/bin/ndn" + "' /usr/local/bin/ndn;"
                    "\" with administrator privileges");
 #endif
 }

@@ -261,10 +261,20 @@ class AppBundle(object):
     print ' * Copying NDN dependencies'
 
     src = os.path.join(path, 'bin')
-    dst = os.path.join(self.bundle, 'Contents', 'Platform')
-    shutil.copytree(src, dst, symlinks=False)
+    dstBinary = os.path.join(self.bundle, 'Contents', 'Helpers')
+    dstResource = os.path.join(self.bundle, 'Contents', 'Resources', 'bin')
+    os.makedirs(dstBinary)
+    os.makedirs(dstResource)
 
-    for subdir, dirs, files in os.walk(dst):
+    for file in os.listdir(src):
+      ftype = Popen(['/usr/bin/file', '-b', "%s/%s" % (src, file)], stdout=PIPE).communicate()[0]
+      if "Mach-O" in ftype:
+        shutil.copy("%s/%s" % (src, file), "%s/%s" % (dstBinary, file))
+      else:
+        shutil.copy("%s/%s" % (src, file), "%s/%s" % (dstResource, file))
+        Popen(['/usr/bin/sed', '-i', '', '-e', 's|`dirname "$0"`/|`dirname "$0"`/../../Helpers/|', "%s/%s" % (dstResource, file)]).communicate()[0]
+
+    for subdir, dirs, files in os.walk(dstBinary):
       for file in files:
         abs = subdir + "/" + file
         self.handle_binary_libs(abs)

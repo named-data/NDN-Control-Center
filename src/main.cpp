@@ -166,6 +166,10 @@ Q_DECLARE_METATYPE(std::vector<ndn::nfd::StrategyChoice>)
 int
 main(int argc, char *argv[])
 {
+  ndn::KeyChain keyChain;
+  ndn::Data data("/to/request/or/check/keychain/permissions");
+  keyChain.sign(data);
+
   qRegisterMetaType<ndn::shared_ptr<const ndn::Data>>();
   qRegisterMetaType<ndn::nfd::ForwarderStatus>();
   qRegisterMetaType<std::vector<ndn::nfd::FibEntry>>();
