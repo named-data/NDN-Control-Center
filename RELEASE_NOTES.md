@@ -1,6 +1,10 @@
 Release Notes
 =============
 
+## Version 0.2.5
+
+- Fix another bug in `ndn` command-line tool
+
 ## Version 0.2.4
 
 - Introduce function to quickly enable local NDN communication using Ad Hoc WiFi

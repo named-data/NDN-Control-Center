@@ -1,0 +1,28 @@
+#!/bin/sh
+
+NDN=`readlink "$0"`
+NDN_APP=`dirname "$NDN"`/..
+
+function usage() {
+    echo
+    echo Available commands:
+    for command in $(ls "$NDN_APP/Resources/bin/" 2>/dev/null); do
+        echo "  $command"
+    done
+}
+
+if [[ $# -eq 0 ]]; then
+    echo ERROR: No command is specified
+    usage
+    exit 1
+fi
+
+if [[ -f "$NDN_APP"/Helpers/"$1" ]]; then
+    "$NDN_APP"/Helpers/"$@"
+elif [[ -f "$NDN_APP"/Resources/bin/"$1" ]]; then
+    "$NDN_APP"/Resources/bin/"$@"
+else
+    echo ERROR: Unknown is specified
+    usage
+    exit 1
+fi

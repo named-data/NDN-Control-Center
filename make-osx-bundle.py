@@ -270,6 +270,7 @@ class AppBundle(object):
       ftype = Popen(['/usr/bin/file', '-b', "%s/%s" % (src, file)], stdout=PIPE).communicate()[0]
       if "Mach-O" in ftype:
         shutil.copy("%s/%s" % (src, file), "%s/%s" % (dstBinary, file))
+        os.symlink("../../Helpers/%s" % file, "%s/%s" % (dstResource, file))
       else:
         shutil.copy("%s/%s" % (src, file), "%s/%s" % (dstResource, file))
         Popen(['/usr/bin/sed', '-i', '', '-e', 's|`dirname "$0"`/|`dirname "$0"`/../../Helpers/|', "%s/%s" % (dstResource, file)]).communicate()[0]

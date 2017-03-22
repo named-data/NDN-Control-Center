@@ -450,7 +450,7 @@ TrayMenu::enableCli()
               << "do shell script \""
                    "/bin/mkdir -vp /usr/local/bin; "
                    "/bin/ln -s -f '" +  QCoreApplication::applicationDirPath() +
-                     "/../Resources/bin/ndn" + "' /usr/local/bin/ndn;"
+                     "/../Resources/ndn" + "' /usr/local/bin/ndn;"
                    "\" with administrator privileges");
 #endif
 }
